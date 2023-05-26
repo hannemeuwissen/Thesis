@@ -10,7 +10,7 @@
 #include<stdio.h>
 #include"graph.h"
 
-int contains(size_t element, size_t * array, const size_t len){
+int contains(int element, int * array, const int len){
     if(len > 0){
         for(int i=0;i<len;i++){
             if(array[i] == element){
@@ -21,11 +21,11 @@ int contains(size_t element, size_t * array, const size_t len){
     return 0;
 }
 
-size_t * random_col_indices(const size_t nnz, const size_t n){
+int * random_col_indices(const int nnz, const int n){
     srand(1999); // remove this once the code works!!!
-    size_t * result = malloc(nnz*sizeof(size_t));
-    size_t proposal;
-    for(size_t i=0;i<nnz;i++){
+    int * result = malloc(nnz*sizeof(int));
+    int proposal;
+    for(int i=0;i<nnz;i++){
         proposal = rand() % n;
         while(contains(proposal, result, i)){
             proposal = rand() % n;
@@ -35,22 +35,22 @@ size_t * random_col_indices(const size_t nnz, const size_t n){
     return result;
 }
 
-sparse_CSR generate_regular_graph_trans_csr(const size_t n, const size_t nnz_per_row){
+sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
 
     /* Initialize sparse_CSR structure */
     sparse_CSR T;
     T.nrows = n;
     T.ncols = n;
     T.nnz = n*nnz_per_row;
-    T.rowptrs = malloc((n+1)*sizeof(size_t));
-    T.colindex = malloc(T.nnz*sizeof(size_t));
+    T.rowptrs = malloc((n+1)*sizeof(int));
+    T.colindex = malloc(T.nnz*sizeof(int));
     T.values = malloc(T.nnz*sizeof(double));
 
     /* Set nonzero elements per row at random */
-    size_t i = 0;
-    size_t row_index = 0;
+    int i = 0;
+    int row_index = 0;
     double value = 1.0/((double) nnz_per_row)
-    size_t * col_indices = random_col_indices(nnz_per_row);
+    int * col_indices = random_col_indices(nnz_per_row);
     while(i<T.nnz){
         T.rowptrs[row_index++] = i;
         for(int j=0;j<nnz_per_row;j++){

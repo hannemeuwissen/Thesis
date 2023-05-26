@@ -9,15 +9,15 @@
 #define GRAPH_H_TWYFUKH2
 
 typedef struct sparse_CSR {
-    size_t nrows;
-    size_t ncols;
-    size_t nnz;
-    size_t * rowptrs;
-    size_t * colindex;
+    int nrows;
+    int ncols;
+    int nnz;
+    int * rowptrs;
+    int * colindex;
     double * values;
 } sparse_CSR;
 
-sparse_CSR generate_regular_graph_trans_csr(const size_t n, const size_t nnz_per_row);
+sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row);
 void print_CSR(sparse_CSR * M);
 
 #endif /* end of include guard: GRAPH_H_TWYFUKH2 */
