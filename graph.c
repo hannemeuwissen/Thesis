@@ -21,6 +21,10 @@ int contains(int element, int * array, const int len){
     return 0;
 }
 
+int sorter(const void * f1, const void * f2){
+    return (*(int*)f1 - *(int*)f2);
+}
+
 void random_col_indices(int ** result, const int n, const int nnz){
     *result = malloc(nnz*sizeof(int));
     int proposal;
@@ -31,6 +35,7 @@ void random_col_indices(int ** result, const int n, const int nnz){
         }
         (*result)[i] = proposal;
     }
+    qsort(*result, nnz, sizeof(int), sorter);
 }
 
 sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
