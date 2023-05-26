@@ -51,9 +51,9 @@ sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
     int row_index = 0;
     double value = 1.0/((double) nnz_per_row);
     int * col_indices;
-    random_col_indices(&col_indices, n, nnz_per_row);
     while(i<T.nnz){
         T.rowptrs[row_index++] = i;
+        random_col_indices(&col_indices, n, nnz_per_row);
         for(int j=0;j<nnz_per_row;j++){
             T.values[i] = value;            
             T.colindex[i] = col_indices[j];
