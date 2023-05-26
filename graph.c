@@ -21,18 +21,17 @@ int contains(int element, int * array, const int len){
     return 0;
 }
 
-int * random_col_indices(const int nnz, const int n){
+void random_col_indices(int ** result, const int n, const int nnz){
     srand(1999); // remove this once the code works!!!
-    int * result = malloc(nnz*sizeof(int));
+    int *result = malloc(nnz*sizeof(int));
     int proposal;
     for(int i=0;i<nnz;i++){
         proposal = rand() % n;
-        while(contains(proposal, result, i)){
+        while(contains(proposal, *result, i)){
             proposal = rand() % n;
         }
-        result[i] = proposal;
+        (*result)[i] = proposal;
     }
-    return result;
 }
 
 sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
@@ -50,7 +49,8 @@ sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
     int i = 0;
     int row_index = 0;
     double value = 1.0/((double) nnz_per_row);
-    int * col_indices = random_col_indices(nnz_per_row, n);
+    int * col_indices;
+    random_col_indices(&col_indices, n, nnz_per_row);
     while(i<T.nnz){
         T.rowptrs[row_index++] = i;
         for(int j=0;j<nnz_per_row;j++){
