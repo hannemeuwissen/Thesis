@@ -60,6 +60,7 @@ sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
         }
         free(col_indices);
     }
+    return T;
 }
 
 void print_CSR(sparse_CSR * M){
