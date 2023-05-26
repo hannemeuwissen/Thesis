@@ -49,7 +49,7 @@ sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
     /* Set nonzero elements per row at random */
     int i = 0;
     int row_index = 0;
-    double value = 1.0/((double) nnz_per_row)
+    double value = 1.0/((double) nnz_per_row);
     int * col_indices = random_col_indices(nnz_per_row);
     while(i<T.nnz){
         T.rowptrs[row_index++] = i;
@@ -63,7 +63,7 @@ sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
 }
 
 void print_CSR(sparse_CSR * M){
-    printf("Row pointers: ")
+    printf("Row pointers: ");
     for(int i=0;i<(M->nrows+1);i++){
         printf("%d ", M->rowptrs[i]);
     }
