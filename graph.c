@@ -26,6 +26,7 @@ void random_col_indices(int ** result, const int n, const int nnz){
     int proposal;
     for(int i=0;i<nnz;i++){
         proposal = rand() % n;
+        printf("%d\n", proposal);
         while(contains(proposal, *result, i)){
             proposal = rand() % n;
         }
