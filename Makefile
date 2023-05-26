@@ -12,10 +12,10 @@ EXECS= main
 
 all:$(EXECS)
 
-graph.o:graph.c
+graph.o:graph.c graph.h
 	$(CC) -c $< $(FLAGS)
 
-main:main.c graph.o
+main:main.c graph.o graph.h
 	$(CC) -o $@ $< graph.o $(FLAGS)
 
 .PHONY:clean
