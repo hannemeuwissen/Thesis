@@ -22,7 +22,6 @@ int contains(int element, int * array, const int len){
 }
 
 void random_col_indices(int ** result, const int n, const int nnz){
-    srand(1999); // remove this once the code works!!!
     *result = malloc(nnz*sizeof(int));
     int proposal;
     for(int i=0;i<nnz;i++){
@@ -35,6 +34,7 @@ void random_col_indices(int ** result, const int n, const int nnz){
 }
 
 sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
+    // srand(1999);
 
     /* Initialize sparse_CSR structure */
     sparse_CSR T;
