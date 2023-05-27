@@ -93,7 +93,7 @@ sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
             i++;
         }
     }
-    T.rowptrs[row_index] = T.nnz + 1;
+    T.rowptrs[row_index] = T.nnz;
     free(col_indices);
     return T;
 }
