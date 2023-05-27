@@ -26,18 +26,6 @@ int sorter(const void * f1, const void * f2){
 }
 
 void random_col_indices(int ** result, const int n, const int nnz){
-    int randomvalue;
-    FILE * fpointer;
-    if((fpointer=fopen("/dev/random","r")) == NULL){
-        perror("Error opening random device");
-        exit(EXIT_FAILURE);
-    }
-    if(fread(&randomvalue,sizeof(int),1,fpointer) != 1){
-        perror("Error reading from random device");
-        exit(EXIT_FAILURE);
-    }
-    fclose(fpointer);
-    srandom(randomvalue);
     *result = malloc(nnz*sizeof(int));
     int proposal;
     for(int i=0;i<nnz;i++){
@@ -51,7 +39,20 @@ void random_col_indices(int ** result, const int n, const int nnz){
 }
 
 sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
-    // srand(1999);
+
+    /* seed random */
+    int randomvalue;
+    FILE * fpointer;
+    if((fpointer=fopen("/dev/random","r")) == NULL){
+        perror("Error opening random device");
+        exit(EXIT_FAILURE);
+    }
+    if(fread(&randomvalue,sizeof(int),1,fpointer) != 1){
+        perror("Error reading from random device");
+        exit(EXIT_FAILURE);
+    }
+    fclose(fpointer);
+    srandom(randomvalue);
 
     /* Initialize sparse_CSR structure */
     sparse_CSR T;
