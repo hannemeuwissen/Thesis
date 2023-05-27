@@ -26,12 +26,24 @@ int sorter(const void * f1, const void * f2){
 }
 
 void random_col_indices(int ** result, const int n, const int nnz){
+    int randomvalue;
+    FILE * fpointer;
+    if((fpointer=fopen("/dev/random","r")) == NULL){
+        perror("Error opening random device");
+        exit(EXIT_FAILURE);
+    }
+    if(fread(&randomvalue,sizeof(int),1,fpointer) != 1){
+        perror("Error reading from random device");
+        exit(EXIT_FAILURE);
+    }
+    fclose(fpointer);
+    srandom(randomvalue);
     *result = malloc(nnz*sizeof(int));
     int proposal;
     for(int i=0;i<nnz;i++){
-        proposal = rand() % n;
+        proposal = random() % n;
         while(contains(proposal, *result, i)){
-            proposal = rand() % n;
+            proposal = random() % n;
         }
         (*result)[i] = proposal;
     }
