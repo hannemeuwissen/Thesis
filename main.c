@@ -11,7 +11,7 @@
 #include"graph.h"                                                          
                                                                                 
 int main(void){                                                                               
-    sparse_CSR test = generate_regular_graph_trans_csr(5, 2);
+    sparse_CSR test = generate_regular_graph_trans_csr(5, 3);
     print_CSR(&test);
     free(test.rowptrs);
     free(test.colindex);
