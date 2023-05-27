@@ -119,12 +119,16 @@ void print_CSR(sparse_CSR * M){
     printf("\n");
 }
 
-void spmv(sparse_CSR M, double * v, double * result){
-    for(int i=0;i<M.nrows;i++){
+void spmv(sparse_CSR M, double * v, double len, double * result){
+    if(len != M.nrows){
+        perror("incompatible dimensions in spmv.\n");
+        exit(EXIT_FAILURE);
+    }
+    for(int i=0;i<len;i++){
         result[i] = 0.0;
         for(int j=M.rowptrs[i];j<M.rowptrs[i+1];j++){
-            /* Note: result should be 0 at all places */
             result[i] += M.values[j]*v[M.colindex[j]];
+            printf("Step %d:\n", i);
             print_vector(result, M.nrows);
         }
     }
