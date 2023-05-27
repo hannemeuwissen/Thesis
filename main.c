@@ -7,7 +7,8 @@
  */
 
 #include<stdlib.h>                                                             
-#include<stdio.h>    
+#include<stdio.h>
+#include<string.h> 
 #include"graph.h"                                                          
                                                                                 
 int main(void){                                                                               
