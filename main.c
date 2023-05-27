@@ -19,7 +19,7 @@ int main(void){
     double * result = malloc(4*sizeof(double));
     memset(result, 0, 4*sizeof(double));
     spmv(test, v, result);
-    print_vector(result);
+    print_vector(result, 4);
     free(test.rowptrs);
     free(test.colindex);
     free(test.values);
