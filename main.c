@@ -15,7 +15,7 @@ int main(void){
     sparse_CSR test = generate_regular_graph_trans_csr(4, 3);
     print_CSR(&test);
     double * v = malloc(4*sizeof(double));
-    for(int i=0;i<4;i++){v[i] = 1.0;}
+    for(int i=0;i<4;i++){v[i] = 0.5;}
     double * result = malloc(4*sizeof(double));
     spmv(test, v, 4, result);
     print_vector(result, 4);
