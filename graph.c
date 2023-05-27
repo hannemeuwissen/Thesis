@@ -119,6 +119,14 @@ void print_CSR(sparse_CSR * M){
     printf("\n");
 }
 
+/**
+ * @brief Function that calculates the sparse matrix mector multiplication between
+ * a sparse_CSR matrix and a vector with compatible length.
+ * @param M Sparse CSR matrix structure.
+ * @param v Vector.
+ * @param len Length of the vector.
+ * @param result Result vector.
+ */
 void spmv(sparse_CSR M, double * v, double len, double * result){
     if(len != M.nrows){
         perror("incompatible dimensions in spmv.\n");
@@ -132,6 +140,11 @@ void spmv(sparse_CSR M, double * v, double len, double * result){
     }
 }
 
+/**
+ * @brief Function that prints a vector of given length.
+ * @param v Vector.
+ * @param len Length of the vector.
+ */
 void print_vector(double * v, const int len){
     for(int i = 0;i<len;i++){
         printf("%lf\n", v[i]);
