@@ -10,6 +10,13 @@
 #include<stdio.h>
 #include"graph.h"
 
+/**
+ * @brief Function that returns 1 if an index is allready present in a given array.
+ * @param element Index.
+ * @param array Array of previously proposed indices.
+ * @param len Length of the array.
+ * @return 1 if the array already contains the element, otherwise 0.
+ */
 int contains(int element, int * array, const int len){
     if(len > 0){
         for(int i=0;i<len;i++){
@@ -19,10 +26,6 @@ int contains(int element, int * array, const int len){
         }
     }
     return 0;
-}
-
-int sorter(const void * f1, const void * f2){
-    return (*(int*)f1 - *(int*)f2);
 }
 
 void random_col_indices(int ** result, const int n, const int nnz){
@@ -35,6 +38,7 @@ void random_col_indices(int ** result, const int n, const int nnz){
         }
         (*result)[i] = proposal;
     }
+    int sorter(const void * f1, const void * f2){return (*(int*)f1 - *(int*)f2);}
     qsort(*result, nnz, sizeof(int), sorter);
 }
 
