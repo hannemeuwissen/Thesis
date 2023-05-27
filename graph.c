@@ -129,7 +129,7 @@ void spmv(sparse_CSR M, double * v, double * result){
 }
 
 void print_vector(double * v, const int len){
-    for(inti = 0;i<len;i++){
+    for(int i = 0;i<len;i++){
         printf("%lf\n", v[i]);
     }
 }
