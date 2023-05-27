@@ -8,6 +8,7 @@
 #ifndef GRAPH_H_TWYFUKH2
 #define GRAPH_H_TWYFUKH2
 
+#include"sparse.h"
 sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row);
 void print_CSR(sparse_CSR * M);
 void spmv(sparse_CSR M, double * v, double len, double * result);
