@@ -28,6 +28,12 @@ int contains(int element, int * array, const int len){
     return 0;
 }
 
+/**
+ * @brief Function that returns a result array with random selected and sorted column indices.
+ * @param result The address of the result array.
+ * @param n The number of columns.
+ * @param nnz The number of nonzeros; the number of indices to be randomly selected.
+ */
 void random_col_indices(int ** result, const int n, const int nnz){
     *result = malloc(nnz*sizeof(int));
     int proposal;
@@ -42,9 +48,15 @@ void random_col_indices(int ** result, const int n, const int nnz){
     qsort(*result, nnz, sizeof(int), sorter);
 }
 
+/**
+ * @brief Function that generates the transition matrix (CSR) of a random graph 
+ * where each node has the same number of edges, which are randomly selected.
+ * @param n The number of nodes.
+ * @param nnz_per_row The number of nonzeros; the number of edges per node.
+ * @return sparse_CSR Sparse CSR matrix stucture of the transition matrix.
+ */
 sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
-
-    /* seed random */
+    /* Seed random using random device */
     int randomvalue;
     FILE * fpointer;
     if((fpointer=fopen("/dev/random","r")) == NULL){
@@ -86,6 +98,10 @@ sparse_CSR generate_regular_graph_trans_csr(const int n, const int nnz_per_row){
     return T;
 }
 
+/**
+ * @brief Function that prints a sparse CSR matrix structure.
+ * @param M The sparse_CSR structure to be printed.
+ */
 void print_CSR(sparse_CSR * M){
     printf("Number of columns and rows: %d\nNumber of nonzeros: %d\n", M->ncols, M->nnz);
     printf("Row pointers: ");
