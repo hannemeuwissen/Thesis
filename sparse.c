@@ -7,7 +7,7 @@
  */
 #include<stdlib.h>
 #include<stdio.h>
-#include"graph.h"
+#include"sparse.h"
 
 /**
  * @brief Function that prints a sparse CSR matrix structure.
