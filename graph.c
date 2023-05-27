@@ -128,8 +128,6 @@ void spmv(sparse_CSR M, double * v, double len, double * result){
         result[i] = 0.0;
         for(int j=M.rowptrs[i];j<M.rowptrs[i+1];j++){
             result[i] += M.values[j]*v[M.colindex[j]];
-            printf("Step %d:\n", i);
-            print_vector(result, M.nrows);
         }
     }
 }

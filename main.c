@@ -12,7 +12,7 @@
 #include"graph.h"                                                          
                                                                                 
 int main(void){                                                                               
-    sparse_CSR test = generate_regular_graph_trans_csr(4, 2);
+    sparse_CSR test = generate_regular_graph_trans_csr(4, 3);
     print_CSR(&test);
     double * v = malloc(4*sizeof(double));
     for(int i=0;i<4;i++){v[i] = 1.0;}
