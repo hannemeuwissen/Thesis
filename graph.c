@@ -8,6 +8,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include"graph.h"
+#include"sparse.h"
 
 /**
  * @brief Function that returns 1 if an index is allready present in a given array.
