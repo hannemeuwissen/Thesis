@@ -15,8 +15,10 @@ all:$(EXECS)
 graph.o:graph.c graph.h
 	$(CC) -c $< $(FLAGS)
 
-main:main.c graph.o graph.h
-	$(CC) -o $@ $< graph.o $(FLAGS)
+sparse.o:sparse.c sparse.h
+
+main:main.c graph.o sparse.o
+	$(CC) -o $@ $< graph.o sparse.o $(FLAGS)
 
 .PHONY:clean
 

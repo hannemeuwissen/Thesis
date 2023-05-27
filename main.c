@@ -9,7 +9,8 @@
 #include<stdlib.h>                                                             
 #include<stdio.h>
 #include<string.h> 
-#include"graph.h"                                                          
+#include"graph.h"
+#include"sparse.h"                                                       
                                                                                 
 int main(void){
     int n = 5;
