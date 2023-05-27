@@ -17,7 +17,6 @@ int main(void){
     double * v = malloc(4*sizeof(double));
     for(int i=0;i<4;i++){v[i] = 1.0;}
     double * result = malloc(4*sizeof(double));
-    memset(result, 0, 4*sizeof(double));
     spmv(test, v, result);
     print_vector(result, 4);
     free(test.rowptrs);

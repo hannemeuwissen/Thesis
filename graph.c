@@ -121,6 +121,7 @@ void print_CSR(sparse_CSR * M){
 
 void spmv(sparse_CSR M, double * v, double * result){
     for(int i=0;i<M.nrows;i++){
+        result[i] = 0.0;
         for(int j=M.rowptrs[i];j<M.rowptrs[i+1];j++){
             /* Note: result should be 0 at all places */
             result[i] += M.values[j]*v[M.colindex[j]];
