@@ -7,6 +7,9 @@
  */
 #include<stdlib.h>
 #include<stdio.h>
+#include<math.h>
+#include<mkl_types.h>
+#include<mkl_cblas.h>
 #include"sparse.h"
 
 /**
@@ -59,5 +62,44 @@ void spmv(sparse_CSR M, double * v, double len, double * result){
 void print_vector(double * v, const int len){
     for(int i = 0;i<len;i++){
         printf("%lf\n", v[i]);
+    }
+}
+
+void print_transpose(double * A, const int n){
+    for(int i=0;i<)
+}
+
+/**
+ * @brief Function that computes the (m+1)-Krylov subspace of the sparse CSR matrix A,
+ * thus the space spanned by the vectors {b, Ab, ..., A^m b}.
+ * @param A Sparse sparse_CSR matrix struct. A should represent a len x len matrix.
+ * @param b Vector b. Note that b should be normalised.
+ * @param len Length of the vector.
+ * @param Q Matrix which will hold the resulting basis vectors of the Krylov subspace.
+ * @param H Matrix that will hold the projection of A onto Q. DO I NEED H TO BE RETURNED?
+ * @param m The degree of the Krlov subspace.
+ */
+void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, double * H, const int m){
+    /* Store Q's as rows in Q first for memory usage, afterwards transpose OR just change cblas incs for Q*/
+    if(A.ncols != len){
+        perror("Incompatible dimensions in Arnoldi.");
+        exit(EXIT_FAILURE);
+    }
+    double eps = 1e-12;
+    cblas_dcopy(len, b, 1, Q, 1); /* Set q0 */
+    double h;
+    double * w = calloc(len*sizeof(double));
+    for(int j=1;j < m;j++){
+        spmv(A, Q + j*len, len, w);
+        for(int i=1;i<=j;i++){
+            h = cblas_ddot(len, w, 1, Q + i*len, 1);
+            cblas_daxpy(len,-h,Q + i*len,1,w, 1);
+        }
+        h = cblas_dnrm2(len, w, 1);
+        if(h < eps){
+            break;
+        }
+        cblas_dscal(len, 1/h, w, 1);
+        cblas_dcopy(len, w, 1, Q + (j+1)*len, 1);
     }
 }
