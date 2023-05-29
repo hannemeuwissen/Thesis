@@ -66,8 +66,23 @@ void print_vector(double * v, const int len){
 }
 
 /**
- * @brief Function that computes the (m+1)-Krylov subspace of the sparse CSR matrix A,
- * thus the space spanned by the vectors {b, Ab, ..., A^m b}.
+ * @brief Function that prints a matrix of given dimensions.
+ * @param A The matrix.
+ * @param n The number of rows.
+ * @param m The number of columns.
+ */
+void print_matrix(double * A, const int n, const int m){
+    for(int i = 0;i<n;i++){
+        for(int j=0;j<m;j++){
+            printf("%lf ", A[i*m + j]);
+        }
+        printf("\n");
+    }
+}
+
+/**
+ * @brief Function that computes the m-Krylov subspace of the sparse CSR matrix A,
+ * thus the space spanned by the vectors {b, Ab, ..., A^(m-1) b}.
  * @param A Sparse sparse_CSR matrix struct. A should represent a len x len matrix.
  * @param b Vector b. Note that b should be normalised.
  * @param len Length of the vector.
@@ -75,7 +90,7 @@ void print_vector(double * v, const int len){
  * @param H Matrix that will hold the projection of A onto Q. DO I NEED H TO BE RETURNED?
  * @param m The degree of the Krlov subspace.
  */
-void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, double * H, const int m){
+void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
     /* Store Q's as rows in Q first for memory usage, afterwards transpose OR just change cblas incs for Q*/
     if(A.ncols != len){
         perror("Incompatible dimensions in Arnoldi.");
