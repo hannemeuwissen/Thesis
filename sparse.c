@@ -99,7 +99,7 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
     double eps = 1e-12;
     cblas_dcopy(len, b, 1, Q, 1); /* Set q0 */
     double h;
-    double * w = calloc(len, sizeof(double));
+    double * w = malloc(len*sizeof(double));
     for(int j=1;j < m;j++){
         spmv(A, Q + j*len, len, w);
         print_vector(w, len);
