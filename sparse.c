@@ -84,9 +84,9 @@ void print_matrix(double * A, const int n, const int m){
  * @brief Function that computes the m-Krylov subspace of the sparse CSR matrix A,
  * thus the space spanned by the vectors {b, Ab, ..., A^(m-1) b}.
  * @param A Sparse sparse_CSR matrix struct. A should represent a len x len matrix.
- * @param b Vector b. Note that b should be normalised.
+ * @param b Vector b.
  * @param len Length of the vector.
- * @param Q Matrix which will hold the resulting basis vectors of the Krylov subspace.
+ * @param Q Matrix which will hold the resulting basis vectors of the Krylov subspace. (len x m)
  * @param H Matrix that will hold the projection of A onto Q. DO I NEED H TO BE RETURNED?
  * @param m The degree of the Krlov subspace.
  */
@@ -98,6 +98,8 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
     }
     double eps = 1e-12;
     cblas_dcopy(len, b, 1, Q, 1); /* Set q0 */
+    double norm_b = cblas_dnrm2(len, Q, 1);
+    cblas_dscal(len, 1/norm_b, Q, 1); /* Normalize */
     print_matrix(Q, len, m);
     double h;
     double * w = malloc(len*sizeof(double));
