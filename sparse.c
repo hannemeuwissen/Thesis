@@ -114,7 +114,7 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
             break;
         }
         cblas_dscal(len, 1/h, w, 1);
-        cblas_dcopy(len, w, 1, Q_trans + (j+1)*len, 1);
+        cblas_dcopy(len, w, 1, Q_trans + j*len, 1);
     }
     /* Transpose final result */
     for(int i=0;i<len;i++){
