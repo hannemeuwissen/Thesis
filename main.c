@@ -29,7 +29,7 @@ int main(void){
 
     /* Check serial arnoldi */
     int n = 3;
-    int nnz = 7
+    int nnz = 7;
     sparse_CSR T;
     T.nrows = n;
     T.ncols = n;
