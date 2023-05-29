@@ -105,7 +105,7 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
     for(int j=1;j < m;j++){
         spmv(A, Q_trans + (j-1)*len, len, w);
         print_vector(w, len);
-        for(int i=1;i<j;i++){
+        for(int i=0;i<j;i++){
             h = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
             cblas_daxpy(len,-h,Q_trans + i*len,1,w, 1);
         }
