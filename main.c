@@ -52,6 +52,6 @@ int main(void){
     T.values[3] = 2.0;
     T.values[4] = 2.0;
     T.values[5] = 1.0;
-    print_CSR(T);
+    print_CSR(&T);
 
 }     
