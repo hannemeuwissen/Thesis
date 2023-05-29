@@ -98,6 +98,7 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
     }
     double eps = 1e-12;
     cblas_dcopy(len, b, 1, Q, 1); /* Set q0 */
+    print_matrix(Q, len, m);
     double h;
     double * w = malloc(len*sizeof(double));
     for(int j=1;j < m;j++){
