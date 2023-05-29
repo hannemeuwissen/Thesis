@@ -8,7 +8,7 @@
 
 CC=gcc
 ICC = icc
-FLAGS= -g -Wextra -Wall
+FLAGS= -g -Wextra -Wall -lm
 MKLFLAGS = -mkl
 EXECS= main
 
@@ -18,6 +18,7 @@ graph.o:graph.c graph.h
 	$(CC) -c $< $(FLAGS)
 
 sparse.o:sparse.c sparse.h
+	$(CC) -c $< $(FLAGS)
 
 main:main.c graph.o sparse.o
 	$(ICC) -o $@ $< graph.o sparse.o $(FLAGS) $(MKLFLAGS)
