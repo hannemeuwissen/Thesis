@@ -29,30 +29,32 @@ int main(void){
 
     /* Check serial arnoldi */
     int n = 3;
-    int nnz_per_row = 2;
+    int nnz = 7
     sparse_CSR T;
     T.nrows = n;
     T.ncols = n;
-    T.nnz = n*nnz_per_row;
+    T.nnz = nnz;
     T.rowptrs = malloc((n+1)*sizeof(int));
     T.colindex = malloc(T.nnz*sizeof(int));
     T.values = malloc(T.nnz*sizeof(double));
-    for(int i=0;i<4;i++){
-        T.rowptrs[i] = i*2;
-    }
+    T.rowptrs[0] = 0;
+    T.rowptrs[1] = 3;
+    T.rowptrs[2] = 5;
+    T.rowptrs[3] = 7;
     T.colindex[0] = 0;
     T.colindex[1] = 1;
-    T.colindex[2] = 1;
-    T.colindex[3] = 2;
-    T.colindex[4] = 0;
-    T.colindex[5] = 1;
+    T.colindex[2] = 2;
+    T.colindex[3] = 1;
+    T.colindex[4] = 2;
+    T.colindex[5] = 0;
+    T.colindex[6] = 1;
     T.values[0] = 1.0;
     T.values[1] = 2.0;
-    T.values[2] = 1.0;
-    T.values[3] = 2.0;
+    T.values[2] = 3.0;
+    T.values[3] = 1.0;
     T.values[4] = 2.0;
-    T.values[5] = 1.0;
-    // print_CSR(&T);
+    T.values[5] = 3.0;
+    T.values[6] = 1.0;
     int m = 3;
     double * Q = malloc(n*m*sizeof(double));
     double *b = malloc(n*sizeof(double));
