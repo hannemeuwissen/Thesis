@@ -7,7 +7,9 @@
 #
 
 CC=gcc
+ICC = icc
 FLAGS= -g -Wextra -Wall
+MKLFLAGS = -mkl
 EXECS= main
 
 all:$(EXECS)
@@ -18,7 +20,7 @@ graph.o:graph.c graph.h
 sparse.o:sparse.c sparse.h
 
 main:main.c graph.o sparse.o
-	$(CC) -o $@ $< graph.o sparse.o $(FLAGS)
+	$(ICC) -o $@ $< graph.o sparse.o $(FLAGS) $(MKLFLAGS)
 
 .PHONY:clean
 
