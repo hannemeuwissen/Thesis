@@ -91,28 +91,34 @@ void print_matrix(double * A, const int n, const int m){
  * @param m The degree of the Krlov subspace.
  */
 void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
-    /* Store Q's as rows in Q first for memory usage, afterwards transpose OR just change cblas incs for Q*/
     if(A.ncols != len){
         perror("Incompatible dimensions in Arnoldi.");
         exit(EXIT_FAILURE);
     }
     double eps = 1e-12;
-    cblas_dcopy(len, b, 1, Q, 1); /* Set q0 */
-    double norm_b = cblas_dnrm2(len, Q, 1);
-    cblas_dscal(len, 1/norm_b, Q, 1); /* Normalize */
+    double * Q_trans = malloc(len*m*sizeof(double));
+    cblas_dcopy(len, b, 1, Q_trans, 1); /* Set Q_trans0 */
+    double norm_b = cblas_dnrm2(len, Q_trans, 1);
+    cblas_dscal(len, 1/norm_b, Q_trans, 1); /* Normalize */
     double h;
     double * w = malloc(len*sizeof(double));
     for(int j=1;j < m;j++){
-        spmv(A, Q + j*len, len, w);
+        spmv(A, Q_trans + j*len, len, w);
         for(int i=1;i<=j;i++){
-            h = cblas_ddot(len, w, 1, Q + i*len, 1);
-            cblas_daxpy(len,-h,Q + i*len,1,w, 1);
+            h = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
+            cblas_daxpy(len,-h,Q_trans + i*len,1,w, 1);
         }
         h = cblas_dnrm2(len, w, 1);
         if(h < eps){
             break;
         }
         cblas_dscal(len, 1/h, w, 1);
-        cblas_dcopy(len, w, 1, Q + (j+1)*len, 1);
+        cblas_dcopy(len, w, 1, Q_trans + (j+1)*len, 1);
+    }
+    /* Transpose final result */
+    for(int i=0;i<len;i++){
+        for(int j=0;j<m;j++){
+            Q[i*m + j] = Q_trans[j*len + i];
+        }
     }
 }
