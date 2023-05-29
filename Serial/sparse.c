@@ -87,7 +87,6 @@ void print_matrix(double * A, const int n, const int m){
  * @param b Vector b.
  * @param len Length of the vector.
  * @param Q Matrix which will hold the resulting basis vectors of the Krylov subspace. (len x m)
- * @param H Matrix that will hold the projection of A onto Q. DO I NEED H TO BE RETURNED?
  * @param m The degree of the Krlov subspace.
  */
 void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
