@@ -65,10 +65,6 @@ void print_vector(double * v, const int len){
     }
 }
 
-void print_transpose(double * A, const int n){
-    for(int i=0;i<)
-}
-
 /**
  * @brief Function that computes the (m+1)-Krylov subspace of the sparse CSR matrix A,
  * thus the space spanned by the vectors {b, Ab, ..., A^m b}.
