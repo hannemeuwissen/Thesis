@@ -102,6 +102,7 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
     double * w = calloc(len, sizeof(double));
     for(int j=1;j < m;j++){
         spmv(A, Q + j*len, len, w);
+        print_vector(w, len);
         for(int i=1;i<=j;i++){
             h = cblas_ddot(len, w, 1, Q + i*len, 1);
             cblas_daxpy(len,-h,Q + i*len,1,w, 1);
