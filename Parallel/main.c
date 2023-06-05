@@ -20,8 +20,26 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     
     sparse_CSR M = generate_regular_graph_part_csr(2, 8, 3);
-    printf("From rank %d:\n", myid);
-    print_CSR(&M);
+    /* Print in order */
+    if(!myid){
+        printf("Rank %d:\n", myid);
+        print_CSR(&M);
+    }
+    MPI_Barrier();
+    if(myid == 1){
+        printf("Rank %d:\n", myid);
+        print_CSR(&M);
+    }
+    MPI_Barrier();
+    if(myid == 2){
+        printf("Rank %d:\n", myid);
+        print_CSR(&M);
+    }
+    MPI_Barrier();
+    if(myid == 3){
+        printf("Rank %d:\n", myid);
+        print_CSR(&M);
+    }
 
     // Read input: degree of Krylov subspace
 
