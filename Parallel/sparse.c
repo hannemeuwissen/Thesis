@@ -143,12 +143,12 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 if(!myid){
                     printf("Data for element %d: rank %d index %d\n", i, colindex_data.rank, colindex_data.index);
                 }
-                double x_element[1];
-                MPI_Get(x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index, 2, MPI_DOUBLE, win);
+                double x_element;
+                MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index*sizeof(double), 1, MPI_DOUBLE, win);
                 if(!myid){
-                    printf("Element: %lf\n", x_element[0]);
+                    printf("Element: %lf\n", x_element);
                 }
-                result[i] += A.values[j]*x_element[0];
+                result[i] += A.values[j]*x_element;
             }
         }
     }
