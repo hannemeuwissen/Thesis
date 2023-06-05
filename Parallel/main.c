@@ -21,32 +21,33 @@ int main(int argc, char **argv)
     
     sparse_CSR M = generate_regular_graph_part_csr(2, 8, 3);
 
-    /* Print in order */
-    if(!myid){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 1){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 2){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 3){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
+    // /* Print in order */
+    // if(!myid){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 2){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 3){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
 
     /* Test SPMV */
     double x[2] = {1.0,1.0};
+    print_vector(x, 2);
     double result[2];
     spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
-    print_vector(result, 2);
+    print_vector(result, 2); // result should be 1 overall (sum of row elements)
 
     // Read input: degree of Krylov subspace
 
