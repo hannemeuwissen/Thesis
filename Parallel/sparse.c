@@ -119,6 +119,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
     // printf("Rank %d: start %d, end %d\n", myid, start, end);
+    if(!myid){
+        print_vector(x, 2);
+    }
+
 
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
