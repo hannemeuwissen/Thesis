@@ -42,13 +42,13 @@ int main(int argc, char **argv)
     //     print_CSR(&M);
     // }
 
-    /* Test SPMV */
-    double x[2] = {2.0,1.0};
-    double result[2];
-    spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
-    if(!myid){
-        print_vector(result, 2); // result should be 1 overall (sum of row elements)
-    }
+    // /* Test SPMV */
+    // double x[2] = {2.0,1.0};
+    // double result[2];
+    // spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
+    // if(!myid){
+    //     print_vector(result, 2); // result should be 1 overall (sum of row elements)
+    // }
 
     // Read input: degree of Krylov subspace
 
