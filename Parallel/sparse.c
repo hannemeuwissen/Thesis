@@ -7,7 +7,7 @@
  */
 #include<stdlib.h>
 #include<stdio.h>
-// #include<math.h>
+#include<math.h>
 #include<mpi.h>
 #include"sparse.h"
 #include"decomp1d.h"
@@ -108,13 +108,14 @@ index_data find_rank_colindex(const int colindex, const int nprocs, const int M,
  * @param nprocs Number of processes.
  * @param comm MPI communicator between processes.
  */
-void spmv(sparse_CSR A, const int M, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
+void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
     
     if(len != A.nrows){
         perror("Incompatible dimensions in parallel spmv.\n");
         exit(EXIT_FAILURE);
     }
     
+    int M = A.ncols;
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
 

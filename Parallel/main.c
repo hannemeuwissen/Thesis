@@ -20,6 +20,7 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     
     sparse_CSR M = generate_regular_graph_part_csr(2, 8, 3);
+
     /* Print in order */
     if(!myid){
         printf("Rank %d:\n", myid);
@@ -40,6 +41,12 @@ int main(int argc, char **argv)
         printf("Rank %d:\n", myid);
         print_CSR(&M);
     }
+
+    /* Test SPMV */
+    double x[2] = {1.0,1.0};
+    double result[2];
+    spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
+    print_vector(result, 2);
 
     // Read input: degree of Krylov subspace
 
