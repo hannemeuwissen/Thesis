@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     // }
 
     /* Test SPMV */
-    double x[2] = {0.5,1.0};
+    double x[2] = {2.0,1.0};
     double result[2];
     spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
     if(!myid){

@@ -122,8 +122,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
-
-    // MPI_Win_fence(0, win);
     
     for(int i=0;i<len;i++){
         result[i] = 0.0;
