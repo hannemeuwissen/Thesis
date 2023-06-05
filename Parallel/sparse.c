@@ -128,7 +128,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             int colindex = A.colindex[j];
             double x_element;
 
-            MPI_Win_fence(MPI_MODE_NOPRECEDE,win);
+            MPI_Win_fence(0,win);
 
             if(colindex >= start && colindex < start + len){ /* Element from x in own memory */
                 x_element = x[colindex];
@@ -137,7 +137,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 index_data colindex_data = find_rank_colindex(colindex, nprocs, M, smaller, myid);
                 MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index*sizeof(double), 1, MPI_DOUBLE, win);
             }
-            MPI_Win_fence(MPI_MODE_NOSUCCEED,win);
+            MPI_Win_fence(0,win);
 
             result[i] += A.values[j]*x_element;
             if(!myid){
