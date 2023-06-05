@@ -125,7 +125,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
-    MPI_Win_fence(MPI_MODE_NOPUT,win);
     
     for(int i=0;i<len;i++){
         result[i] = 0.0;
@@ -142,8 +141,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 if(!myid){
                     printf("Data for element %d: rank %d index %d\n", i, colindex_data.rank, colindex_data.index);
                 }
-                double x_element = 3.0;
+                double x_element;
+                MPI_Win_fence(MPI_MODE_NOPUT,win);
                 MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index*sizeof(double), 1, MPI_DOUBLE, win);
+                MPI_Win_fence(MPI_MODE_NOSTORE,win);
                 if(!myid){
                     printf("Element: %lf\n", x_element);
                 }
@@ -152,6 +153,5 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         }
     }
 
-    MPI_Win_fence(MPI_MODE_NOSTORE,win);
     MPI_Win_free(&win);
 }
