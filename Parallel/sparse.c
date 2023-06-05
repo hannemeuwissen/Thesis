@@ -128,6 +128,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     for(int i=0;i<len;i++){
         result[i] = 0.0;
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
+            x_element = 0.0
             int colindex = A.colindex[j];
 
             MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
@@ -142,9 +143,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
 
             result[i] += A.values[j]*x_element;
-            if(!myid){
-                printf("Element: %lf\n", x_element);
-            }
         }
     }
 
