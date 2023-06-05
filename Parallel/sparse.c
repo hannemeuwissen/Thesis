@@ -140,6 +140,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             }else{ /* Element from x in other processes' memory*/
                 int smaller = ((colindex < start) ? 1 : 0);
                 index_data colindex_data = find_rank_colindex(colindex, nprocs, M, smaller, myid);
+                printf("Data for element %d: rank %d index %d\n", i, colindex_data.rank, colindex_data.index);
                 double x_element;
                 MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index, 1, MPI_DOUBLE, win);
                 result[i] += A.values[j]*x_element;
