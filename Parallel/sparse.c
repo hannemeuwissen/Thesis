@@ -118,9 +118,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int M = A.ncols;
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
-    printf("Rank %d: start %d, end %d\n", myid, start, end);
+    // printf("Rank %d: start %d, end %d\n", myid, start, end);
 
-    // Window in arguments or create here?
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
     MPI_Win_fence(MPI_MODE_NOPUT,win);
@@ -129,6 +128,9 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         result[i] = 0.0;
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
+            if(!myid){
+                printf("colindex: %d\n", colindex);
+            }
             if(colindex >= start && colindex < start + len){ /* Element from x in own memory */
                 result[i] += A.values[j]*x[colindex];
             }else{ /* Element from x in other processes' memory*/
