@@ -44,7 +44,6 @@ int main(int argc, char **argv)
 
     /* Test SPMV */
     double x[2] = {1.0,1.0};
-    print_vector(x, 2);
     double result[2];
     spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
     print_vector(result, 2); // result should be 1 overall (sum of row elements)
