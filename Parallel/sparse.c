@@ -118,6 +118,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int M = A.ncols;
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
+    double x_element;
 
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
@@ -128,7 +129,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         result[i] = 0.0;
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
-            double x_element;
 
             MPI_Win_fence(0,win);
 
