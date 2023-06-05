@@ -46,7 +46,9 @@ int main(int argc, char **argv)
     double x[2] = {1.0,1.0};
     double result[2];
     spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
-    print_vector(result, 2); // result should be 1 overall (sum of row elements)
+    if(!myid){
+        print_vector(result, 2); // result should be 1 overall (sum of row elements)
+    }
 
     // Read input: degree of Krylov subspace
 
