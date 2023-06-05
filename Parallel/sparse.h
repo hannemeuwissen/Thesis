@@ -8,6 +8,9 @@
 #ifndef SPARSE_H_TWYFUKH2
 #define SPARSE_H_TWYFUKH2
 
+/**
+ * @brief Structure that holds information of sparse CSR matrix.
+ */
 typedef struct sparse_CSR {
     int nrows;
     int ncols;
@@ -17,6 +20,9 @@ typedef struct sparse_CSR {
     double * values;
 } sparse_CSR;
 
+/**
+ * @brief Structure that holds information of a certain index.
+ */
 typedef struct index_data {
     int rank;
     int index;

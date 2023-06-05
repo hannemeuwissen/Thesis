@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mpi.h>
+#include"graph.h"
+#include"sparse.h"
 
 int main(int argc, char **argv)
 {  
@@ -16,6 +18,11 @@ int main(int argc, char **argv)
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+    
+    sparse_CSR M = generate_regular_graph_part_csr(5, 20, 5);
+    if(!myid){
+        print_CSR(&M);
+    }
 
     // Read input: degree of Krylov subspace
 
