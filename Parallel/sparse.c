@@ -83,7 +83,7 @@ index_data find_rank_colindex(const int colindex, const int nprocs, const int M,
                 return result;
             }
         }
-    }esle{
+    }else{
         for(int i=(rank + 1);i<nprocs;i++){
             decomp1d(M, nprocs, i, &start, &end);
             if(colindex <= end){
@@ -116,7 +116,7 @@ void spmv(sparse_CSR A, const int M, double * x, double len, double * result, co
     }
     
     int start, end;
-    decomp1d(M, nprocs, rank, &start, &end); /* Partition M rows over processes */
+    decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
 
     // Window in arguments or create here?
     MPI_Win win;
