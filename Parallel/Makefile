@@ -9,11 +9,15 @@
 CC=gcc
 ICC = icc
 MPI = mpicc
-FLAGS= -g -Wextra -Wall -lm
+FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
 EXECS= main
+OBJ = graph.o sparse.o decomp1d.o
 
 all:$(EXECS)
+
+decomp1d.o:decomp1d.c
+	$(CC) -c $< $(FLAGS)
 
 graph.o:graph.c graph.h
 	$(CC) -c $< $(FLAGS)
@@ -21,8 +25,8 @@ graph.o:graph.c graph.h
 sparse.o:sparse.c sparse.h
 	$(CC) -c $< $(FLAGS)
 
-main:main.c graph.o sparse.o
-	$(MPI) -o $@ $< graph.o sparse.o $(FLAGS)
+main:main.c $(OBJ)
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS)
 
 .PHONY:clean
 

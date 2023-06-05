@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "tsqr_mpi": "c"
+        "tsqr_mpi": "c",
+        "math.h": "c"
     }
 }

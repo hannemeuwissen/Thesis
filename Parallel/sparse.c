@@ -7,7 +7,7 @@
  */
 #include<stdlib.h>
 #include<stdio.h>
-#include<math.h>
+// #include<math.h>
 #include<mpi.h>
 #include"sparse.h"
 #include"decomp1d.h"
