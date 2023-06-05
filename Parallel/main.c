@@ -25,17 +25,17 @@ int main(int argc, char **argv)
         printf("Rank %d:\n", myid);
         print_CSR(&M);
     }
-    MPI_Barrier();
+    MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){
         printf("Rank %d:\n", myid);
         print_CSR(&M);
     }
-    MPI_Barrier();
+    MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 2){
         printf("Rank %d:\n", myid);
         print_CSR(&M);
     }
-    MPI_Barrier();
+    MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 3){
         printf("Rank %d:\n", myid);
         print_CSR(&M);
