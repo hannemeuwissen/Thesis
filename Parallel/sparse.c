@@ -130,22 +130,23 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         result[i] = 0.0;
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
-            double x_element;
-
-            MPI_Win_fence(0,win);
-
             if(colindex >= start && colindex < start + len){ /* Element from x in own memory */
-                x_element = x[colindex];
+                result[i] += A.values[j]*x[colindex];
             }else{ /* Element from x in other processes' memory*/
                 int smaller = ((colindex < start) ? 1 : 0);
                 index_data colindex_data = find_rank_colindex(colindex, nprocs, M, smaller, myid);
+                if(!myid){
+                    printf("Data for element %d: rank %d index %d\n", i, colindex_data.rank, colindex_data.index);
+                }
+                double x_element;
+                MPI_Win_fence(MPI_MODE_NOPUT,win);
                 MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index*sizeof(double), 1, MPI_DOUBLE, win);
+                MPI_Win_fence(MPI_MODE_NOSTORE,win);
+                if(!myid){
+                    printf("Element: %lf\n", x_element);
+                }
+                result[i] += A.values[j]*x_element;
             }
-
-            MPI_Win_fence(0,win);
-
-            result[i] += A.values[j]*x_element;
-
         }
     }
 
