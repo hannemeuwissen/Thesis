@@ -119,9 +119,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
     // printf("Rank %d: start %d, end %d\n", myid, start, end);
-    print_vector(x, 2);
+    if(!myid){
+        print_vector(x, 2);
+    }
 
-    MPI_Barrier(comm);
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
     MPI_Win_fence(MPI_MODE_NOPUT,win);
@@ -141,7 +142,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 if(!myid){
                     printf("Data for element %d: rank %d index %d\n", i, colindex_data.rank, colindex_data.index);
                 }
-                double x_element;
+                double x_element = 3.0;
                 MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index*sizeof(double), 1, MPI_DOUBLE, win);
                 if(!myid){
                     printf("Element: %lf\n", x_element);
