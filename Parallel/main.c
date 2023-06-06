@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     if(!myid){
         print_matrix(R, 4, 4);
     }
-    MPI_Bcast(R, N*N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(R, 4*4, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, 5, 4, 1.0, R, 4, A, 4);
     /* Print in order */
     if(!myid){
