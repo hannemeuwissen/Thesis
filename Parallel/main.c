@@ -70,16 +70,9 @@ int main(int argc, char **argv)
         print_matrix(R, 4, 4);
     }
     int M = 5*nprocs;
-    int ret = cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, M, 4, 1.0, R, 4, A, 4);
-    if(ret!=0){
-        if(ret<0){
-            fprintf(stderr, "LAPACKE_dgeqrf failed. Parameter %d had an illegal value\n", abs(ret));
-            exit(EXIT_FAILURE);
-        }
-        else{
-            fprintf(stderr, "LAPACKE_dgeqrf failed. Leading minor of order %d is not positive definite\n", ret);
-            exit(EXIT_FAILURE);
-        }
+    cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, 5, 4, 1.0, R, 4, A, 4);
+    if(!myid){
+        printf(A,5,4);
     }
 
     // Read input: degree of Krylov subspace
