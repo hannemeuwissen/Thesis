@@ -7,6 +7,7 @@
  */
 #ifndef SPARSE_H_TWYFUKH2
 #define SPARSE_H_TWYFUKH2
+#include<mpi.h>
 
 /**
  * @brief Structure that holds information of sparse CSR matrix.
