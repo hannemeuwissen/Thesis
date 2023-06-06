@@ -69,10 +69,9 @@ int main(int argc, char **argv)
     if(!myid){
         print_matrix(R, 4, 4);
     }
-    int M = 5*nprocs;
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, 5, 4, 1.0, R, 4, A, 4);
     if(!myid){
-        printf(A,5,4);
+        print_matrix(A,5,4);
     }
 
     // Read input: degree of Krylov subspace
