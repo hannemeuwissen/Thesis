@@ -62,7 +62,6 @@ int main(int argc, char **argv)
     // }
 
     /* Test TSQR */
-    // let each process read the same matrix part
     double A[20] = {9, 2, 7, 5, 10, 9, 8, 10, 9, 9, 8, 3, 3, 0, 4, 10, 6, 7, 10, 0};
     double * R = malloc(4*4*sizeof(double));
     TSQR(A, 5*nprocs, 4, R, myid, nprocs, MPI_COMM_WORLD);
@@ -70,8 +69,25 @@ int main(int argc, char **argv)
         print_matrix(R, 4, 4);
     }
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, 5, 4, 1.0, R, 4, A, 4);
+    /* Print in order */
     if(!myid){
-        print_matrix(A,5,4);
+        printf("Rank %d:\n", myid);
+        print_matrix(A, 5, 4);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 1){
+        printf("Rank %d:\n", myid);
+        print_matrix(A, 5, 4);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 2){
+        printf("Rank %d:\n", myid);
+        print_matrix(A, 5, 4);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 3){
+        printf("Rank %d:\n", myid);
+        print_matrix(A, 5, 4);
     }
 
     // Read input: degree of Krylov subspace
