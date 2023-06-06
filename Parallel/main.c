@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mpi.h>
+#include <math.h>
 #include"graph.h"
 #include"sparse.h"
 #include"tsqr_mpi.h"
@@ -20,7 +21,9 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-    if(nprocs%2 != 0){
+    float logprocs = log2(nprocs);
+
+    if(ceil(logprocs) != floor(logprocs)){
         fprintf(stderr,"Error: The number of processes needs to be a power of n (because of TSQR).\n");
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
