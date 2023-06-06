@@ -12,6 +12,7 @@
 #include<mkl_types.h>
 #include<mkl_cblas.h>
 #include<string.h>
+#include"mkl.h"
 #include "decomp1d.h"
 
 /**
