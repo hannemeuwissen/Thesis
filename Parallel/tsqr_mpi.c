@@ -83,6 +83,7 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
 
             if(step<steps){
                 if(is_active(rank, step + 1)){
+                    printf("here!");
                     /* Receive R from other process */
                     if(realloc(tempA, 2*N*N*sizeof(double)) == NULL){
                         perror("Could not reallocate memory in tsqr");
