@@ -29,7 +29,7 @@ tsqr_mpi.o:tsqr_mpi.c decomp1d.h
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS) -lm
 
 main:main.c $(OBJ)
-	$(MPI) -o $@ $< $(OBJ) $(FLAGS) $(MKLFLAGS) -fopenmp -lm
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -fopenmp -lpthread -lm
 
 .PHONY:clean
 
