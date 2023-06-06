@@ -9,9 +9,11 @@
 #include <stdio.h>
 #include <mpi.h>
 #include <math.h>
+#include<mkl_cblas.h>
 #include"graph.h"
 #include"sparse.h"
 #include"tsqr_mpi.h"
+#include"mkl.h"
 
 int main(int argc, char **argv)
 {  
@@ -66,8 +68,17 @@ int main(int argc, char **argv)
     if(!myid){
         print_matrix(R, 4, 4);
     }
-    // check resulting R
-    // do lapack algorithm to get Q and check this
+    int ret = LAPACKE_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, 5*nprocs, 4, 1.0, R, 4, A, 4);
+    if(ret!=0){
+        if(ret<0){
+            fprintf(stderr, "LAPACKE_dgeqrf failed. Parameter %d had an illegal value\n", abs(ret));
+            exit(EXIT_FAILURE);
+        }
+        else{
+            fprintf(stderr, "LAPACKE_dgeqrf failed. Leading minor of order %d is not positive definite\n", ret);
+            exit(EXIT_FAILURE);
+        }
+    }
 
     // Read input: degree of Krylov subspace
 
