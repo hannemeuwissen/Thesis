@@ -88,8 +88,9 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
                     R[j + i*N] = ((i>j) ? 0 : tempA[j + i*N]);
                 }
             } 
-            printf("Rank %d is here\n", rank);
+            // printf("Rank %d is here\n", rank);
             if(step<steps){
+                printf("rank %d is active in next step: %d\n", rank, is_active(rank, step + 1));
                 if(is_active(rank, step + 1)){
                     printf("here!");
                     /* Receive R from other process */
