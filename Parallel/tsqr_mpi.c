@@ -64,8 +64,6 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
 
     for(int step=0;step<=steps;step++){ /* Parallel TSQR loop */
 
-        printf("Rank: %d, is active: %d\n",rank,is_active(rank, step));
-
         if(is_active(rank, step)){
 
             lapack_int rows = ((!step)?end-start+1 : 2*N); 
@@ -84,15 +82,13 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
                 }
             }
 
-            printf("Rank %d is here\n", rank);
-
             /* Save R part */
             for(int i=0;i<N;i++){ 
                 for(int j=0;j<N;j++){
                     R[j + i*N] = ((i>j) ? 0 : tempA[j + i*N]);
                 }
             } 
-
+            printf("Rank %d is here\n", rank);
             if(step<steps){
                 if(is_active(rank, step + 1)){
                     printf("here!");
