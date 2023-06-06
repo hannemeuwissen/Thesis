@@ -21,11 +21,12 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-    float logprocs = log2(nprocs);
-
-    if(ceil(logprocs) != floor(logprocs)){
-        fprintf(stderr,"Error: The number of processes needs to be a power of n (because of TSQR).\n");
-        MPI_Abort(MPI_COMM_WORLD, 1);
+    if(!myid){
+        float logprocs = log2(nprocs);
+        if(ceil(logprocs) != floor(logprocs)){
+            fprintf(stderr,"Error: The number of processes needs to be a power of n (because of TSQR).\n");
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
     }
     
     // /* Test SPMV */
