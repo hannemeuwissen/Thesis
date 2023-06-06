@@ -88,15 +88,12 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
                     R[j + i*N] = ((i>j) ? 0 : tempA[j + i*N]);
                 }
             } 
+            free(tempA);
             
             if(step<steps){
                 // printf("rank %d is active in next step: %d\n", rank, is_active(rank, step + 1));
                 if(is_active(rank, step + 1)){
                     /* Receive R from other process */
-                    // if(realloc(tempA, 2*N*N*sizeof(double)) == NULL){
-                    //     perror("Could not reallocate memory in tsqr");
-                    // }
-                    free(tempA);
                     tempA = malloc(N*2*N*sizeof(double));
                     memcpy(tempA, R, N*N*sizeof(double));
                     MPI_Recv(tempA + N*N, N*N, MPI_DOUBLE, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
@@ -111,5 +108,4 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
         }
     }
     free(tau);
-    free(tempA);
 }
