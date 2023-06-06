@@ -80,7 +80,7 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
             if(step<steps){
                 if(is_active(rank, step + 1)){
                     /* Receive R from other process */
-                    realloc(tempA, 2*N*N);
+                    realloc(tempA, 2*N*N*sizeof(double));
                     memcpy(tempA, R, N*N*sizeof(double));
                     MPI_Recv(tempA + N*N, N*N, MPI_DOUBLE, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
                 }else{
