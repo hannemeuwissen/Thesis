@@ -84,6 +84,8 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
                 }
             }
 
+            prinf("Rank %d is here\n", rank);
+
             /* Save R part */
             for(int i=0;i<N;i++){ 
                 for(int j=0;j<N;j++){
