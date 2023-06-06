@@ -14,6 +14,7 @@
 #include<string.h>
 #include"mkl.h"
 #include "decomp1d.h"
+#include "sparse.h"
 
 /**
  * @brief Function that determines if the process is active in a certain step of the TSQR algorithm.
@@ -55,10 +56,11 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
     const int steps = log2(nprocs);
     int start, end;
     decomp1d(M, nprocs, rank, &start, &end); /* Partition M rows over processes */
-    if(!rank){printf("Start: %d, end: %d\n", start, end);}
+    // if(!rank){printf("Start: %d, end: %d\n", start, end);}
     
     double * tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
     memcpy(tempA, A, (end-start+1)*N*sizeof(double));
+    if(!rank){print_matrix(tempA, 5,4);}
     double * tau = malloc(N*sizeof(double)); /* Allocate space to hold tau's */
 
     for(int step=0;step<=steps;step++){ /* Parallel TSQR loop */
