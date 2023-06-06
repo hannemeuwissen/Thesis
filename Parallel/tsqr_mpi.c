@@ -60,10 +60,11 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
     
     double * tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
     memcpy(tempA, A, (end-start+1)*N*sizeof(double));
-    if(!rank){print_matrix(tempA, 5,4);}
     double * tau = malloc(N*sizeof(double)); /* Allocate space to hold tau's */
 
     for(int step=0;step<=steps;step++){ /* Parallel TSQR loop */
+
+        printf("Rank: %d, is active: %d\n",rank,is_active(rank, step));
 
         if(is_active(rank, step)){
 
