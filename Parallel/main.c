@@ -10,6 +10,7 @@
 #include <mpi.h>
 #include <math.h>
 #include<mkl_cblas.h>
+#include<mkl_types.h>
 #include"graph.h"
 #include"sparse.h"
 #include"tsqr_mpi.h"
