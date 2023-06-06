@@ -11,6 +11,7 @@
 #include <mpi.h>
 #include<mkl_types.h>
 #include<mkl_cblas.h>
+#include<string.h>
 #include "decomp1d.h"
 
 /**
@@ -20,7 +21,7 @@
  * @return int Returns 0 if the calling process is not active anymore, otherwise 1.
  */
 int is_active(const int rank, const int step){
-    return (((int) rank%pow(2.0, step)) == 0 ? 1 : 0);
+    return (((int) rank%((int)pow(2.0, step))) == 0 ? 1 : 0);
 }
 
 /**
@@ -48,14 +49,14 @@ int find_lower_active(const int rank, const int step){
  * @param[in] nprocs The number of processes.
  * @param[in] comm The MPI communicator
  */
-void TSQR(double *A, const int M, const int N, double *R, const int rank, const int nrpocs, MPI_Comm comm){
+void TSQR(double *A, const int M, const int N, double *R, const int rank, const int nprocs, MPI_Comm comm){
     
-    const int steps = log2(nrpocs);
+    const int steps = log2(nprocs);
     int start, end;
     decomp1d(M, nprocs, rank, &start, &end); /* Partition M rows over processes */
     
     double * tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
-    memcpy(tempA, A, (end-start+1)*N*sizeof(double))
+    memcpy(tempA, A, (end-start+1)*N*sizeof(double));
     double * tau = malloc(N*sizeof(double)); /* Allocate space to hold tau's */
 
     for(int step=0;step<=steps;step++){ /* Parallel TSQR loop */
