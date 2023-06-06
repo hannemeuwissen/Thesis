@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     if(!myid){
         float logprocs = log2(nprocs);
         if(ceil(logprocs) != floor(logprocs)){
-            fprintf(stderr,"Error: The number of processes needs to be a power of n (because of TSQR).\n");
+            fprintf(stderr,"Error: The number of processes needs to be a power of 2 (because of TSQR).\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
