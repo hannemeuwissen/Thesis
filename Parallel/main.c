@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     // let each process read the same matrix part
     double A[20] = {9, 2, 7, 5, 10, 9, 8, 10, 9, 9, 8, 3, 3, 0, 4, 10, 6, 7, 10, 0};
     double * R = malloc(4*4*sizeof(double));
-    TSQR(A, 20, 4, R, myid, nprocs, MPI_COMM_WORLD);
+    TSQR(A, 5, 4, R, myid, nprocs, MPI_COMM_WORLD);
     if(!myid){
         print_matrix(R, 4, 4);
     }
