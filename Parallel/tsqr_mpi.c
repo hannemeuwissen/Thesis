@@ -56,7 +56,6 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
     const int steps = log2(nprocs);
     int start, end;
     decomp1d(M, nprocs, rank, &start, &end); /* Partition M rows over processes */
-    // if(!rank){printf("Start: %d, end: %d\n", start, end);}
     
     double * tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
     memcpy(tempA, A, (end-start+1)*N*sizeof(double));
@@ -91,7 +90,6 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
             free(tempA);
             
             if(step<steps){
-                // printf("rank %d is active in next step: %d\n", rank, is_active(rank, step + 1));
                 if(is_active(rank, step + 1)){
                     /* Receive R from other process */
                     tempA = malloc(N*2*N*sizeof(double));

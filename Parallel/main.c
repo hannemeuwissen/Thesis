@@ -19,6 +19,11 @@ int main(int argc, char **argv)
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+
+    if(nprocs%2 != 0){
+        fprintf(stderr,"Error: The number of processes needs to be a power of n (because of TSQR).\n");
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
     
     // /* Test SPMV */
     // sparse_CSR M = generate_regular_graph_part_csr(2, 8, 3);
