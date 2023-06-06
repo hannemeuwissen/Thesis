@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
     /* Test TSQR */
     // let each process read the same matrix part
-    double A[20] = [0 1 2 1 9 0 3 0 3 5 1 2 3 0 1 3 2 6 1 3];
+    double A[20] = {0 1 2 1 9 0 3 0 3 5 1 2 3 0 1 3 2 6 1 3};
     double * R = malloc(4*4*sizeof(double));
     TSQR(A, 20, 4, R, myid, nprocs, MPI_COMM_WORLD);
     if(!myid){
