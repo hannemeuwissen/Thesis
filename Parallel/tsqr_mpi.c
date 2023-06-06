@@ -72,7 +72,17 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
             lapack_int cols = N;
 
             /* Calculate local Housholder QR in terms of tau and v's */
-            LAPACKE_dgeqrf(CblasRowMajor, rows, cols, tempA, cols, tau);
+            int ret = LAPACKE_dgeqrf(CblasRowMajor, rows, cols, tempA, cols, tau);
+            if(ret!=0){
+                if(ret<0){
+                    fprintf(stderr, "LAPACKE_dgeqrf failed. Parameter %d had an illegal value\n", abs(ret));
+                    exit(EXIT_FAILURE);
+                }
+                else{
+                    fprintf(stderr, "LAPACKE_dgeqrf failed. Leading minor of order %d is not positive definite\n", ret);
+                    exit(EXIT_FAILURE);
+                }
+            }
 
             /* Save R part */
             for(int i=0;i<N;i++){ 
