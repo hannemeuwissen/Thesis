@@ -90,17 +90,19 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
             } 
             
             if(step<steps){
-                printf("rank %d is active in next step: %d\n", rank, is_active(rank, step + 1));
+                // printf("rank %d is active in next step: %d\n", rank, is_active(rank, step + 1));
                 if(is_active(rank, step + 1)){
                     printf("here!");
                     /* Receive R from other process */
-                    if(realloc(tempA, 2*N*N*sizeof(double)) == NULL){
-                        perror("Could not reallocate memory in tsqr");
-                    }
+                    // if(realloc(tempA, 2*N*N*sizeof(double)) == NULL){
+                    //     perror("Could not reallocate memory in tsqr");
+                    // }
+                    free(tempA);
+                    tempA = malloc(N*2*N*sizeof(double));
                     memcpy(tempA, R, N*N*sizeof(double));
-                    MPI_Recv(&(tempA[N*N]), N*N, MPI_DOUBLE, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
+                    MPI_Recv(tempA + N*N, N*N, MPI_DOUBLE, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
                 }else{
-                    printf("Rank %d is here\n", rank);
+                    // printf("Rank %d is here\n", rank);
                     /* Send R to other active process */
                     int lower_active = find_lower_active(rank, step + 1);
                     printf("Lower active for rank %d in step %d: %d\n", rank, step, lower_active);
