@@ -29,7 +29,7 @@ tsqr_mpi.o:tsqr_mpi.c decomp1d.h
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS) -lm
 
 main:main.c $(OBJ)
-	$(MPI) -o $@ $< $(OBJ) $(FLAGS) $(MKLFLAGS) -lm
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) $(MKLFLAGS) -fopenmp -lm
 
 .PHONY:clean
 
