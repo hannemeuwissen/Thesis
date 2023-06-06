@@ -70,7 +70,7 @@ int main(int argc, char **argv)
         print_matrix(R, 4, 4);
     }
     int M = 5*nprocs;
-    int ret = LAPACKE_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, M, 4, 1.0, R, 4, A, 4);
+    int ret = LAPACKE_dtfsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, M, 4, 1.0, R, 4, A, 4);
     if(ret!=0){
         if(ret<0){
             fprintf(stderr, "LAPACKE_dgeqrf failed. Parameter %d had an illegal value\n", abs(ret));
