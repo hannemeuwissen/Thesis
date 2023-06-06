@@ -10,6 +10,7 @@
 #include <mpi.h>
 #include"graph.h"
 #include"sparse.h"
+#include"tsqr_mpi.h"
 
 int main(int argc, char **argv)
 {  
@@ -19,13 +20,13 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     
-    sparse_CSR M = generate_regular_graph_part_csr(2, 8, 3);
-
+    // /* Test SPMV */
+    // sparse_CSR M = generate_regular_graph_part_csr(2, 8, 3);
     // /* Print in order */
-    if(!myid){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
+    // if(!myid){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
     // MPI_Barrier(MPI_COMM_WORLD);
     // if(myid == 1){
     //     printf("Rank %d:\n", myid);
@@ -41,14 +42,23 @@ int main(int argc, char **argv)
     //     printf("Rank %d:\n", myid);
     //     print_CSR(&M);
     // }
-
-    // /* Test SPMV */
     // double x[2] = {2.0,1.0};
     // double result[2];
     // spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
     // if(!myid){
     //     print_vector(result, 2); // result should be 1 overall (sum of row elements)
     // }
+
+    /* Test TSQR */
+    // let each process read the same matrix part
+    double A[20] = [0 1 2 1 9 0 3 0 3 5 1 2 3 0 1 3 2 6 1 3];
+    double * R = malloc(4*4*sizeof(double));
+    TSQR(A, 20, 4, R, myid, nprocs, MPI_COMM_WORLD);
+    if(!myid){
+        print_matrix(R, 4, 4);
+    }
+    // check resulting R
+    // do lapack algorithm to get Q and check this
 
     // Read input: degree of Krylov subspace
 

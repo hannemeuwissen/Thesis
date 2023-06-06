@@ -41,7 +41,7 @@ int find_lower_active(const int rank, const int step){
 /**
  * @brief Function that performs the communication avoiding TSQR using OpenMP.
  * @param[in] A The matrix that will hold the data.
- * @param[in] M Number of rows of the matrix.
+ * @param[in] M Number of rows of the original matrix.
  * @param[in] N Number of columns of the matrix.
  * @param[in] R The matrix that will hold the result for R. Rank 0 holds the final result.
  * @param[in] rank The rank of the calling process.
