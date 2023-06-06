@@ -26,7 +26,7 @@ sparse.o:sparse.c sparse.h
 	$(CC) -c $< $(FLAGS)
 
 tsqr_mpi.o:tsqr_mpi.c decomp1d.h
-	$(CC) -c $< $(FLAGS) $(MKLFLAGS)
+	$(ICC) -c $< $(FLAGS) $(MKLFLAGS)
 
 main:main.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS)

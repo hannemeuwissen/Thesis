@@ -85,7 +85,7 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
                 }else{
                     /* Send R to other active process */
                     int lower_active = find_lower_active(rank, step + 1);
-                    MPI_Send(R, N*N, MI_DOUBLE, lower_active, 1, comm);
+                    MPI_Send(R, N*N, MPI_DOUBLE, lower_active, 1, comm);
                 }
             }
         }else{
