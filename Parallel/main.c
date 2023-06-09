@@ -37,6 +37,7 @@ int main(int argc, char **argv)
     int n = 2500;
     int nnz_per_row = 2000;
     sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
+    printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
     // /* Print in order */
     // if(!myid){
     //     printf("Rank %d:\n", myid);
@@ -60,9 +61,13 @@ int main(int argc, char **argv)
     double * x = malloc(n*sizeof(double));
     for(int i=0;i<n;i++){x[i] = 1.0;}
     double * result = malloc(n*sizeof(double));
+    double t1 = MPI_Wtime();
     spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
+    double t2 = MPI_Wtime();
     if(!myid){
-        print_vector(result, 500); // result should be 1 overall (sum of row elements)
+        printf("First 50 lines from result on process 0:\n");
+        print_vector(result, 50); // result should be 1 overall (sum of row elements)
+        printf("Runtime: %lf\n", t2-t1);
     }
 
     // /* Test TSQR */
