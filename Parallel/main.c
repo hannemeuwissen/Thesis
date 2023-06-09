@@ -37,26 +37,26 @@ int main(int argc, char **argv)
     int n = 2500;
     int nnz_per_row = 2000;
     sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
-    /* Print in order */
-    if(!myid){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 1){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 2){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 3){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
+    // /* Print in order */
+    // if(!myid){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 2){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 3){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
     double * x = malloc(n*sizeof(double));
     for(int i=0;i<n;i++){x[i] = 1.0;}
     double * result = malloc(n*sizeof(double));
