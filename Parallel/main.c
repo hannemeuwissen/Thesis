@@ -76,7 +76,24 @@ int main(int argc, char **argv)
     int n = 5;
     double * A = malloc(m*n*sizeof(double));
     read_matrix_from_file("A.txt", myid*m*n, A, m, n);
+    /* Print in order */
     if(!myid){
+        printf("Rank %d:\n", myid);
+        print_matrix(A, m, n);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 1){
+        printf("Rank %d:\n", myid);
+        print_matrix(A, m, n);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 2){
+        printf("Rank %d:\n", myid);
+        print_matrix(A, m, n);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 3){
+        printf("Rank %d:\n", myid);
         print_matrix(A, m, n);
     }
     double * R = malloc(n*n*sizeof(double));
