@@ -72,7 +72,7 @@ int main(int argc, char **argv)
     // }
 
     /* Test TSQR */
-    int m = 2500; // Total: 10000
+    int m = 25000; // Total: 100000
     int n = 1000;
     double * A = malloc(m*n*sizeof(double));
     int skip = ((!myid) ? 0 : myid*m*n + n);
@@ -112,6 +112,7 @@ int main(int argc, char **argv)
     t1 = MPI_Wtime();
     MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
+    MPI_Barrier(MPI_COMM_WORLD);
     t2 = MPI_Wtime();
     if(!myid){
         printf("Result for Q (first 10 elements of first row):\n");
