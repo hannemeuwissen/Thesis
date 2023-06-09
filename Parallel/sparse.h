@@ -30,7 +30,5 @@ typedef struct index_data {
 } index_data;
 
 void print_CSR(sparse_CSR * M);
-void print_vector(double * v, const int len);
-void print_matrix(double * A, const int n, const int m);
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm);
 #endif /* end of include guard: SPARSE_H_TWYFUKH2 */

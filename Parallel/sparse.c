@@ -13,32 +13,6 @@
 #include"decomp1d.h"
 
 /**
- * @brief Function that prints a vector of given length.
- * @param v Vector.
- * @param len Length of the vector.
- */
-void print_vector(double * v, const int len){
-    for(int i = 0;i<len;i++){
-        printf("%lf\n", v[i]);
-    }
-}
-
-/**
- * @brief Function that prints a matrix of given dimensions.
- * @param A The matrix.
- * @param n The number of rows.
- * @param m The number of columns.
- */
-void print_matrix(double * A, const int n, const int m){
-    for(int i = 0;i<n;i++){
-        for(int j=0;j<m;j++){
-            printf("%lf ", A[i*m + j]);
-        }
-        printf("\n");
-    }
-}
-
-/**
  * @brief Function that prints a sparse CSR matrix structure.
  * @param M The sparse_CSR structure to be printed.
  */
