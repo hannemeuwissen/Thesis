@@ -11,7 +11,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= main
+EXECS= main test
 OBJ = graph.o sparse.o decomp1d.o tsqr_mpi.o matrix.o
 
 all:$(EXECS)
@@ -30,6 +30,12 @@ sparse.o:sparse.c sparse.h
 
 tsqr_mpi.o:tsqr_mpi.c decomp1d.h
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS) -lm
+
+test:test.c $(OBJ)
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+        -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
+        -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+        -liomp5 -lpthread -lm
 
 main:main.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
