@@ -106,10 +106,10 @@ int main(int argc, char **argv)
         print_vector(R, n);
         printf("Runtime: %lf\n", t2-t1);
     }
-    double t1 = MPI_Wtime();
+    t1 = MPI_Wtime();
     MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
-    double t2 = MPI_Wtime();
+    t2 = MPI_Wtime();
     if(!myid){
         printf("Result for Q (first 10 elements of first row):\n");
         print_vector(A, n);
