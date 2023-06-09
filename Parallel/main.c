@@ -99,6 +99,7 @@ int main(int argc, char **argv)
     double * R = malloc(n*n*sizeof(double));
     TSQR(A, m*nprocs, n, R, myid, nprocs, MPI_COMM_WORLD);
     if(!myid){
+        printf("Result for R:\n");
         print_matrix(R, n, n);
     }
     MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
