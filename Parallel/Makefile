@@ -12,11 +12,14 @@ MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
 EXECS= main
-OBJ = graph.o sparse.o decomp1d.o tsqr_mpi.o
+OBJ = graph.o sparse.o decomp1d.o tsqr_mpi.o matrix.o
 
 all:$(EXECS)
 
-decomp1d.o:decomp1d.c
+decomp1d.o:decomp1d.c decomp1d.h
+	$(CC) -c $< $(FLAGS)
+
+matrix.o:matrix.c decomp1d.h 
 	$(CC) -c $< $(FLAGS)
 
 graph.o:graph.c graph.h
