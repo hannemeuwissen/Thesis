@@ -75,7 +75,8 @@ int main(int argc, char **argv)
     int m = 5; // Total: 4*5
     int n = 5;
     double * A = malloc(m*n*sizeof(double));
-    read_matrix_from_file("A.txt", myid*m*n, A, m, n);
+    int skip = ((!myid) ? 0 : myid*m*n + n);
+    read_matrix_from_file("A.txt", skip, A, m, n);
     /* Print in order */
     if(!myid){
         printf("Rank %d:\n", myid);
