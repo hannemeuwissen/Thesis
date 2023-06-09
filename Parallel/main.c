@@ -57,9 +57,9 @@ int main(int argc, char **argv)
         printf("Rank %d:\n", myid);
         print_CSR(&M);
     }
-    double x = malloc(n*sizeof(double));
+    double * x = malloc(n*sizeof(double));
     for(int i=0;i<n;i++){x[i] = 1.0;}
-    double result = malloc(n*sizeof(double));
+    double * result = malloc(n*sizeof(double));
     spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
     if(!myid){
         print_vector(result, 500); // result should be 1 overall (sum of row elements)
