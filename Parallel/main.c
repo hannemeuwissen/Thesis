@@ -77,6 +77,9 @@ int main(int argc, char **argv)
     double * A = malloc(m*n*sizeof(double));
     int skip = ((!myid) ? 0 : myid*m*n + n);
     read_matrix_from_file("A.txt", skip, A, m, n);
+    if(myid == 3){
+        printf("Data read!\n");
+    }
     // /* Print in order */
     // if(!myid){
     //     printf("Rank %d:\n", myid);
@@ -103,7 +106,7 @@ int main(int argc, char **argv)
     double t2 = MPI_Wtime();
     if(!myid){
         printf("Result for R (first 10 elements of first row):\n");
-        print_vector(R, n);
+        print_matrix(R, 1, 10);
         printf("Runtime: %lf\n", t2-t1);
     }
     t1 = MPI_Wtime();
@@ -112,7 +115,7 @@ int main(int argc, char **argv)
     t2 = MPI_Wtime();
     if(!myid){
         printf("Result for Q (first 10 elements of first row):\n");
-        print_vector(A, n);
+        print_matrix(A, 1, 10);
         printf("Runtime: %lf\n", t2-t1);
     }
     // /* Print in order */
