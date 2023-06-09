@@ -5,6 +5,8 @@
  * @version 1.0
  * @date 2023-06-02
  */
+#include<stdlib.h>
+#include<stdio.h>
 
 /**
  * @brief Function that prints a vector of given length.
