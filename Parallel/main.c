@@ -72,59 +72,69 @@ int main(int argc, char **argv)
     // }
 
     /* Test TSQR */
-    int m = 5; // Total: 4*5
-    int n = 5;
+    int m = 2500; // Total: 10000
+    int n = 1000;
     double * A = malloc(m*n*sizeof(double));
     int skip = ((!myid) ? 0 : myid*m*n + n);
     read_matrix_from_file("A.txt", skip, A, m, n);
-    /* Print in order */
-    if(!myid){
-        printf("Rank %d:\n", myid);
-        print_matrix(A, m, n);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 1){
-        printf("Rank %d:\n", myid);
-        print_matrix(A, m, n);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 2){
-        printf("Rank %d:\n", myid);
-        print_matrix(A, m, n);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 3){
-        printf("Rank %d:\n", myid);
-        print_matrix(A, m, n);
-    }
+    // /* Print in order */
+    // if(!myid){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, m, n);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, m, n);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 2){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, m, n);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 3){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, m, n);
+    // }
     double * R = malloc(n*n*sizeof(double));
+    double t1 = MPI_Wtime();
     TSQR(A, m*nprocs, n, R, myid, nprocs, MPI_COMM_WORLD);
+    double t2 = MPI_Wtime();
     if(!myid){
-        printf("Result for R:\n");
-        print_matrix(R, n, n);
+        printf("Result for R (first 10 elements of first row):\n");
+        print_vector(R, n);
+        printf("Runtime: %lf\n", t2-t1);
     }
+    double t1 = MPI_Wtime();
     MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
-    /* Print in order */
+    double t2 = MPI_Wtime();
     if(!myid){
-        printf("Rank %d:\n", myid);
-        print_matrix(A, m, n);
+        printf("Result for Q (first 10 elements of first row):\n");
+        print_vector(A, n);
+        printf("Runtime: %lf\n", t2-t1);
     }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 1){
-        printf("Rank %d:\n", myid);
-        print_matrix(A, m, n);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 2){
-        printf("Rank %d:\n", myid);
-        print_matrix(A, m, n);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 3){
-        printf("Rank %d:\n", myid);
-        print_matrix(A, m, n);
-    }
+    // /* Print in order */
+    // if(!myid){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, m, n);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, m, n);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 2){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, m, n);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 3){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, m, n);
+    // }
 
     // Read input: degree of Krylov subspace + s
 
