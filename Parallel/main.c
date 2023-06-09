@@ -32,64 +32,68 @@ int main(int argc, char **argv)
         }
     }
     
-    // /* Test SPMV */
-    // sparse_CSR M = generate_regular_graph_part_csr(2, 8, 3);
-    // /* Print in order */
-    // if(!myid){
-    //     printf("Rank %d:\n", myid);
-    //     print_CSR(&M);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 1){
-    //     printf("Rank %d:\n", myid);
-    //     print_CSR(&M);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 2){
-    //     printf("Rank %d:\n", myid);
-    //     print_CSR(&M);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 3){
-    //     printf("Rank %d:\n", myid);
-    //     print_CSR(&M);
-    // }
-    // double x[2] = {2.0,1.0};
-    // double result[2];
-    // spmv(M, x, 2, result, myid, nprocs, MPI_COMM_WORLD);
-    // if(!myid){
-    //     print_vector(result, 2); // result should be 1 overall (sum of row elements)
-    // }
-
-    /* Test TSQR */
-    double A[20] = {9, 2, 7, 5, 10, 9, 8, 10, 9, 9, 8, 3, 3, 0, 4, 10, 6, 7, 10, 0};
-    double * R = malloc(4*4*sizeof(double));
-    TSQR(A, 5*nprocs, 4, R, myid, nprocs, MPI_COMM_WORLD);
-    if(!myid){
-        print_matrix(R, 4, 4);
-    }
-    MPI_Bcast(R, 4*4, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, 5, 4, 1.0, R, 4, A, 4);
+    /* Test SPMV */
+    int m = 10000;
+    int n = 2500;
+    int nnz_per_row = 2000;
+    sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
     /* Print in order */
     if(!myid){
         printf("Rank %d:\n", myid);
-        print_matrix(A, 5, 4);
+        print_CSR(&M);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){
         printf("Rank %d:\n", myid);
-        print_matrix(A, 5, 4);
+        print_CSR(&M);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 2){
         printf("Rank %d:\n", myid);
-        print_matrix(A, 5, 4);
+        print_CSR(&M);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 3){
         printf("Rank %d:\n", myid);
-        print_matrix(A, 5, 4);
+        print_CSR(&M);
     }
+    double x = malloc(n*sizeof(double));
+    for(int i=0;i<n;i++){x[i] = 1.0;}
+    double result = malloc(n*sizeof(double));
+    spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
+    if(!myid){
+        print_vector(result, 500); // result should be 1 overall (sum of row elements)
+    }
+
+    // /* Test TSQR */
+    // double A[20] = {9, 2, 7, 5, 10, 9, 8, 10, 9, 9, 8, 3, 3, 0, 4, 10, 6, 7, 10, 0};
+    // double * R = malloc(4*4*sizeof(double));
+    // TSQR(A, 5*nprocs, 4, R, myid, nprocs, MPI_COMM_WORLD);
+    // if(!myid){
+    //     print_matrix(R, 4, 4);
+    // }
+    // MPI_Bcast(R, 4*4, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    // cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, 5, 4, 1.0, R, 4, A, 4);
+    // /* Print in order */
+    // if(!myid){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, 5, 4);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, 5, 4);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 2){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, 5, 4);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 3){
+    //     printf("Rank %d:\n", myid);
+    //     print_matrix(A, 5, 4);
+    // }
 
     // Read input: degree of Krylov subspace
 

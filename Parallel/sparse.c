@@ -100,7 +100,6 @@ index_data find_rank_colindex(const int colindex, const int nprocs, const int M,
  * @brief Function that calculates the sparse matrix mector multiplication between
  * a sparse_CSR matrix and a vector with compatible length.
  * @param A Sparse CSR matrix structure. Part of the matrix stored in memory of the calling process.
- * @param M Number of columns in the original problem.
  * @param x Vector. Part of the full vector that is stored in memory of the calling process.
  * @param len Length of the vector part. 
  * @param result Resulting part of the full vector.
