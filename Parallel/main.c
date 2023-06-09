@@ -74,7 +74,7 @@ int main(int argc, char **argv)
     /* Test TSQR */
     int m = 5; // Total: 4*5
     int n = 5;
-    double * A = malloc(m*n*sizof(double));
+    double * A = malloc(m*n*sizeof(double));
     read_matrix_from_file("A.txt", myid*m*n, A, m, n);
     if(!myid){
         print_matrix(A, m, n);
