@@ -102,13 +102,12 @@ int main(int argc, char **argv)
     // }
 
     /* Tesy BGS: 2 processes*/
-    double V[4], W[4];
     if(!myid){
-        V = {1.0, 0.0, 0.0, 1.0};
-        W = {1.0, 0.0, 0.0, 5.0};
+        double V[4] = {1.0, 0.0, 0.0, 1.0};
+        double W[4] = {1.0, 0.0, 0.0, 5.0};
     }else{
-        V = {0.0, 0.0, 0.0, 1.0};
-        W = {3.0, 7.0, 4.0, 0.0};
+        double V[4] = {0.0, 0.0, 0.0, 1.0};
+        double W[4] = {3.0, 7.0, 4.0, 0.0};
     }
     bgs(V, W, 4, 4, MPI_COMM_WORLD);
     if(!myid){
