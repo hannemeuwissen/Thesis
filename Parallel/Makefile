@@ -11,7 +11,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= main test
+EXECS= test
 OBJ = graph.o sparse.o decomp1d.o tsqr_mpi.o matrix.o
 
 all:$(EXECS)
