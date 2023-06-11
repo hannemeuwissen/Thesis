@@ -11,6 +11,7 @@
 #include <math.h>
 #include<mkl_cblas.h>
 #include<mkl_types.h>
+#include<string.h>
 #include"matrix.h"
 #include"graph.h"
 #include"sparse.h"
