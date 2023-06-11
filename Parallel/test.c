@@ -104,7 +104,7 @@ int main(int argc, char **argv)
     /* Tesy BGS: 2 processes*/
     double V[4], W[4];
     if(!myid){
-        V[4] = {1.0, 0.0, 0.0, 1.0};
+        V = {1.0, 0.0, 0.0, 1.0};
         W[4] = {1.0, 0.0, 0.0, 5.0};
     }else{
         V[4] = {0.0, 0.0, 0.0, 1.0};
