@@ -51,8 +51,7 @@ int main(int argc, char **argv)
 
     // 3. Orthogonalize block using parallel CA-TSQR
     double * R = malloc(n*n*sizeof(double)); 
-    /* Calculate R */
-    TSQR(A, m*nprocs, n, R, myid, nprocs, MPI_COMM_WORLD);
+    TSQR(A, m*nprocs, n, R, myid, nprocs, MPI_COMM_WORLD); // Is R needed?
     MPI_Barrier(MPI_COMM_WORLD);
     
     MPI_Finalize();
