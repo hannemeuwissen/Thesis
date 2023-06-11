@@ -56,6 +56,7 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
     const int steps = log2(nprocs);
     int start, end;
     decomp1d(M, nprocs, rank, &start, &end); /* Partition M rows over processes */
+    int m = end - start + 1;
     
     double * tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
     memcpy(tempA, A, (end-start+1)*N*sizeof(double));
@@ -65,7 +66,7 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
 
         if(is_active(rank, step)){
 
-            lapack_int rows = ((!step)?end-start+1 : 2*N); 
+            lapack_int rows = ((!step)? m : 2*N); 
             lapack_int cols = N;
 
             /* Calculate local Housholder QR in terms of tau and v's */
@@ -108,11 +109,11 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
     free(tau);
 
     /* Broadcast result for R from process 0 */
-    MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(R, N*N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     // tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
     // memcpy(tempA, A, (end-start+1)*N*sizeof(double));
 
     /* Overwrite A with resulting Q for each part */
-    cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
+    cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, N);
     MPI_Barrier(MPI_COMM_WORLD);
 }
