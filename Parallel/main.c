@@ -48,9 +48,9 @@ int main(int argc, char **argv)
     double * R = malloc(n*n*sizeof(double)); 
     /* Calculate R */
     TSQR(A, m*nprocs, n, R, myid, nprocs, MPI_COMM_WORLD);
-    MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
-    MPI_Barrier(MPI_COMM_WORLD);
+    // MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    // cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
+    // MPI_Barrier(MPI_COMM_WORLD);
     
     MPI_Finalize();
     return 0;

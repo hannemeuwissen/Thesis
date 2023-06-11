@@ -37,11 +37,11 @@ test:test.c $(OBJ)
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
         -liomp5 -lpthread -lm
 
-main:main.c $(OBJ)
-	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
-        -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
-        -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        -liomp5 -lpthread -lm
+# main:main.c $(OBJ)
+# 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+#         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
+#         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+#         -liomp5 -lpthread -lm
 
 .PHONY:clean
 

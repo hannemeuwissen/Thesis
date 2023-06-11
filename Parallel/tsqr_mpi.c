@@ -106,4 +106,13 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
         }
     }
     free(tau);
+
+    /* Broadcast result for R from process 0 */
+    MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    // tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
+    // memcpy(tempA, A, (end-start+1)*N*sizeof(double));
+
+    /* Overwrite A with resulting Q for each part */
+    cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
+    MPI_Barrier(MPI_COMM_WORLD);
 }
