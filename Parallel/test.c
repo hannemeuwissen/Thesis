@@ -110,13 +110,13 @@ int main(int argc, char **argv)
         double V[4] = {0.0, 0.0, 0.0, 1.0};
         double W[4] = {3.0, 7.0, 4.0, 0.0};
     }
-    bgs(V, W, 4, 4, MPI_COMM_WORLD);
+    bgs(V, W, 2, 2, MPI_COMM_WORLD);
     if(!myid){
-        print_matrix(W, 4, 4);
+        print_matrix(W, 2, 2);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){
-        print_matrix(W, 4, 4);
+        print_matrix(W, 2, 2);
     }    
 
     MPI_Finalize();
