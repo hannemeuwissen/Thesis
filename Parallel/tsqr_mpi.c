@@ -115,5 +115,5 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
 
     /* Overwrite A with resulting Q for each part */
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, N);
-    MPI_Barrier(MPI_COMM_WORLD);
+    // MPI_Barrier(MPI_COMM_WORLD);
 }
