@@ -7,7 +7,6 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include <mpi.h>
 #include<mkl_types.h>
 #include<mkl_cblas.h>
