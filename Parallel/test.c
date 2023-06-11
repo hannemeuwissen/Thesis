@@ -15,6 +15,7 @@
 #include"graph.h"
 #include"sparse.h"
 #include"tsqr_mpi.h"
+#include"bgs.h"
 #include"mkl.h"
 
 int main(int argc, char **argv)
@@ -71,84 +72,53 @@ int main(int argc, char **argv)
     //     printf("Runtime: %lf\n", t2-t1);
     // }
 
-    /* Test TSQR */
-    int m = 25000; // Total: 100000
-    int n = 1000;
-    double * A = malloc(m*n*sizeof(double));
-    int skip = ((!myid) ? 0 : myid*m*n + n);
-    read_matrix_from_file("A.txt", skip, A, m, n);
-    if(myid == 3){
-        printf("Data read!\n");
-    }
-    // /* Print in order */
-    // if(!myid){
-    //     printf("Rank %d:\n", myid);
-    //     print_matrix(A, m, n);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 1){
-    //     printf("Rank %d:\n", myid);
-    //     print_matrix(A, m, n);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 2){
-    //     printf("Rank %d:\n", myid);
-    //     print_matrix(A, m, n);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
+    // /* Test TSQR */
+    // int m = 25000; // Total: 100000
+    // int n = 1000;
+    // double * A = malloc(m*n*sizeof(double));
+    // int skip = ((!myid) ? 0 : myid*m*n + n);
+    // read_matrix_from_file("A.txt", skip, A, m, n);
     // if(myid == 3){
-    //     printf("Rank %d:\n", myid);
-    //     print_matrix(A, m, n);
+    //     printf("Data read!\n");
     // }
-    double * R = malloc(n*n*sizeof(double));
-    double t1 = MPI_Wtime();
-    TSQR(A, m*nprocs, n, R, myid, nprocs, MPI_COMM_WORLD);
-    double t2 = MPI_Wtime();
+    // double * R = malloc(n*n*sizeof(double));
+    // double t1 = MPI_Wtime();
+    // TSQR(A, m*nprocs, m, n, R, myid, nprocs, MPI_COMM_WORLD);
+    // double t2 = MPI_Wtime();
+    // if(!myid){
+    //     printf("Result for R (first 10 elements of first row):\n");
+    //     print_matrix(R, 1, 10);
+    //     printf("Runtime: %lf\n", t2-t1);
+    // }
+    // t1 = MPI_Wtime();
+    // MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    // cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // t2 = MPI_Wtime();
+    // if(!myid){
+    //     printf("Result for Q (first 10 elements of first row):\n");
+    //     print_matrix(A, 1, 10);
+    //     printf("Runtime: %lf\n", t2-t1);
+    // }
+
+    /* Tesy BGS: 2 processes*/
+    double V[4], W[4];
     if(!myid){
-        printf("Result for R (first 10 elements of first row):\n");
-        print_matrix(R, 1, 10);
-        printf("Runtime: %lf\n", t2-t1);
+        V = {1.0, 0.0, 0.0, 1.0};
+        W = {1.0, 0.0, 0.0, 5.0};
+    }else{
+        V = {0.0, 0.0, 0.0, 1.0};
+        W = {3.0, 7.0, 4.0, 0.0};
     }
-    t1 = MPI_Wtime();
-    MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
+    bgs(V, W, 4, 4, MPI_COMM_WORLD);
+    if(!myid){
+        print_matrix(W, 4, 4);
+    }
     MPI_Barrier(MPI_COMM_WORLD);
-    t2 = MPI_Wtime();
-    if(!myid){
-        printf("Result for Q (first 10 elements of first row):\n");
-        print_matrix(A, 1, 10);
-        printf("Runtime: %lf\n", t2-t1);
-    }
-    // /* Print in order */
-    // if(!myid){
-    //     printf("Rank %d:\n", myid);
-    //     print_matrix(A, m, n);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 1){
-    //     printf("Rank %d:\n", myid);
-    //     print_matrix(A, m, n);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 2){
-    //     printf("Rank %d:\n", myid);
-    //     print_matrix(A, m, n);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 3){
-    //     printf("Rank %d:\n", myid);
-    //     print_matrix(A, m, n);
-    // }
+    if(myid == 1){
+        print_matrix(W, 4, 4);
+    }    
 
-    // Read input: degree of Krylov subspace + s
-
-    // Decide on s in s-step process
-
-    // For all blocks:
-    // 1. Matrix powers kernel using parallel spmv 
-    // 2. Block-GS to orthogonalize compared to previous blocks (not the first time)
-    // 3. Orthogonalize block using parallel CA-TSQR
-    
     MPI_Finalize();
     return 0;
 }

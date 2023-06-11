@@ -15,6 +15,7 @@
 #include"graph.h"
 #include"sparse.h"
 #include"tsqr_mpi.h"
+#include"bgs.h"
 #include"mkl.h"
 
 int main(int argc, char **argv)
@@ -33,8 +34,7 @@ int main(int argc, char **argv)
         }
     }
 
-
-    // Read input: degree of Krylov subspace + s (-> degree multiple of s) + A + size A (M,n)
+    // Read input: degree of Krylov subspace + s (-> degree multiple of s) + A + size A (M,N)
     int steps = degree/s;
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end);
@@ -42,15 +42,18 @@ int main(int argc, char **argv)
 
     // For all blocks:
     
-    // 1. Matrix powers kernel using parallel spmv 
+    // 1. Matrix powers kernel using parallel spmv for size of block
+    // NOTE: since output for each spmv is vector --> need to transpose in next part!
+
     // 2. Block-GS to orthogonalize compared to previous blocks (not the first time)
+    // First transpose!
+    bgs(V, W, m, N, MPI_COMM_WORLD);
+
     // 3. Orthogonalize block using parallel CA-TSQR
     double * R = malloc(n*n*sizeof(double)); 
     /* Calculate R */
     TSQR(A, m*nprocs, n, R, myid, nprocs, MPI_COMM_WORLD);
-    // MPI_Bcast(R, n*n, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    // cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, n, 1.0, R, n, A, n);
-    // MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
     
     MPI_Finalize();
     return 0;

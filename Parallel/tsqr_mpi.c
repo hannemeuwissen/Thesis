@@ -13,7 +13,6 @@
 #include<mkl_cblas.h>
 #include<string.h>
 #include"mkl.h"
-#include "decomp1d.h"
 #include "sparse.h"
 
 /**
@@ -44,22 +43,19 @@ int find_lower_active(const int rank, const int step){
 /**
  * @brief Function that performs the communication avoiding TSQR using OpenMP.
  * @param[in] A The matrix that will hold the data.
- * @param[in] M Number of rows of the original matrix.
+ * @param[in] m Number of rows in the matrix part.
  * @param[in] N Number of columns of the matrix.
  * @param[in] R The matrix that will hold the result for R. Rank 0 holds the final result.
  * @param[in] rank The rank of the calling process.
  * @param[in] nprocs The number of processes.
  * @param[in] comm The MPI communicator
  */
-void TSQR(double *A, const int M, const int N, double *R, const int rank, const int nprocs, MPI_Comm comm){
+void TSQR(double *A, const int m, const int N, double *R, const int rank, const int nprocs, MPI_Comm comm){
     
     const int steps = log2(nprocs);
-    int start, end;
-    decomp1d(M, nprocs, rank, &start, &end); /* Partition M rows over processes */
-    int m = end - start + 1;
     
-    double * tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
-    memcpy(tempA, A, (end-start+1)*N*sizeof(double));
+    double * tempA = malloc(m*N*sizeof(double)); /* Allocate space to not overwrite A */
+    memcpy(tempA, A, m*N*sizeof(double));
     double * tau = malloc(N*sizeof(double)); /* Allocate space to hold tau's */
 
     for(int step=0;step<=steps;step++){ /* Parallel TSQR loop */
@@ -110,8 +106,6 @@ void TSQR(double *A, const int M, const int N, double *R, const int rank, const 
 
     /* Broadcast result for R from process 0 */
     MPI_Bcast(R, N*N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    // tempA = malloc((end-start+1)*N*sizeof(double)); /* Allocate space to not overwrite A */
-    // memcpy(tempA, A, (end-start+1)*N*sizeof(double));
 
     /* Overwrite A with resulting Q for each part */
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, N);
