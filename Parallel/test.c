@@ -102,13 +102,20 @@ int main(int argc, char **argv)
     // }
 
     /* Tesy BGS: 2 processes*/
-    double V[4], W[4];
+    double *V = malloc(4*sizeof(double)); 
+    double *W = malloc(4*sizeof(double));
+    memset(V, 0, 4*sizeof(double));
+    memset(W, 0, 4*sizeof(double));
     if(!myid){
-        double V[4] = {1.0, 0.0, 0.0, 1.0};
-        double W[4] = {1.0, 0.0, 0.0, 5.0};
+        V[0] = 1.0;
+        V[3] = 1.0;
+        W[0] = 1.0;
+        W[3] = 5.0;
     }else{
-        double V[4] = {0.0, 0.0, 0.0, 1.0};
-        double W[4] = {3.0, 7.0, 4.0, 0.0};
+        V[3] = 1.0;
+        W[0] = 1.0;
+        W[1] = 7.0;
+        W[2] = 4.0;
     }
     bgs(V, W, 2, 2, MPI_COMM_WORLD);
     if(!myid){
