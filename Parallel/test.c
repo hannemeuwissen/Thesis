@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     // }
     // double * R = malloc(n*n*sizeof(double));
     // double t1 = MPI_Wtime();
-    // TSQR(A, m*nprocs, m, n, R, myid, nprocs, MPI_COMM_WORLD);
+    // TSQR(A, m, n, R, myid, nprocs, MPI_COMM_WORLD);
     // double t2 = MPI_Wtime();
     // if(!myid){
     //     printf("Result for R (first 10 elements of first row):\n");
