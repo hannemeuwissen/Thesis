@@ -103,8 +103,8 @@ int main(int argc, char **argv)
     // }
 
     /* Tesy BGS: 2 processes*/
-    double *V = malloc(4*sizeof(double)); 
-    double *W = malloc(4*sizeof(double));
+    double *V = malloc(6*sizeof(double)); 
+    double *W = malloc(6*sizeof(double));
     memset(V, 0, 6*sizeof(double));
     memset(W, 0, 6*sizeof(double));
     if(!myid){
