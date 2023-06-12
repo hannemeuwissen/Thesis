@@ -104,31 +104,28 @@ int main(int argc, char **argv)
 
     /* Tesy BGS: 2 processes*/
     double *V = malloc(6*sizeof(double)); 
-    double *W = malloc(6*sizeof(double));
+    double *W = malloc(4*sizeof(double));
     memset(V, 0, 6*sizeof(double));
-    memset(W, 0, 6*sizeof(double));
+    memset(W, 0, 4*sizeof(double));
     if(!myid){
         V[0] = 1.0;
         V[4] = 1.0;
         W[0] = 1.0;
-        W[2] = 4.0;
-        W[4] = 5.0;
-        W[5] = 6.0;
+        W[3] = 5.0;
     }else{
         V[2] = 1.0;
         V[4] = 1.0;
         W[0] = 3.0;
         W[1] = 7.0;
-        W[3] = 4.0;
-        W[5] = 1.0;
+        W[2] = 4.0;
     }
-    bgs(V, W, 2, 3, 3, MPI_COMM_WORLD);
+    bgs(V, W, 2, 3, 2, MPI_COMM_WORLD);
     if(!myid){
-        print_matrix(W, 2, 3);
+        print_matrix(W, 2, 2);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){
-        print_matrix(W, 2, 3);
+        print_matrix(W, 2, 2);
     }    
 
     MPI_Finalize();
