@@ -120,7 +120,7 @@ int main(int argc, char **argv)
         W[0] = 3.0;
         W[1] = 7.0;
         W[3] = 4.0;
-        w[5] = 1.0;
+        W[5] = 1.0;
     }
     bgs(V, W, 2, 3, MPI_COMM_WORLD);
     if(!myid){
