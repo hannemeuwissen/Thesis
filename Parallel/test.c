@@ -122,7 +122,7 @@ int main(int argc, char **argv)
         W[3] = 4.0;
         W[5] = 1.0;
     }
-    bgs(V, W, 2, 3, MPI_COMM_WORLD);
+    bgs(V, W, 2, 3, 3, MPI_COMM_WORLD);
     if(!myid){
         print_matrix(W, 2, 3);
     }

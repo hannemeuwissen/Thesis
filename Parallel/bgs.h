@@ -8,6 +8,6 @@
 #ifndef BGS_H_7BZWC1IU
 #define BGS_H_7BZWC1IU
 
-void bgs(double *V, double *W, const int m, const int N, MPI_Comm comm);
+void bgs(double *V, double *W, const int m, const int n, const int s, MPI_Comm comm);
 
 #endif /* end of include guard: BGS_H_7BZWC1IU */

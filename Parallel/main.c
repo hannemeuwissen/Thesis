@@ -110,7 +110,7 @@ int main(int argc, char **argv)
         // NOTE: since output for each spmv is vector --> need to transpose before next part!
 
         // 2. Block-GS to orthogonalize compared to previous blocks (not the first time)
-        bgs(V, W, m, s, MPI_COMM_WORLD);
+        bgs(V, W, m, block*s + 1, s, MPI_COMM_WORLD);
 
         // 3. Orthogonalize block using parallel CA-TSQR
         double * R = malloc(s*s*sizeof(double)); 
