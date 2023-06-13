@@ -101,7 +101,7 @@ void get_indices(const int n, const int nprocs, int * start, int * end){
     if(nprocs > 1){
         for(int i=1;i<nprocs;i++){
             start[i] = end[i-1] + 1;
-            end[i] = end[i-1] + ((i<remainder) ? n_elements : (n_elements-1)); 
+            end[i] = end[i-1] + ((i<remainder) ? (n_elements+1) : n_elements); 
         }
     }
 
