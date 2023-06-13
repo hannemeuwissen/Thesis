@@ -10,7 +10,6 @@
 #include<math.h>
 #include<mpi.h>
 #include"sparse.h"
-#include"decomp1d.h"
 
 /**
  * @brief Function that prints a sparse CSR matrix structure.
@@ -43,56 +42,36 @@ void print_CSR(sparse_CSR * M){
  * @param rank The rank of the calling process.
  * @return index_data The rank that stores the element and the index of the element.
  */
-// index_data find_rank_colindex(const int colindex, const int nprocs, const int M, const int smaller, const int rank){
-//     int start, end;
-//     index_data result;
-//     result.rank = -1;
-//     result.index = -1;
-//     if(smaller){
-//         for(int i=0;i<rank;i++){
-//             decomp1d(M, nprocs, i, &start, &end);
-//             if(colindex <= end){
-//                 result.rank = i;
-//                 result.index = colindex - start;
-//                 return result;
-//             }
-//         }
-//     }else{
-//         for(int i=(rank + 1);i<nprocs;i++){
-//             decomp1d(M, nprocs, i, &start, &end);
-//             if(colindex <= end){
-//                 result.rank = i;
-//                 result.index = colindex - start;
-//                 return result;
-//             }
-//         }
-//     }
-//     return result;
-// }
 index_data find_rank_colindex(const int colindex, const int nprocs, int * start, int * end, const int smaller, const int rank){
     index_data result;
     result.rank = -1;
     result.index = -1;
+    int ll, ul;
     if(smaller){
-        for(int i=0;i<rank;i++){
-            if(colindex <= end[i]){
-                result.rank = i;
-                result.index = colindex - start[i];
-                return result;
-            }
-        }
+        ll = 0;
+        ul = rank;
     }else{
-        for(int i=(rank + 1);i<nprocs;i++){
-            if(colindex <= end[i]){
-                result.rank = i;
-                result.index = colindex - start[i];
-                return result;
-            }
+        ll = rank+1;
+        ul == nprocs;
+    }
+    for(int i=ll;i<ul;i++){
+        if(colindex <= end[i]){
+            result.rank = i;
+            result.index = colindex - start[i];
+            return result;
         }
     }
     return result;
 }
 
+/**
+ * @brief Get the start and end indices of the rows for each part that each process holds of
+ * the full matrix. 
+ * @param n The total number of rows.
+ * @param nprocs The number of processes.
+ * @param start The start indices.
+ * @param end The end indices.
+ */
 void get_indices(const int n, const int nprocs, int * start, int * end){
     int n_elements = n/nprocs;
     int remainder = n%nprocs;
@@ -126,13 +105,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     }
     
     int M = A.ncols;
-    // int start, end;
-    // decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
     double x_element;
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
-    printf("Rank %d - Start: %d, end: %d\n", myid, start[myid], end[myid]);
 
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
