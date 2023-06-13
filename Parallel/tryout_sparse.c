@@ -43,49 +43,26 @@ void print_CSR(sparse_CSR * M){
  * @param rank The rank of the calling process.
  * @return index_data The rank that stores the element and the index of the element.
  */
-// index_data find_rank_colindex(const int colindex, const int nprocs, const int M, const int smaller, const int rank){
-//     int start, end;
-//     index_data result;
-//     result.rank = -1;
-//     result.index = -1;
-//     if(smaller){
-//         for(int i=0;i<rank;i++){
-//             decomp1d(M, nprocs, i, &start, &end);
-//             if(colindex <= end){
-//                 result.rank = i;
-//                 result.index = colindex - start;
-//                 return result;
-//             }
-//         }
-//     }else{
-//         for(int i=(rank + 1);i<nprocs;i++){
-//             decomp1d(M, nprocs, i, &start, &end);
-//             if(colindex <= end){
-//                 result.rank = i;
-//                 result.index = colindex - start;
-//                 return result;
-//             }
-//         }
-//     }
-//     return result;
-// }
-index_data find_rank_colindex(const int colindex, const int nprocs, int * start, int * end, const int smaller, const int rank){
+index_data find_rank_colindex(const int colindex, const int nprocs, const int M, const int smaller, const int rank){
+    int start, end;
     index_data result;
     result.rank = -1;
     result.index = -1;
     if(smaller){
         for(int i=0;i<rank;i++){
-            if(colindex <= end[i]){
+            decomp1d(M, nprocs, i, &start, &end);
+            if(colindex <= end){
                 result.rank = i;
-                result.index = colindex - start[i];
+                result.index = colindex - start;
                 return result;
             }
         }
     }else{
         for(int i=(rank + 1);i<nprocs;i++){
-            if(colindex <= end[i]){
+            decomp1d(M, nprocs, i, &start, &end);
+            if(colindex <= end){
                 result.rank = i;
-                result.index = colindex - start[i];
+                result.index = colindex - start;
                 return result;
             }
         }
@@ -96,6 +73,7 @@ index_data find_rank_colindex(const int colindex, const int nprocs, int * start,
 void get_indices(const int n, const int nprocs, int * start, int * end){
     int n_elements = n/nprocs;
     int remainder = n%nprocs;
+    // *e = 0;
     start[0] = 0;
     end[0] = ((!remainder) ? (n_elements) : (n_elements + 1));
     if(nprocs > 1){
@@ -104,6 +82,21 @@ void get_indices(const int n, const int nprocs, int * start, int * end){
             end[i] = end[i-1] + ((i<remainder) ? (n_elements + 1) : (n_elements)); 
         }
     }
+}
+
+void get_all_values(double * colindices, const int len, const int rank, const int nprocs, int * start, int * end, double * x_values){
+    int count = 0;
+    int * lengths = malloc(len*sizeof(int));
+    int * displs = malloc(len*sizeof(int));
+    int index = 0;
+    for(int p = 0;p < nprocs;p++){
+        if(p!=rank){
+            while(colindices[index] < end[p] && index < len){
+                
+            }
+        }
+    }
+    free(lengths);
 }
 
 /**
@@ -125,15 +118,15 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     }
     
     int M = A.ncols;
+    int * start =  malloc(nprocs*sizeof(int));
+    int * end = malloc(nprocs*sizeof(int));
+    get_indices(M, nprocs, start, end);
     // int start, end;
     // decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
     // double x_element;
-    int * start = malloc(nprocs*sizeof(int));
-    int * end = malloc(nprocs*sizeof(int));
-    get_indices(M, nprocs, start, end);
 
     MPI_Win win;
-    MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
+    MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);  
     
     for(int i=0;i<len;i++){
         result[i] = 0.0;
@@ -147,7 +140,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 x_element = x[colindex];
             }else{ /* Element from x in other processes' memory*/
                 int smaller = ((colindex < start) ? 1 : 0);
-                index_data colindex_data = find_rank_colindex(colindex, nprocs, start, end, smaller, myid);
+                index_data colindex_data = find_rank_colindex(colindex, nprocs, M, smaller, myid);
                 MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index, 1, MPI_DOUBLE, win);
             }
             MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);

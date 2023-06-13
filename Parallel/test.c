@@ -35,43 +35,43 @@ int main(int argc, char **argv)
         }
     }
     
-    // /* Test SPMV */
-    // int m = 10000;
-    // int n = 2500;
-    // int nnz_per_row = 2000;
-    // sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
-    // printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
-    // // /* Print in order */
-    // // if(!myid){
-    // //     printf("Rank %d:\n", myid);
-    // //     print_CSR(&M);
-    // // }
-    // // MPI_Barrier(MPI_COMM_WORLD);
-    // // if(myid == 1){
-    // //     printf("Rank %d:\n", myid);
-    // //     print_CSR(&M);
-    // // }
-    // // MPI_Barrier(MPI_COMM_WORLD);
-    // // if(myid == 2){
-    // //     printf("Rank %d:\n", myid);
-    // //     print_CSR(&M);
-    // // }
-    // // MPI_Barrier(MPI_COMM_WORLD);
-    // // if(myid == 3){
-    // //     printf("Rank %d:\n", myid);
-    // //     print_CSR(&M);
-    // // }
-    // double * x = malloc(n*sizeof(double));
-    // for(int i=0;i<n;i++){x[i] = 1.0;}
-    // double * result = malloc(n*sizeof(double));
-    // double t1 = MPI_Wtime();
-    // spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
-    // double t2 = MPI_Wtime();
+    /* Test SPMV */
+    int m = 10000;
+    int n = 2500;
+    int nnz_per_row = 2000;
+    sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
+    printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
+    // /* Print in order */
     // if(!myid){
-    //     printf("First 50 lines from result on process 0:\n");
-    //     print_vector(result, 50); // result should be 1 overall (sum of row elements)
-    //     printf("Runtime: %lf\n", t2-t1);
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
     // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 2){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 3){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
+    double * x = malloc(n*sizeof(double));
+    for(int i=0;i<n;i++){x[i] = 1.0;}
+    double * result = malloc(n*sizeof(double));
+    double t1 = MPI_Wtime();
+    spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
+    double t2 = MPI_Wtime();
+    if(!myid){
+        printf("First 50 lines from result on process 0:\n");
+        print_vector(result, 50); // result should be 1 overall (sum of row elements)
+        printf("Runtime: %lf\n", t2-t1);
+    }
 
     // /* Test TSQR */
     // int m = 25000; // Total: 100000
@@ -102,31 +102,31 @@ int main(int argc, char **argv)
     //     printf("Runtime: %lf\n", t2-t1);
     // }
 
-    /* Tesy BGS: 2 processes*/
-    double *V = malloc(6*sizeof(double)); 
-    double *W = malloc(4*sizeof(double));
-    memset(V, 0, 6*sizeof(double));
-    memset(W, 0, 4*sizeof(double));
-    if(!myid){
-        V[0] = 1.0;
-        V[4] = 1.0;
-        W[0] = 1.0;
-        W[3] = 5.0;
-    }else{
-        V[2] = 1.0;
-        V[4] = 1.0;
-        W[0] = 3.0;
-        W[1] = 7.0;
-        W[2] = 4.0;
-    }
-    bgs(V, W, 2, 3, 2, MPI_COMM_WORLD);
-    if(!myid){
-        print_matrix(W, 2, 2);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 1){
-        print_matrix(W, 2, 2);
-    }    
+    // /* Tesy BGS: 2 processes*/
+    // double *V = malloc(6*sizeof(double)); 
+    // double *W = malloc(4*sizeof(double));
+    // memset(V, 0, 6*sizeof(double));
+    // memset(W, 0, 4*sizeof(double));
+    // if(!myid){
+    //     V[0] = 1.0;
+    //     V[4] = 1.0;
+    //     W[0] = 1.0;
+    //     W[3] = 5.0;
+    // }else{
+    //     V[2] = 1.0;
+    //     V[4] = 1.0;
+    //     W[0] = 3.0;
+    //     W[1] = 7.0;
+    //     W[2] = 4.0;
+    // }
+    // bgs(V, W, 2, 3, 2, MPI_COMM_WORLD);
+    // if(!myid){
+    //     print_matrix(W, 2, 2);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     print_matrix(W, 2, 2);
+    // }    
 
     MPI_Finalize();
     return 0;

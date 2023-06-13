@@ -19,50 +19,58 @@
 #include"mkl.h"
 
 /**
- * @brief Function that reads and parses command line arguments.
- * @param[in] argc The command line argument count.
- * @param[in] argv Pointer to the command line arguments.
- * @param[in] n Integer pointer to nr of rows.
- * @param[in] m Integer pointer to nr of cols.
- * @param[in] seed Integer pointer to seed.
- * @param[in] time Integer pointer to time specifier.
+ * @brief Function that handles the input arguments. 
+ * @param argc
+ * @param argv 
+ * @param filename_A The name of the file that contains the sparse CSR matrix.
+ * @param M The number of rows.
+ * @param N The number of columns.
+ * @param filename_v The name of the file that contains the initial vector.
+ * @param degree The degree of the Krylov subspace.
+ * @param s The blocksize (s-step Krylov subspace method).
  */
-void parse_command_line(const int argc, char * const *argv, char * filename_A, int * M, int * N, int * degree, int * s){
+void parse_command_line(const int argc, char * const *argv, char * filename_A, int * M, int * N, char * filename_v, int * degree, int * s){
     int c=0;
-    while((c = getopt(argc, argv, "d:s:f:m:n:")) != -1){
+    while((c = getopt(argc, argv, "d:s:f:v:m:n:")) != -1){
         switch(c){
             case 'f':
-                if(sscanf(optarg,"%s",filename) == 0){
-                    printf("Usage : ./main [-f filename] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                if(sscanf(optarg,"%s",filename_A) == 0){
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    MPI_Abort(MPI_COMM_WORLD, 1);
+                }
+                break;
+            case 'v':
+                if(sscanf(optarg,"%s",filename_v) == 0){
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case 'm':
                 if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : ./main [-f filename] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case 'n':
                 if(sscanf(optarg,"%d",N) == 0){
-                    printf("Usage : ./main [-f filename] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : ./main [-f filename] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : ./main [-f filename] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case '?':
-                printf("Usage : ./main [-f filename] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
                 MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
@@ -76,7 +84,7 @@ int main(int argc, char **argv)
 {  
     int myid, nprocs;
     int degree,s,M,N;
-    char filename_A[100];
+    char filename_A[100], filename_v[100];
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
@@ -90,9 +98,9 @@ int main(int argc, char **argv)
         }
     }
 
-    // Read input: degree of Krylov subspace + s (-> degree multiple of s) + A + size A (M,N)
+    // Read input: degree of Krylov subspace + s (-> degree multiple of s) + A + size A (M,N) + input vector!
     if(!myid){
-        parse_command_line(argc, argv, filename_A, &M, &N, &degree, &s);
+        parse_command_line(argc, argv, filename_A, filename_v, &M, &N, &degree, &s);
     }
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
