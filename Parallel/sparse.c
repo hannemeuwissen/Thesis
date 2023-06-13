@@ -33,6 +33,28 @@ void print_CSR(sparse_CSR * M){
 }
 
 /**
+ * @brief Get the start and end indices of the rows for each part that each process holds of
+ * the full matrix. 
+ * @param n The total number of rows.
+ * @param nprocs The number of processes.
+ * @param start The start indices.
+ * @param end The end indices.
+ */
+void get_indices(const int n, const int nprocs, int * start, int * end){
+    int n_elements = n/nprocs;
+    int remainder = n%nprocs;
+    start[0] = 0;
+    end[0] = ((!remainder) ? (n_elements-1) : n_elements);
+    if(nprocs > 1){
+        for(int i=1;i<nprocs;i++){
+            start[i] = end[i-1] + 1;
+            end[i] = end[i-1] + ((i<remainder) ? (n_elements+1) : n_elements); 
+        }
+    }
+
+}
+
+/**
  * @brief Function that finds which rank has the vector value matching a given column index.
  * @param colindex The index of the to be found element.
  * @param nprocs The total number of processes.
@@ -62,28 +84,6 @@ index_data find_rank_colindex(const int colindex, const int nprocs, int * start,
         }
     }
     return result;
-}
-
-/**
- * @brief Get the start and end indices of the rows for each part that each process holds of
- * the full matrix. 
- * @param n The total number of rows.
- * @param nprocs The number of processes.
- * @param start The start indices.
- * @param end The end indices.
- */
-void get_indices(const int n, const int nprocs, int * start, int * end){
-    int n_elements = n/nprocs;
-    int remainder = n%nprocs;
-    start[0] = 0;
-    end[0] = ((!remainder) ? (n_elements-1) : n_elements);
-    if(nprocs > 1){
-        for(int i=1;i<nprocs;i++){
-            start[i] = end[i-1] + 1;
-            end[i] = end[i-1] + ((i<remainder) ? (n_elements+1) : n_elements); 
-        }
-    }
-
 }
 
 /**

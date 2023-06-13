@@ -16,10 +16,7 @@ OBJ = graph.o sparse.o tsqr_mpi.o bgs.o matrix.o
 
 all:$(EXECS)
 
-decomp1d.o:decomp1d.c decomp1d.h
-	$(CC) -c $< $(FLAGS)
-
-matrix.o:matrix.c decomp1d.h 
+matrix.o:matrix.c matrix.h
 	$(CC) -c $< $(FLAGS)
 
 graph.o:graph.c graph.h
@@ -31,7 +28,7 @@ sparse.o:sparse.c sparse.h
 bgs.o:bgs.c bgs.h
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS)
 
-tsqr_mpi.o:tsqr_mpi.c decomp1d.h
+tsqr_mpi.o:tsqr_mpi.c
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS) -lm
 
 test:test.c $(OBJ)
