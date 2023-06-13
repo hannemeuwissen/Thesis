@@ -52,7 +52,7 @@ index_data find_rank_colindex(const int colindex, const int nprocs, int * start,
         ul = rank;
     }else{
         ll = rank+1;
-        ul == nprocs;
+        ul = nprocs;
     }
     for(int i=ll;i<ul;i++){
         if(colindex <= end[i]){
