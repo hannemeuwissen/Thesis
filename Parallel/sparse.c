@@ -127,7 +127,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int M = A.ncols;
     // int start, end;
     // decomp1d(M, nprocs, myid, &start, &end); /* Partition M rows over processes */
-    // double x_element;
+    double x_element;
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
