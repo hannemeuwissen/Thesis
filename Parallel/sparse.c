@@ -126,7 +126,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     
     int M = A.ncols;
     // double x_element;
-    double x_gathered_elements = malloc(A.nnz*sizeof(int));
+    double * x_gathered_elements = malloc(A.nnz*sizeof(int));
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
