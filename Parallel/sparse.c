@@ -219,7 +219,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     }
 
     MPI_Win_free(&win);
-    MPI_Type_free(&indexed_values)
+    MPI_Type_free(&indexed_values);
 
     free(start);
     free(end);
