@@ -210,9 +210,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 }
                 free(indices);
             }
-            if(!myid){
-                printf("Here\n");
-            }
         }
         if(!myid){
             printf("Here\n");
