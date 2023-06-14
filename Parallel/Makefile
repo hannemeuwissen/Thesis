@@ -23,7 +23,7 @@ graph.o:graph.c graph.h
 	$(CC) -c $< $(FLAGS)
 
 sparse.o:sparse.c sparse.h
-	$(CC) -c $< $(FLAGS)
+	$(CC) -c $< $(FLAGS) $(MKLFLAGS)
 
 bgs.o:bgs.c bgs.h
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS)
