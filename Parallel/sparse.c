@@ -179,17 +179,18 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
     
     for(int i=0;i<len;i++){
-        int j =A.rowptrs[i];
+        int j = A.rowptrs[i];
         int nnz_i = 0;
         MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
         while(j<A.rowptrs[i+1] && nnz_i < A.nnz){
             int colindex = A.colindex[j];
-            for(int p=0;p<nprocs;p++){
-                int cnt = 0;
-                int * indices = malloc((end[p] - start[p]+1)*sizeof(int));
+            for(int p=0;p<nprocs;p++){ /* Per process: get all elements at once */
+                int cnt = 0; /* number of elements to get from this process */
+                int * indices = malloc((end[p] - start[p]+1)*sizeof(int)); /* Indices of element in other process */
                 while(colindex < end[p] && j < A.rowptrs[i+1] && nnz_i < A.nnz){
                     if(p != myid){
-                        indices[cnt++] = colindex - start[p];
+                        indices[cnt] = colindex - start[p];
+                        cnt++;
                     }else{
                         x_gathered_elements[nnz_i] = x[colindex - start[p]];
                     }
@@ -199,6 +200,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                         colindex = A.colindex[j];
                     }
                 }
+                printf("Here!\n");
                 if(p != myid){
                     int * lengths = malloc(cnt*sizeof(int));
                     for(int i=0;i<cnt;i++){lengths[i] = 1;}
