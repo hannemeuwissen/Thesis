@@ -200,7 +200,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                         colindex = A.colindex[j];
                     }
                 }
-                printf("Here!\n");
                 if(p != myid){
                     int * lengths = malloc(cnt*sizeof(int));
                     for(int i=0;i<cnt;i++){lengths[i] = 1;}
@@ -211,6 +210,12 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 }
                 free(indices);
             }
+            if(!myid){
+                printf("Here\n");
+            }
+        }
+        if(!myid){
+            printf("Here\n");
         }
         MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
         // multiply row_values & x_gathered_elements using BLAS function
