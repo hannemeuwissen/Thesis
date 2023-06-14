@@ -153,6 +153,9 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 int smaller = ((colindex < start[myid]) ? 1 : 0);
                 int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
                 MPI_Get(x_gathered_elements + nnz_i, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
+                if(!myid){
+                    printf("%lf\n",x_gathered_elements[nnz_i]);
+                }
             }
 
             MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
