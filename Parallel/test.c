@@ -36,9 +36,9 @@ int main(int argc, char **argv)
     }
     
     /* Test SPMV */
-    int m = 100;
-    int n = 25;
-    int nnz_per_row = 20;
+    int m = 8;
+    int n = 2;
+    int nnz_per_row = 2;
     sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
     printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
     // /* Print in order */
