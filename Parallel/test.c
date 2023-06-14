@@ -36,9 +36,9 @@ int main(int argc, char **argv)
     }
     
     /* Test SPMV */
-    int m = 8;
-    int n = 2;
-    int nnz_per_row = 2;
+    int m = 10000;
+    int n = 2500;
+    int nnz_per_row = 2000;
     sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
     printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
     // /* Print in order */
@@ -68,8 +68,8 @@ int main(int argc, char **argv)
     spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
     double t2 = MPI_Wtime();
     if(!myid){
-        printf("First 2 lines from result on process 0:\n");
-        print_vector(result, 2); // result should be 1 overall (sum of row elements)
+        printf("First 50 lines from result on process 0:\n");
+        print_vector(result, 50); // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
 
