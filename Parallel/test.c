@@ -42,10 +42,10 @@ int main(int argc, char **argv)
     sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
     printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
     // /* Print in order */
-    if(!myid){
-        printf("Rank %d:\n", myid);
-        print_CSR(&M);
-    }
+    // if(!myid){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&M);
+    // }
     // MPI_Barrier(MPI_COMM_WORLD);
     // if(myid == 1){
     //     printf("Rank %d:\n", myid);
