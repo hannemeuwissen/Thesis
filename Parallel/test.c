@@ -68,8 +68,8 @@ int main(int argc, char **argv)
     spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
     double t2 = MPI_Wtime();
     if(!myid){
-        printf("First 25 lines from result on process 0:\n");
-        print_vector(result, 25); // result should be 1 overall (sum of row elements)
+        printf("First 2 lines from result on process 0:\n");
+        print_vector(result, 2); // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
 
