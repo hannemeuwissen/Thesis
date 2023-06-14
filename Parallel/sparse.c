@@ -147,7 +147,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 // x_element = x[colindex - start[myid]];
                 x_gathered_elements[nnz_i] = x[colindex - start[myid]];
                 if(!myid){
-                    printf("here!\n");
+                    printf("%lf\n",x_gathered_elements[nnz_i]);
                 }
             }else{ /* Element from x in other processes' memory*/
                 int smaller = ((colindex < start[myid]) ? 1 : 0);
