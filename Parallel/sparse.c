@@ -125,7 +125,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     }
     
     int M = A.ncols;
-    double x_element;
+    // double x_element;
+    double x_gathered_elements = malloc(A.nnz*sizeof(int));
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
@@ -134,25 +135,30 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
     
     for(int i=0;i<len;i++){
-        result[i] = 0.0;
+        // result[i] = 0.0;
+        int nnz_i = 0;
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
-            x_element = 0.0;
+            // x_element = 0.0;
             int colindex = A.colindex[j];
 
             MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
 
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
-                x_element = x[colindex - start[myid]];
+                // x_element = x[colindex - start[myid]];
+                x_gathered_elements[nnz_i] = x[colindex - start[myid]];
             }else{ /* Element from x in other processes' memory*/
                 int smaller = ((colindex < start[myid]) ? 1 : 0);
                 int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
-                MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
+                MPI_Get(x_gathered_elements + nnz_i, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
             }
 
             MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
 
-            result[i] += A.values[j]*x_element;
+            // result[i] += A.values[j]*x_element;
+            nnz_i++;
         }
+
+        result[i] = cblas_ddot(A.nnz, A.values, 1, x_gathered_elements, 1);
     }
 
     MPI_Win_free(&win);
