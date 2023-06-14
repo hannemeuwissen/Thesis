@@ -169,14 +169,12 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     }
     
     int M = A.ncols;
-    // double x_element;
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
     double * x_gathered_elements = malloc(A.nnz*sizeof(double));
 
     MPI_Datatype indexed_values;
-
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
     
@@ -184,7 +182,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         int j =A.rowptrs[i];
         int nnz_i = 0;
         MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
-        while(j<A.rowptrs[i+1] && i < A.nnz){
+        while(j<A.rowptrs[i+1] && nnz_i < A.nnz){
             int colindex = A.colindex[j];
             for(int p=0;p<nprocs;p++){
                 int cnt = 0;
