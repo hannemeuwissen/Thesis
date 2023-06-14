@@ -64,29 +64,10 @@ void get_indices(const int n, const int nprocs, int * start, int * end){
  * @param rank The rank of the calling process.
  * @return index_data The rank that stores the element and the index of the element.
  */
-index_data find_rank_colindex(const int colindex, const int nprocs, int * start, int * end, const int smaller, const int rank){
-    index_data result;
-    result.rank = -1;
-    result.index = -1;
-    int ll, ul;
-    if(smaller){
-        ll = 0;
-        ul = rank;
-    }else{
-        ll = rank+1;
-        ul = nprocs;
-    }
-    for(int i=ll;i<ul;i++){
-        if(colindex <= end[i]){
-            result.rank = i;
-            result.index = colindex - start[i];
-            return result;
-        }
-    }
-    return result;
-}
-// int find_rank_colindex(const int colindex, const int nprocs, int * end, const int smaller, const int rank){
-//     int result = -1;
+// index_data find_rank_colindex(const int colindex, const int nprocs, int * start, int * end, const int smaller, const int rank){
+//     index_data result;
+//     result.rank = -1;
+//     result.index = -1;
 //     int ll, ul;
 //     if(smaller){
 //         ll = 0;
@@ -97,11 +78,30 @@ index_data find_rank_colindex(const int colindex, const int nprocs, int * start,
 //     }
 //     for(int i=ll;i<ul;i++){
 //         if(colindex <= end[i]){
-//             return i;
+//             result.rank = i;
+//             result.index = colindex - start[i];
+//             return result;
 //         }
 //     }
 //     return result;
 // }
+int find_rank_colindex(const int colindex, const int nprocs, int * end, const int smaller, const int rank){
+    int result = -1;
+    int ll, ul;
+    if(smaller){
+        ll = 0;
+        ul = rank;
+    }else{
+        ll = rank+1;
+        ul = nprocs;
+    }
+    for(int i=ll;i<ul;i++){
+        if(colindex <= end[i]){
+            return i;
+        }
+    }
+    return result;
+}
 
 /**
  * @brief Function that calculates the sparse matrix mector multiplication between
@@ -139,13 +139,13 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
 
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
-                x_element = x[colindex];
+                x_element = x[colindex - start[myid]];
             }else{ /* Element from x in other processes' memory*/
                 int smaller = ((colindex < start[myid]) ? 1 : 0);
-                index_data colindex_data = find_rank_colindex(colindex, nprocs, start, end, smaller, myid);
-                // int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
-                MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index, 1, MPI_DOUBLE, win);
-                // MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
+                // index_data colindex_data = find_rank_colindex(colindex, nprocs, start, end, smaller, myid);
+                int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
+                // MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index, 1, MPI_DOUBLE, win);
+                MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
             }
             MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
 
@@ -158,3 +158,64 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     free(start);
     free(end);
 }
+// void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
+    
+//     if(len != A.nrows){
+//         perror("Incompatible dimensions in parallel spmv.\n");
+//         exit(EXIT_FAILURE);
+//     }
+    
+//     int M = A.ncols;
+//     // double x_element;
+//     int * start = malloc(nprocs*sizeof(int));
+//     int * end = malloc(nprocs*sizeof(int));
+//     get_indices(M, nprocs, start, end);
+//     double * x_gathered_elements = malloc(A.nnz*sizeof(double));
+
+//     MPI_Win win;
+//     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
+    
+//     for(int i=0;i<len;i++){
+//         int j =A.rowptrs[i];
+//         int nnz_i = 0;
+//         while(j<A.rowptrs[i+1] && i < A.nnz){
+//             int colindex = A.colindex[j];
+//             for(int p=0;p<nprocs;p++){
+//                 int cnt = 0;
+//                 int * indices = malloc((end[p] - start[p]+1)*sizeof(int));
+//                 while(colindex < end[p] && j < A.rowptrs[i+1]){
+//                     if(p != myid){
+
+//                     }else{
+//                         x_gathered_elements[nnz_i] = x[colindex - start[p]];
+//                     }
+//                     nnz_i++;
+//                     j++;
+//                 }
+//                 free(indices);
+//             }
+//             MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
+
+//             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
+//                 x_element = x[colindex];
+//             }else{ /* Element from x in other processes' memory*/
+//                 int smaller = ((colindex < start[myid]) ? 1 : 0);
+//                 // index_data colindex_data = find_rank_colindex(colindex, nprocs, start, end, smaller, myid);
+//                 int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
+//                 // MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_data.rank, colindex_data.index, 1, MPI_DOUBLE, win);
+//                 MPI_Get(&x_element, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
+//             }
+//             MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
+
+//             result[i] += A.values[j]*x_element;
+//         }
+//     }
+
+//     // multiply row_values & x_gathered_elements using BLAS function
+
+//     MPI_Win_free(&win);
+
+//     free(start);
+//     free(end);
+//     free(x_gathered_elements);
+// }
