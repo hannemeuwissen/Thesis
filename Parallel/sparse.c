@@ -182,7 +182,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         int j = A.rowptrs[i];
         int nnz_i = 0;
         MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
-        while(j<A.rowptrs[i+1] && nnz_i < A.nnz){
+        while(j<A.rowptrs[i+1]){
             int colindex = A.colindex[j];
             for(int p=0;p<nprocs;p++){ /* Per process: get all elements at once */
                 int cnt = 0; /* number of elements to get from this process */
@@ -210,6 +210,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 }
                 free(indices);
             }
+            j++;
+
         }
         if(!myid){
             printf("Here\n");
