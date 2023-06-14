@@ -214,8 +214,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         }
         MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
         // multiply row_values & x_gathered_elements using BLAS function
-        // cblas_dsdot (const MKL_INT n, const float *sx, const MKL_INT incx, const float *sy, const MKL_INT incy);
-        result[i] = cblas_dsdot(A.nnz, A.values, 1, x_gathered_elements, 1);
+        // cblas_ddot (n, x, incx, y, incy);
+        result[i] = cblas_ddot(A.nnz, A.values, 1, x_gathered_elements, 1);
     }
 
     MPI_Win_free(&win);
