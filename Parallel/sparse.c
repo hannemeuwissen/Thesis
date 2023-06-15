@@ -168,6 +168,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
     free(start);
     free(end);
+    free(x_gathered_elements);
 }
 // void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
     
