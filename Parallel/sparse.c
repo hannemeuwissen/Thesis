@@ -159,9 +159,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         }
 
         result[i] = cblas_ddot(A.nnz, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
-        if(!myid){
-            printf("%lf\n",result[i]);
-        }
     }
 
     MPI_Win_free(&win);
