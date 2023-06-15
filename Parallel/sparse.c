@@ -123,10 +123,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         perror("Incompatible dimensions in parallel spmv.\n");
         exit(EXIT_FAILURE);
     }
-    
+    A.
     int M = A.ncols;
     // double x_element;
-    double * x_gathered_elements = malloc(A.nnz*sizeof(int));
+    double * x_gathered_elements = malloc(M*sizeof(int)); // maximum size
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
@@ -158,7 +158,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             nnz_i++;
         }
 
-        result[i] = cblas_ddot(A.nnz, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
+        result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }
 
     MPI_Win_free(&win);
