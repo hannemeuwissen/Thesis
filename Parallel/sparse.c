@@ -123,7 +123,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         perror("Incompatible dimensions in parallel spmv.\n");
         exit(EXIT_FAILURE);
     }
-    A.
+    
     int M = A.ncols;
     // double x_element;
     double * x_gathered_elements = malloc(M*sizeof(int)); // maximum size
