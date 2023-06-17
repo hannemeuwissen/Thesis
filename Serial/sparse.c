@@ -106,14 +106,14 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, double * H, co
         spmv(A, Q_trans + (j-1)*len, len, w);
         // print_vector(w, len);
         for(int i=0;i<j;i++){
-            H[i*m + (j-1)] = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
-            cblas_daxpy(len,-H[i*m + (j-1)],Q_trans + i*len,1,w, 1);
+            H[i*(m-1) + (j-1)] = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
+            cblas_daxpy(len,-H[i*(m-1) + (j-1)],Q_trans + i*len,1,w, 1);
         }
-        H[j*m + (j-1)] = cblas_dnrm2(len, w, 1);
-        if(H[j*m + (j-1)] < eps){
+        H[j*(m-1) + (j-1)] = cblas_dnrm2(len, w, 1);
+        if(H[j*(m-1) + (j-1)] < eps){
             break;
         }
-        cblas_dscal(len, 1/H[j*m + (j-1)], w, 1);
+        cblas_dscal(len, 1/H[j*(m-1) + (j-1)], w, 1);
         cblas_dcopy(len, w, 1, Q_trans + j*len, 1);
     }
     /* Transpose final result */
