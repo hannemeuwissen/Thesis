@@ -55,11 +55,12 @@ int main(void){
     T.values[4] = 2.0;
     T.values[5] = 3.0;
     T.values[6] = 1.0;
-    int m = 3;
+    int m = 4;
     double * Q = malloc(n*m*sizeof(double));
     double * H = malloc(m*(m-1)*sizeof(double));
+    memset(H, 0, m*(m-1)*sizeof(double));
     double *b = malloc(n*sizeof(double));
-    for(int i=0;i<3;i++){
+    for(int i=0;i<n;i++){
         b[i] = 1.0;
     }
     Arnoldi(T, b, n, Q, H, m);
