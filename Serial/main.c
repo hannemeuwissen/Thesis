@@ -60,7 +60,7 @@ int main(void){
     for(int i=0;i<3;i++){
         b[i] = 1.0;
     }
-    Arnoldi(T, b, n, Q, m);
+    Arnoldi(T, b, n, Q, H, m);
     print_matrix(Q, n, m);
     print_matrix(H, m, m-1);
     free(H);
