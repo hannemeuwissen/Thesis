@@ -87,32 +87,33 @@ void print_matrix(double * A, const int n, const int m){
  * @param b Vector b.
  * @param len Length of the vector.
  * @param Q Matrix which will hold the resulting basis vectors of the Krylov subspace. (len x m)
+ * @param H Matrix which will hold the resulting upper Hessenberg matrix H. (m x (m-1))
  * @param m The degree of the Krlov subspace.
  */
-void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, const int m){
+void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, double * H, const int m){
     if(A.ncols != len){
         perror("Incompatible dimensions in Arnoldi.");
         exit(EXIT_FAILURE);
     }
-    double eps = 1e-12;
+    double eps = 1e-12; /* Tolerance for h: stop if h too small */
     double * Q_trans = malloc(len*m*sizeof(double));
-    cblas_dcopy(len, b, 1, Q_trans, 1); /* Set Q_trans0 */
+    cblas_dcopy(len, b, 1, Q_trans, 1); /* Set first vector of Q */
     double norm_b = cblas_dnrm2(len, Q_trans, 1);
     cblas_dscal(len, 1/norm_b, Q_trans, 1); /* Normalize */
-    double h;
+    // double h;
     double * w = malloc(len*sizeof(double));
     for(int j=1;j < m;j++){
         spmv(A, Q_trans + (j-1)*len, len, w);
-        print_vector(w, len);
+        // print_vector(w, len);
         for(int i=0;i<j;i++){
-            h = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
-            cblas_daxpy(len,-h,Q_trans + i*len,1,w, 1);
+            H[i*m + (j-1)] = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
+            cblas_daxpy(len,-H[i*m + (j-1)],Q_trans + i*len,1,w, 1);
         }
-        h = cblas_dnrm2(len, w, 1);
-        if(h < eps){
+        H[j*m + (j-1)] = cblas_dnrm2(len, w, 1);
+        if(H[j*m + (j-1)] < eps){
             break;
         }
-        cblas_dscal(len, 1/h, w, 1);
+        cblas_dscal(len, 1/H[j*m + (j-1)], w, 1);
         cblas_dcopy(len, w, 1, Q_trans + j*len, 1);
     }
     /* Transpose final result */
