@@ -98,7 +98,7 @@ int main(int argc, char **argv)
         }
     }
 
-    // Read input: degree of Krylov subspace + s (-> degree multiple of s) + A + size A (M,N) + input vector!
+    // Read input: degree of Krylov subspace + s (-> degree multiple of s) + A + size A (M,N) + input vector
     if(!myid){
         parse_command_line(argc, argv, filename_A, filename_v, &M, &N, &degree, &s);
     }
@@ -107,6 +107,7 @@ int main(int argc, char **argv)
     MPI_Bcast(filename_A, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
     int steps = degree/s;
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end);
@@ -114,18 +115,36 @@ int main(int argc, char **argv)
 
     // For all blocks:
     for(int block = 0;block < steps;block++){
-        // 1. Matrix powers kernel using parallel spmv for size of block
+
+        // Fix B
+
+        // Matrix powers kernel using parallel spmv for size of block
         // NOTE: since output for each spmv is vector --> need to transpose before next part!
 
-        // 2. Block-GS to orthogonalize compared to previous blocks (not the first time)
-        bgs(V, W, m, block*s + 1, s, MPI_COMM_WORLD);
+        if(!block){
+            // Orthogonalize block using parallel CA-TSQR
 
-        // 3. Orthogonalize block using parallel CA-TSQR
-        double * R = malloc(s*s*sizeof(double)); 
-        TSQR(A, m, s, R, myid, nprocs, MPI_COMM_WORLD);
-        MPI_Barrier(MPI_COMM_WORLD); 
+            // set mathcal Q
+            
+            // Calculate mathcal H
+        }else{
+            // Block-CGS to orthogonalize compared to previous blocks
+            double mathcalR = malloc((block*s + 1)*s*sizeof(double));
+            bgs(mathcalQ, V, mathcalR, m, block*s + 1, s, MPI_COMM_WORLD);
 
-        // 4. Calculate H
+            // Orthogonalize block using parallel CA-TSQR
+            double * R = malloc(s*s*sizeof(double)); 
+            TSQR(V, m, s, R, myid, nprocs, MPI_COMM_WORLD);
+            MPI_Barrier(MPI_COMM_WORLD); 
+
+            // Update mathcal Q
+
+            // Update mathcal R_k
+
+            // Update mathcal B
+
+            // Update mathcal H
+        }
 
     }
     
