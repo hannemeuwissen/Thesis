@@ -16,6 +16,7 @@
 #include"sparse.h"
 #include"tsqr_mpi.h"
 #include"bgs.h"
+#include"hess.h"
 #include"mkl.h"
 
 /**
@@ -113,6 +114,8 @@ int main(int argc, char **argv)
     decomp1d(M, nprocs, myid, &start, &end);
     int m = end - start + 1;
 
+    // Read data
+
     // For all blocks:
     for(int block = 0;block < steps;block++){
 
@@ -123,10 +126,24 @@ int main(int argc, char **argv)
 
         if(!block){
             // Orthogonalize block using parallel CA-TSQR
+            double * R_ = malloc((s+1)*(s+1)*sizeof(double)); 
+            TSQR(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD);
+            MPI_Barrier(MPI_COMM_WORLD);
 
             // set mathcal Q
-            
+            double * mathcalQ = malloc(m*(s+1)*sizeof(double));
+            memcpy(mathcalQ, V, m*(s+1)*sizeof(double));
+
             // Calculate mathcal H
+            if(!myid){
+                double * mathcalH = malloc((s+1)*s*sizeof(double));
+
+                // set B_
+
+                double * R = malloc(s*s*sizeof(double)); 
+                get_R(R, R_, s+1);
+                calc_hess(mathcalH, R_, B_, R, s+1, s);
+            }
         }else{
             // Block-CGS to orthogonalize compared to previous blocks
             double mathcalR = malloc((block*s + 1)*s*sizeof(double));
