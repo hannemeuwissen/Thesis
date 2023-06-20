@@ -36,16 +36,24 @@ int main(int argc, char **argv){
             fprintf(stderr,"Error: The number of processes needs to be a power of 2 (because of TSQR).\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
-    }
 
-    // Read input
-    if(!myid){
-        parse_command_line_regular(argc, argv, &M, &N, &nnz, filename_v, &degree, &s);
+        parse_command_line_regular(argc, argv, &M, &N, &nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
+        if(degree%s != 0){
+            printf("Invalid input: the degree of the Krylov subspace should be a multiple of the blocksize (s)\n");
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+
+        if((M<=0) || (N<=0) || (M<N)){
+            printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+
         if(floor(M/nprocs) < N){
             printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process: %d x %d).\n", M/nprocs, N);
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
+
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     // MPI_Bcast(filename_A, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
