@@ -135,10 +135,11 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     
     for(int i=0;i<len;i++){
         int nnz_i = 0;
+
+        MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
+
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
-
-            MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
 
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
                 x_gathered_elements[nnz_i] = x[colindex - start[myid]];
@@ -148,10 +149,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 MPI_Get(x_gathered_elements + nnz_i, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
             }
 
-            MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
-
             nnz_i++;
         }
+
+        MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
 
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }

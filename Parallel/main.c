@@ -20,8 +20,7 @@
 #include"hess.h"
 #include"mkl.h"
 
-int main(int argc, char **argv)
-{  
+int main(int argc, char **argv){  
     int myid, nprocs;
     int degree,s,M,N,nnz;
     // char filename_A[100]; 
