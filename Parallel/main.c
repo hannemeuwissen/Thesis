@@ -11,6 +11,7 @@
 #include <math.h>
 #include<mkl_cblas.h>
 #include<mkl_types.h>
+#include"parse.h"
 #include"matrix.h"
 #include"graph.h"
 #include"sparse.h"
@@ -19,73 +20,12 @@
 #include"hess.h"
 #include"mkl.h"
 
-/**
- * @brief Function that handles the input arguments. 
- * @param argc
- * @param argv 
- * @param filename_A The name of the file that contains the sparse CSR matrix.
- * @param M The number of rows.
- * @param N The number of columns.
- * @param filename_v The name of the file that contains the initial vector.
- * @param degree The degree of the Krylov subspace.
- * @param s The blocksize (s-step Krylov subspace method).
- */
-void parse_command_line(const int argc, char * const *argv, char * filename_A, int * M, int * N, char * filename_v, int * degree, int * s){
-    int c=0;
-    while((c = getopt(argc, argv, "d:s:f:v:m:n:")) != -1){
-        switch(c){
-            case 'f':
-                if(sscanf(optarg,"%s",filename_A) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
-                    MPI_Abort(MPI_COMM_WORLD, 1);
-                }
-                break;
-            case 'v':
-                if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
-                    MPI_Abort(MPI_COMM_WORLD, 1);
-                }
-                break;
-            case 'm':
-                if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
-                    MPI_Abort(MPI_COMM_WORLD, 1);
-                }
-                break;
-            case 'n':
-                if(sscanf(optarg,"%d",N) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
-                    MPI_Abort(MPI_COMM_WORLD, 1);
-                }
-                break;
-            case 'd':
-                if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
-                    MPI_Abort(MPI_COMM_WORLD, 1);
-                }
-                break;
-            case 's':
-                if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
-                    MPI_Abort(MPI_COMM_WORLD, 1);
-                }
-                break;
-            case '?':
-                printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
-                MPI_Abort(MPI_COMM_WORLD, 1);
-        }
-    }
-    if(degree%s != 0){
-        printf("Invalid input: the degree of the Krylov subspace should be a multiple of the blocksize (s)\n");
-        MPI_Abort(MPI_COMM_WORLD, 1);
-    }
-}
-
 int main(int argc, char **argv)
 {  
     int myid, nprocs;
-    int degree,s,M,N;
-    char filename_A[100], filename_v[100];
+    int degree,s,M,N,nnz;
+    // char filename_A[100]; 
+    char filename_v[100];
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
@@ -99,13 +39,17 @@ int main(int argc, char **argv)
         }
     }
 
-    // Read input: degree of Krylov subspace + s (-> degree multiple of s) + A + size A (M,N) + input vector
+    // Read input
     if(!myid){
-        parse_command_line(argc, argv, filename_A, filename_v, &M, &N, &degree, &s);
+        parse_command_line_regular(argc, argv, &M, &N, &nnz, filename_v, &degree, &s);
+        if(floor(M/nprocs) < N){
+            printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process: %d x %d).\n", M/nprocs, N);
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
     }
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(filename_A, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
+    // MPI_Bcast(filename_A, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
@@ -114,7 +58,12 @@ int main(int argc, char **argv)
     decomp1d(M, nprocs, myid, &start, &end);
     int m = end - start + 1;
 
-    // Read data
+    // Generate graph
+    generate_regular_graph_part_csr(m, M, nnz);
+
+    // read v
+    double *v = malloc(m*sizeof(double));
+    read_matrix_from_file(filename_v, start, v, m, 1);
 
     // For all blocks:
     for(int block = 0;block < steps;block++){

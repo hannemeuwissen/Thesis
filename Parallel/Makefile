@@ -12,9 +12,12 @@ MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
 EXECS= test
-OBJ = graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
+OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
+
+parse.o:parse.c parse.h
+	$(CC) -c $< $(FLAGS)
 
 matrix.o:matrix.c matrix.h
 	$(CC) -c $< $(FLAGS)
@@ -23,7 +26,7 @@ graph.o:graph.c graph.h
 	$(CC) -c $< $(FLAGS)
 
 sparse.o:sparse.c sparse.h
-	$(CC) -c $< $(FLAGS) $(MKLFLAGS)
+	$(ICC) -c $< $(FLAGS) $(MKLFLAGS)
 
 bgs.o:bgs.c bgs.h
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS)

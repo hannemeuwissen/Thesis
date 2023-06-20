@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     // int n = 1000;
     // double * A = malloc(m*n*sizeof(double));
     // int skip = ((!myid) ? 0 : myid*m*n + n);
-    // read_matrix_from_file("A.txt", skip, A, m, n);
+    // read_matrix_from_file("A.txt", skip, A, m, n); // Change skip: read_matrix_function changed 
     // if(myid == 3){
     //     printf("Data read!\n");
     // }

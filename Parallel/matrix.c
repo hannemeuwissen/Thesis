@@ -49,7 +49,7 @@ void read_matrix_from_file(const char *const filename, const int skip, double *A
 		exit(-1);
     }
     double temp;
-    for(int r=N;r<skip;r++){
+    for(int r=0;r<skip;r++){
         if(fscanf(fp, "%lf", &temp) == 0){
             perror("Incorrect matrix dimensions");
             exit(-1);
