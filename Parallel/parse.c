@@ -21,52 +21,58 @@
  */
 void parse_command_line_regular(const int argc, char * const *argv, int * M, int * N, int * nnz, char * filename_v, int * degree, int * s){
     int c=0;
-    M = 800;
-    N = 200;
-    nnz = 50;
+    *M = 800;
+    *N = 200;
+    *nnz = 50;
     while((c = getopt(argc, argv, "d:s:v:m:n:z:")) != -1){
         switch(c){
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-z nnz per row] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case 'm':
                 if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-z nnz per row] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case 'n':
                 if(sscanf(optarg,"%d",N) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-z nnz per row] [-d degree] [-s blocksize]\n");
+                    MPI_Abort(MPI_COMM_WORLD, 1);
+                }
+                break;
+            case 'z':
+                if(sscanf(optarg,"%d",nnz) == 0){
+                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-z nnz per row] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-z nnz per row] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-z nnz per row] [-d degree] [-s blocksize]\n");
                     MPI_Abort(MPI_COMM_WORLD, 1);
                 }
                 break;
             case '?':
-                printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-d degree] [-s blocksize]\n");
+                printf("Usage : ./main [-v filename_v] [-m nr of rows] [-n nr of columns] [-z nnz per row] [-d degree] [-s blocksize]\n");
                 MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
-    if(degree%s != 0){
+    if(*degree%*s != 0){
         printf("Invalid input: the degree of the Krylov subspace should be a multiple of the blocksize (s)\n");
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
-    if((M<=0) || (N<=0) || (M<N)){
+    if((*M<=0) || (*N<=0) || (*M<*N)){
         printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
@@ -85,8 +91,8 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
  */
 void parse_command_line_irregular(const int argc, char * const *argv, char * filename_A, int * M, int * N, char * filename_v, int * degree, int * s){
     int c=0;
-    M = 800;
-    N = 200;
+    *M = 800;
+    *N = 200;
     while((c = getopt(argc, argv, "d:s:f:v:m:n:")) != -1){
         switch(c){
             case 'f':
@@ -130,11 +136,11 @@ void parse_command_line_irregular(const int argc, char * const *argv, char * fil
                 MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
-    if(degree%s != 0){
+    if(*degree%*s != 0){
         printf("Invalid input: the degree of the Krylov subspace should be a multiple of the blocksize (s)\n");
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
-    if((M<=0) || (N<=0) || (M<N)){
+    if((*M<=0) || (*N<=0) || (*M<*N)){
         printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
