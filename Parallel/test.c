@@ -69,13 +69,13 @@ int main(int argc, char **argv)
     double t2 = MPI_Wtime();
     if(!myid){
         printf("First lines from result on process 0:\n");
-        print_vector(result, 10); // result should be 1 overall (sum of row elements)
+        print_vector(result, 25); // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 3){
         printf("First lines from result on process 3:\n");
-        print_vector(result, 10); // result should be 1 overall (sum of row elements)
+        print_vector(result, 25); // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
 
