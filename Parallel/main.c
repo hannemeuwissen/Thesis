@@ -66,7 +66,7 @@ int main(int argc, char **argv){
     int m = end - start + 1;
 
     // Generate graph
-    generate_regular_graph_part_csr(m, M, nnz);
+    sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
 
     // read v
     double *v = malloc(m*sizeof(double));
@@ -79,6 +79,14 @@ int main(int argc, char **argv){
 
         // Matrix powers kernel using parallel spmv for size of block
         // NOTE: since output for each spmv is vector --> need to transpose before next part!
+        int nr_vecs = ((!block)?s+1:s);
+        double * V = malloc((s+1)*m*sizeof(double));
+        if(!block){
+            memcpy(V, v, m*sizeof(double)); // find way to always get the last vector from last block here
+        }
+        for(int k=0;k<s;k++){
+            spmv(A, V + s*m, m, V + (s+1)*m, myid, nprocs, MPI_COMM_WORLD);
+        }
 
         if(!block){
             // Orthogonalize block using parallel CA-TSQR
@@ -88,7 +96,7 @@ int main(int argc, char **argv){
 
             // set mathcal Q
             double * mathcalQ = malloc(m*(s+1)*sizeof(double));
-            memcpy(mathcalQ, V, m*(s+1)*sizeof(double));
+            memcpy(mathcalQ, V, m*(s+1)*sizeof(double)); // save mathcallQ in rows (transposed)?
 
             // Calculate mathcal H
             if(!myid){
@@ -112,9 +120,11 @@ int main(int argc, char **argv){
 
             // Update mathcal Q
 
-            // Update mathcal R_k
-
-            // Update mathcal B
+            // Needed for following: mathcalR, mathcalR_, R
+            // Compute Hk−1,k
+            //Compute Hk viaEquation(3.21)
+            // ComputehkviaEquation (3.22)
+            // Hk = ... see p 165 Mark 
 
             // Update mathcal H
         }
