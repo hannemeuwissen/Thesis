@@ -112,8 +112,8 @@ int main(int argc, char **argv)
     int n = 4;
     double * A = malloc(m*n*sizeof(double));
     double * transA = malloc(m*n*sizeof(double));
-    read_matrix_from_file("smallA.txt", myid*m*n, A, m, n); // Change skip: read_matrix_function changed 
-    if(myid == 3){
+    read_matrix_from_file("smallA.txt", 0, A, m, n); // Change skip: read_matrix_function changed 
+    if(myid == 0){
         print_matrix(A, m, n);
     }
     // Transpose A
