@@ -143,7 +143,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
             lapack_int cols = N;
 
             /* Calculate local Housholder QR in terms of tau and v's */
-            int ret = LAPACKE_dgeqrf(LAPACK_COL_MAJOR, rows, cols, tempA, rows, tau);
+            int ret = LAPACKE_dgeqrf(LAPACK_COL_MAJOR, cols, rows, tempA, rows, tau);
             if(ret!=0){
                 if(ret<0){
                     fprintf(stderr, "LAPACKE_dgeqrf failed. Parameter %d had an illegal value\n", abs(ret));
