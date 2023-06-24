@@ -125,6 +125,10 @@ void TSQR(double *A, const int m, const int N, double *R, const int rank, const 
  */
 void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int rank, const int nprocs, MPI_Comm comm){
     
+    MPI_Datatype stridedcol;
+    MPI_Type_vector(N, N, m, MPI_DOUBLE, &stridedcol);
+    MPI_Type_commit(&stridedcol);
+
     const int steps = log2(nprocs);
     
     double * tempA = malloc(m*N*sizeof(double)); /* Allocate space to not overwrite A */
@@ -139,7 +143,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
             lapack_int cols = N;
 
             /* Calculate local Housholder QR in terms of tau and v's */
-            int ret = LAPACKE_dgeqrf( LAPACK_COL_MAJOR, rows, cols, tempA, cols, tau);
+            int ret = LAPACKE_dgeqrf(CblasColMajor, rows, cols, tempA, cols, tau);
             if(ret!=0){
                 if(ret<0){
                     fprintf(stderr, "LAPACKE_dgeqrf failed. Parameter %d had an illegal value\n", abs(ret));
@@ -168,7 +172,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                     /* Receive R from other process */
                     tempA = malloc(N*2*N*sizeof(double));
                     memcpy(tempA, R, N*N*sizeof(double));
-                    MPI_Recv(tempA + N*N, N*N, MPI_DOUBLE, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
+                    MPI_Recv(tempA + N, N*N, MPI_DOUBLE, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
                 }else{
                     /* Send R to other active process */
                     int lower_active = find_lower_active(rank, step + 1);
@@ -187,4 +191,6 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
     /* Overwrite A with resulting Q for each part */
     cblas_dtrsm(CblasColMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, N);
     // MPI_Barrier(MPI_COMM_WORLD);
+
+    MPI_Type_free(&stridedcol);
 }
