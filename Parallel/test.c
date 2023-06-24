@@ -113,14 +113,14 @@ int main(int argc, char **argv)
     double * A = malloc(m*n*sizeof(double));
     double * transA = malloc(m*n*sizeof(double));
     read_matrix_from_file("smallA.txt", 0, A, m, n); // Change skip: read_matrix_function changed 
-    if(myid == 0){
-        print_matrix(A, m, n);
-    }
     // Transpose A
     for(int i=0;i<m;i++){
         for(int j = 0;j<n;j++){
             transA[j*m + i] = A[i*n + j];
         }
+    }
+    if(myid == 0){
+        print_matrix(transA, n, m);
     }
     double * transR = malloc(n*n*sizeof(double));
     double t1 = MPI_Wtime();
