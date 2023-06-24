@@ -155,9 +155,9 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                 }
             }
 
-            if(!rank){
-                print_matrix(tempA, cols, rows);
-            }
+            // if(!rank){
+            //     print_matrix(tempA, cols, rows);
+            // }
 
             /* Save R part */
             for(int i=0;i<N;i++){ 
@@ -165,9 +165,9 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                     R[j + i*N] = ((j > i)? 0 : tempA[j + i*m]);
                 }
             } 
-            if(!rank){
-                print_matrix(R, cols, cols);
-            }
+            // if(!rank){
+            //     print_matrix(R, cols, cols);
+            // }
             free(tempA);
             
             if(step<steps){
@@ -192,7 +192,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
     MPI_Bcast(R, N*N, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     /* Overwrite A with resulting Q for each part */
-    cblas_dtrsm(CblasColMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, N);
+    cblas_dtrsm(CblasColMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, m);
     // MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Type_free(&stridedcol);
