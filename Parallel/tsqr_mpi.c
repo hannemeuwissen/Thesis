@@ -165,6 +165,9 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                     R[j + i*N] = ((j>i) ? 0 : tempA[j + i*N]);
                 }
             } 
+            if(!rank){
+                print_matrix(R, cols, cols);
+            }
             free(tempA);
             
             if(step<steps){
