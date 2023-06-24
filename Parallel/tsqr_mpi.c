@@ -156,7 +156,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
             }
 
             if(!rank){
-                print_matrix(A, rows, cols);
+                print_matrix(tempA, cols, rows);
             }
 
             /* Save R part */
