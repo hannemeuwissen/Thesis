@@ -119,9 +119,9 @@ int main(int argc, char **argv)
             transA[j*m + i] = A[i*n + j];
         }
     }
-    if(myid == 0){
-        print_matrix(transA, n, m);
-    }
+    // if(myid == 0){
+    //     print_matrix(transA, n, m);
+    // }
     double * transR = malloc(n*n*sizeof(double));
     double t1 = MPI_Wtime();
     TSQR_on_transpose(transA, m, n, transR, myid, nprocs, MPI_COMM_WORLD);
