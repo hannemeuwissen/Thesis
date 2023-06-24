@@ -35,12 +35,12 @@ int main(int argc, char **argv)
         }
     }
     
-    /* Test SPMV */
-    int m = 10000;
-    int n = 2500;
-    int nnz_per_row = 2000;
-    sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
-    printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
+    // /* Test SPMV */
+    // int m = 10000;
+    // int n = 2500;
+    // int nnz_per_row = 2000;
+    // sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
+    // printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
     // /* Print in order */
     // if(!myid){
     //     printf("Rank %d:\n", myid);
