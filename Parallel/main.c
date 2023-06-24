@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mpi.h>
+#include <string.h>
 #include <math.h>
 #include<mkl_cblas.h>
 #include<mkl_types.h>
@@ -23,7 +24,6 @@
 int main(int argc, char **argv){  
     int myid, nprocs;
     int degree,s,M,N,nnz;
-    // char filename_A[100]; 
     char filename_v[100];
 
     MPI_Init(&argc, &argv);
@@ -56,7 +56,6 @@ int main(int argc, char **argv){
 
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    // MPI_Bcast(filename_A, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
@@ -65,31 +64,35 @@ int main(int argc, char **argv){
     decomp1d(M, nprocs, myid, &start, &end);
     int m = end - start + 1;
 
-    // Generate graph
+    /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
 
-    // read v
+    /* Read the start vector v */
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start, v, m, 1);
+    // NOTE: does this vector need to be normalized? -> don't thinks so because normalized by TSQR?
 
-    // For all blocks:
+    /* Set change of basis matrices (for monomial basis) */
+    double * B_ = malloc(s*(s+1)*sizeof(double));
+    double * B = malloc(s*s*sizeof(double));
+    set_B(B, B_, s);
+
+    /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     for(int block = 0;block < steps;block++){
 
-        // Fix B
-
-        // Matrix powers kernel using parallel spmv for size of block
-        // NOTE: since output for each spmv is vector --> need to transpose before next part!
-        int nr_vecs = ((!block)?s+1:s);
-        double * V = malloc((s+1)*m*sizeof(double));
+        /* Matrix powers kernel using parallel spmv for size of block */
+        // NOTE: since output for each spmv is vector --> saved row-wise for memory efficiency
         if(!block){
-            memcpy(V, v, m*sizeof(double)); // find way to always get the last vector from last block here
-        }
-        for(int k=0;k<s;k++){
-            spmv(A, V + s*m, m, V + (s+1)*m, myid, nprocs, MPI_COMM_WORLD);
+            double * V = malloc((s+1)*m*sizeof(double));
+            memcpy(V, v, m*sizeof(double));
+            matrix_powers(A, v, V + m, s, m, myid, nprocs, MPI_COMM_WORLD);
+        }else{
+            double * V = malloc(s*m*sizeof(double));
+            matrix_powers(A, v, V, s, m, myid, nprocs, MPI_COMM_WORLD);
         }
 
         if(!block){
-            // Orthogonalize block using parallel CA-TSQR
+            /* Orthogonalize first block using parallel CA-TSQR */
             double * R_ = malloc((s+1)*(s+1)*sizeof(double)); 
             TSQR(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD);
             MPI_Barrier(MPI_COMM_WORLD);
@@ -127,6 +130,8 @@ int main(int argc, char **argv){
             // Hk = ... see p 165 Mark 
 
             // Update mathcal H
+
+            // put last vector in v!!
         }
 
     }

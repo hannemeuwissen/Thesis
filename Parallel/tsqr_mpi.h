@@ -9,5 +9,6 @@
 #define TSQR_H_7BZWC1IU
 
 void TSQR(double *A, const int m, const int N, double *R, const int rank, const int nprocs, MPI_Comm comm);
+void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int rank, const int nprocs, MPI_Comm comm);
 
 #endif /* end of include guard: TSQR_H_7BZWC1IU */

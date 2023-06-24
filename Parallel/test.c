@@ -61,23 +61,23 @@ int main(int argc, char **argv)
     //     printf("Rank %d:\n", myid);
     //     print_CSR(&M);
     // }
-    double * x = malloc(n*sizeof(double));
-    for(int i=0;i<n;i++){x[i] = 1.0;}
-    double * result = malloc(n*sizeof(double));
-    double t1 = MPI_Wtime();
-    spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
-    double t2 = MPI_Wtime();
-    if(!myid){
-        printf("First lines from result on process 0:\n");
-        print_vector(result, 10); // result should be 1 overall (sum of row elements)
-        printf("Runtime: %lf\n", t2-t1);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 3){
-        printf("First lines from result on process 3:\n");
-        print_vector(result, 10); // result should be 1 overall (sum of row elements)
-        printf("Runtime: %lf\n", t2-t1);
-    }
+    // double * x = malloc(n*sizeof(double));
+    // for(int i=0;i<n;i++){x[i] = 1.0;}
+    // double * result = malloc(n*sizeof(double));
+    // double t1 = MPI_Wtime();
+    // spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
+    // double t2 = MPI_Wtime();
+    // if(!myid){
+    //     printf("First lines from result on process 0:\n");
+    //     print_vector(result, 10); // result should be 1 overall (sum of row elements)
+    //     printf("Runtime: %lf\n", t2-t1);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 3){
+    //     printf("First lines from result on process 3:\n");
+    //     print_vector(result, 10); // result should be 1 overall (sum of row elements)
+    //     printf("Runtime: %lf\n", t2-t1);
+    // }
 
     // /* Test TSQR */
     // int m = 25000; // Total: 100000
@@ -107,6 +107,32 @@ int main(int argc, char **argv)
     //     print_matrix(A, 1, 10);
     //     printf("Runtime: %lf\n", t2-t1);
     // }
+    /* Test TSQR */
+    int m = 5; // Total: 4000
+    int n = 4;
+    double * A = malloc(m*n*sizeof(double));
+    double * transA = malloc(m*n*sizeof(double));
+    read_matrix_from_file("smallA.txt", myid*m*n, A, m, n); // Change skip: read_matrix_function changed 
+    if(myid == 3){
+        print_matrix(A, m, n);
+    }
+    // Transpose A
+    for(int i=0;i<m;i++){
+        for(int j = 0;j<n;j++){
+            transA[j*m + i] = A[i*n + j];
+        }
+    }
+    double * transR = malloc(n*n*sizeof(double));
+    double t1 = MPI_Wtime();
+    TSQR_on_transpose(transA, m, n, transR, myid, nprocs, MPI_COMM_WORLD);
+    double t2 = MPI_Wtime();
+    if(!myid){
+        printf("Result for transR:\n");
+        print_matrix(transR, n, n);
+        printf("Result for transA:\n");
+        print_matrix(transA, n, m);
+        printf("Runtime: %lf\n", t2-t1);
+    }
 
     // /* Tesy BGS: 2 processes*/
     // double *V = malloc(6*sizeof(double)); 

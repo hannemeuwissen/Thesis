@@ -10,5 +10,6 @@
 
 void calc_hess(double * H_, double * R_, double * B_, double * R, const int n, const int m);
 void get_R(double * R, double * R_, const int n);
+void set_B(double *B, double B_, const int s);
 
 #endif /* end of include guard: HESS_H_7BZWC1IU */

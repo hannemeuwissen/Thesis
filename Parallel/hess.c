@@ -39,3 +39,24 @@ void get_R(double * R, double * R_, const int n){
         memcpy(R + (n-1)*i, R_ + n*i, (n-1)*sizeof(double));
     }
 }
+
+/**
+ * @brief Function that sets both change of basis matrices B_ and the internal part B. 
+ * @param B The matrix which will hold the internal part of B_.
+ * @param B_ The matrix which will hold B_.
+ * @param s The number of columns in B_.
+ */
+void set_B(double *B, double B_, const int s){
+    /* Set B_ */    
+    memset(B_, 0, s*(s+1)*sizeof(double));
+    for(int i=1;i<(s+1);i++){
+        for(int j=0;j<s;j++){
+            if(i == (j+1)){
+                B_[i*s + j] = 1.0;
+            }
+        }
+    }
+
+    /* Set B */
+    memcpy(B, B_, s*s*sizeof(double));
+}

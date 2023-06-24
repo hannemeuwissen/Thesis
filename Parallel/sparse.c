@@ -67,27 +67,6 @@ void get_indices(const int n, const int nprocs, int * start, int * end){
  * @param rank The rank of the calling process.
  * @return index_data The rank that stores the element and the index of the element.
  */
-// index_data find_rank_colindex(const int colindex, const int nprocs, int * start, int * end, const int smaller, const int rank){
-//     index_data result;
-//     result.rank = -1;
-//     result.index = -1;
-//     int ll, ul;
-//     if(smaller){
-//         ll = 0;
-//         ul = rank;
-//     }else{
-//         ll = rank+1;
-//         ul = nprocs;
-//     }
-//     for(int i=ll;i<ul;i++){
-//         if(colindex <= end[i]){
-//             result.rank = i;
-//             result.index = colindex - start[i];
-//             return result;
-//         }
-//     }
-//     return result;
-// }
 int find_rank_colindex(const int colindex, const int nprocs, int * end, const int smaller, const int rank){
     int result = -1;
     int ll, ul;
@@ -230,3 +209,21 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 //     free(end);
 //     free(x_gathered_elements);
 // }
+
+/**
+ * @brief Function that performs the matrix powers kernel, constructing {v, Av, ..., A^(s)v}. 
+ * @param A The part of the sparse CSR matrix A for calling process.
+ * @param start_v The start vector v.
+ * @param V The matrix that stores the result.
+ * @param s The maximum power of A.
+ * @param m The number of rows in the part A.
+ * @param myid The rank of the calling process.
+ * @param nprocs The number of processes.
+ * @param comm The MPI communicator.
+ */
+void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, MPI_Comm comm){
+    spmv(A, start_v, m, V, myid, nprocs, comm);
+    for(int k=1;k<s;k++){
+        spmv(A, V + (s-1)*m, m, V + s*m, myid, nprocs, comm);
+    }
+}
