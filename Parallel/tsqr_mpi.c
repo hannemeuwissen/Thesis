@@ -160,7 +160,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
             }
 
             /* Save R part */
-            for(int j=0;j<N;i++){ 
+            for(int j=0;j<N;j++){ 
                 for(int i=0;i<N;i++){
                     R[j + i*N] = ((j > i)? 0 : tempA[j + i*N]);
                 }
