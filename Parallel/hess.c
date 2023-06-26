@@ -29,6 +29,21 @@ void calc_hess(double * H_, double * R_, double * B_, double * R, const int n, c
 }
 
 /**
+ * @brief Function that calculates the upper Hessenberg matrix based on R_, R (both transposed) and B_. 
+ * @param H_ The matrix which will hold the result.
+ * @param R_ The R_ matrix.
+ * @param B_ The B_ matrix.
+ * @param R The R matrix.
+ * @param n The number of rows and columns in R_, and rows in B_.
+ * @param m The number of columns in B_, and rows and columns in R.
+ */
+void calc_hess_on_transpose(double * H_, double * R_, double * B_, double * R, const int n, const int m){
+    memcpy(H_, B_, n*m*sizeof(double));
+    cblas_dtrmm(CblasRowMajor, CblasLeft, CblasUpper, CblasTrans, CblasNonUnit, n, m, 1.0, R_, n, H_, m);
+    cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasTrans, CblasNonUnit, n, m, 1.0, R, m, H_, m);
+}
+
+/**
  * @brief Function that gets the internal part from R_. 
  * @param R The matrix which will hold the result.
  * @param R_ The matrix which holds R_.

@@ -124,10 +124,6 @@ void TSQR(double *A, const int m, const int N, double *R, const int rank, const 
  * @param[in] comm The MPI communicator
  */
 void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int rank, const int nprocs, MPI_Comm comm){
-    
-    MPI_Datatype stridedcol;
-    MPI_Type_vector(N, N, m, MPI_DOUBLE, &stridedcol);
-    MPI_Type_commit(&stridedcol);
 
     const int steps = log2(nprocs);
     
@@ -200,5 +196,4 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
     cblas_dtrsm(CblasColMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, m);
     // MPI_Barrier(MPI_COMM_WORLD);
 
-    MPI_Type_free(&stridedcol);
 }

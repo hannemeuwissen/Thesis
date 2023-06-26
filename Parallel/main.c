@@ -67,7 +67,12 @@ int main(int argc, char **argv){
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
 
-    /* Read the start vector v */
+    /* Initialize arrays */
+    double *V;
+    double *R_;
+    double *mathcalQ = malloc((1 + steps*s)*m*sizeof(double));
+    double *mathcalH;
+    double *mathcalR;
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start, v, m, 1);
     // NOTE: does this vector need to be normalized? -> don't thinks so because normalized by TSQR?
@@ -80,48 +85,51 @@ int main(int argc, char **argv){
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     for(int block = 0;block < steps;block++){
 
-        /* Matrix powers kernel using parallel spmv for size of block */
-        // NOTE: since output for each spmv is vector --> saved row-wise for memory efficiency
         if(!block){
-            double * V = malloc((s+1)*m*sizeof(double));
+            /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
+            V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
             matrix_powers(A, v, V + m, s, m, myid, nprocs, MPI_COMM_WORLD);
-        }else{
-            double * V = malloc(s*m*sizeof(double));
-            matrix_powers(A, v, V, s, m, myid, nprocs, MPI_COMM_WORLD);
-        }
 
-        if(!block){
             /* Orthogonalize first block using parallel CA-TSQR */
-            double * R_ = malloc((s+1)*(s+1)*sizeof(double)); 
-            TSQR(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD);
+            R_ = malloc((s+1)*(s+1)*sizeof(double)); 
+            TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             MPI_Barrier(MPI_COMM_WORLD);
 
-            // set mathcal Q
-            double * mathcalQ = malloc(m*(s+1)*sizeof(double));
-            memcpy(mathcalQ, V, m*(s+1)*sizeof(double)); // save mathcallQ in rows (transposed)?
+            /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
+            memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
 
-            // Calculate mathcal H
+            /* Save last vector in v */
+            memcpy(v, V + s*m, m*sizeof(double));
+            free(V);
+
+            /* Calculate mathcal H (note: only process 0 calculates H, and final H is not transposed!)*/
             if(!myid){
-                double * mathcalH = malloc((s+1)*s*sizeof(double));
-
-                // set B_
-
+                mathcalH = malloc((s+1)*s*sizeof(double));
                 double * R = malloc(s*s*sizeof(double)); 
                 get_R(R, R_, s+1);
-                calc_hess(mathcalH, R_, B_, R, s+1, s);
+                calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
             }
         }else{
-            // Block-CGS to orthogonalize compared to previous blocks
-            double mathcalR = malloc((block*s + 1)*s*sizeof(double));
-            bgs(mathcalQ, V, mathcalR, m, block*s + 1, s, MPI_COMM_WORLD);
+            /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
+            V = malloc(s*m*sizeof(double));
+            matrix_powers(A, v, V, s, m, myid, nprocs, MPI_COMM_WORLD);
 
-            // Orthogonalize block using parallel CA-TSQR
-            double * R = malloc(s*s*sizeof(double)); 
-            TSQR(V, m, s, R, myid, nprocs, MPI_COMM_WORLD);
+            /* Block-CGS to orthogonalize compared to previous blocks */
+            mathcalR = malloc((block*s + 1)*m*sizeof(double));
+            bgs_on_transpose(mathcalQ, V, mathcalR, m, block*s + 1, s, MPI_COMM_WORLD);
+
+            /* Orthogonalize block using parallel CA-TSQR */
+            R_ = malloc(s*s*sizeof(double)); 
+            TSQR_on_transpose(V, m, s, R, myid, nprocs, MPI_COMM_WORLD);
             MPI_Barrier(MPI_COMM_WORLD); 
 
-            // Update mathcal Q
+            /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
+            memcpy(mathcalQ + (1 + block*s)*m, V, s*m*sizeof(double));
+
+            /* Save last vector in v */
+            memcpy(v, V + (s-1)*m, m*sizeof(double));
+            free(V);
 
             // Needed for following: mathcalR, mathcalR_, R
             // Compute Hk−1,k
