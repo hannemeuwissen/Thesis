@@ -173,6 +173,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
             if(step<steps){
                 if(is_active(rank, step + 1)){
                     /* Receive R from other process */
+                    print_matrix(R, N, N);
                     tempA = malloc(N*2*N*sizeof(double));
                     for(int i=0;i<N;i++){
                         memcpy(tempA + i*m, R + i*N, N*sizeof(double));
