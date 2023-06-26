@@ -178,6 +178,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                         memcpy(tempA + i*m, R, N*sizeof(double));
                     }
                     MPI_Recv(tempA + N, 1, stridedcol, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
+                    print_matrix(tempA, N, 2*N);
                 }else{
                     /* Send R to other active process */
                     int lower_active = find_lower_active(rank, step + 1);
