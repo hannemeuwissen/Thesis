@@ -162,7 +162,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
             /* Save R part */
             for(int i=0;i<N;i++){ 
                 for(int j=0;j<N;j++){
-                    R[j + i*N] = ((j > i)? 0 : tempA[j + i*m]);
+                    R[j + i*N] = ((j > i)? 0 : tempA[j + i*rows]);
                 }
             } 
             // if(!rank){
@@ -173,17 +173,14 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
             if(step<steps){
                 if(is_active(rank, step + 1)){
                     /* Receive R from other process */
-                    print_matrix(R, N, N);
                     tempA = malloc(N*2*N*sizeof(double));
                     for(int i=0;i<N;i++){
                         memcpy(tempA + i*2*N, R + i*N, N*sizeof(double));
                     }
-                    print_matrix(tempA, N, 2*N);
                     MPI_Recv(R, N*N, MPI_DOUBLE, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
                     for(int i=0;i<N;i++){
                         memcpy(tempA + N + i*2*N, R + i*N, N*sizeof(double));
                     }
-                    print_matrix(tempA, N, 2*N);
                 }else{
                     /* Send R to other active process */
                     int lower_active = find_lower_active(rank, step + 1);
