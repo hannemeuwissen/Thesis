@@ -187,7 +187,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                 }else{
                     /* Send R to other active process */
                     int lower_active = find_lower_active(rank, step + 1);
-                    MPI_Send(R, 1, stridedcol, lower_active, 1, comm);
+                    MPI_Send(R, N*N, MPI_DOUBLE, lower_active, 1, comm);
                 }
             }
         }else{
