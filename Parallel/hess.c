@@ -43,40 +43,63 @@ void calc_hess_on_transpose(double * H_, double * R_, double * B_, double * R, c
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasTrans, CblasNonUnit, n, m, 1.0, R, m, H_, m);
 }
 
-void update_hess_on_transpose(double ** H, double * mathcalR_, double * R, const int s, const int k){
+/**
+ * @brief Function that updates the upper Hessenberg matrix from step 1.
+ * @param H Pointer to the address of the previous upper Hessenberg matrix, and will store the next.
+ * @param mathcalR_ Pointer to the matrix inproduct from B-CGS.
+ * @param R Pointer to the R matrix from TSQR.
+ * @param s The blocksize.
+ * @param k The index of the current block.
+ */
+void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, const int s, const int k){
     /* Set dimensions */
     const int lowerdim = s*(k+1);
     const int upperdim = s*(k+1) + 1;
 
-    /* Construct MathcalR_ and MathcalR */
+    /* Construct MathcalR_ ([I mathcalR_ ; 0 R_]) and MathcalR */
     double * MathcalR_ = malloc(upperdim*upperdim*sizeof(double));
-    for(int i=0;i<(s*k + 1);i++){
+    for(int i=0;i<(s*k + 1);i++){ /* Upper part: [I mathcalR_]*/
         memset(MathcalR_ + i*upperdim, 0, (s*k + 1)*sizeof(double));
         MathcalR_[i + i*upperdim] = 1.0;
         memcpy(MathcalR_ + (s*k + 1) + i*upperdim, mathcalR_ + i*s, s*sizeof(double));
     }
     double * transR_ = malloc(s*s*sizeof(double));
     transpose(R_, transR_, s);
-    for(int i=(s*k + 1);i<upperdim;i++){
+    for(int i=(s*k + 1);i<upperdim;i++){ /* Lower part: [0 R_]*/
         memset(MathcalR_ + i*upperdim, 0, (s*k + 1)*sizeof(double));
         memcpy(MathcalR_ + (s*k + 1) + i*upperdim, transR_ + i*s, s*sizeof(double));
     }
     double * MathcalR = malloc((s*k + 1)*(s*k + 1)*sizeof(double));
     get_R(MathcalR, MathcalR_, upperdim);
 
-    /* Construct MathcalB_ */
+    /* Construct MathcalB_ ([H 0 ; 0,...,h B_]) */
     double * MathcalB_ = malloc(upperdim*lowerdim*sizeof(double));
-    for(int i=0;i<(s*k + 1);i++){
+    for(int i=0;i<s*k;i++){ /* Upper part: [H 0] */
         memcpy(MathcalB_ + i*lowerdim, *H + i*s*k, s*k*sizeof(double));
         memset(MathcalB_ + s*k + i*lowerdim, 0, s*sizeof(double));
     }
-    /* Change of basis matrix */
-    double * B_ = malloc(s*(s+1)*sizeof(double));
-    double * B = malloc(s*s*sizeof(double));
-    set_B(B, B_, s);
+    for(int i=s*k;i<upperdim;i++){ /* Lower part: [0,...,h B_] */
+        memset(MathcalB_ + i*lowerdim, 0, lowerdim*sizeof(double));
+        if(i > s*k){MathcalB_[i-1 + i*lowerdim] = 1.0;}
+    }
+    MathcalB_[s*k - 1 + s*k*lowerdim] = (*H)[s*k - 1 + (s*k)*(s*k)];
+    free(*H);
 
     /* Update H */
-    double *tempH = malloc(upperdim*lowerdim*sizeof(double));
+    *H = malloc(upperdim*lowerdim*sizeof(double));
+    calc_hess(*H, MathcalR_, MathcalB_, MathcalR, upperdim, lowerdim);
+}
+
+/**
+ * @brief Function that sets the change of basis matrix B_. 
+ * @param B_ The pointer to the matrix B_.
+ * @param s The number of columns in B_.
+ */
+void set_B_(double *B_, const int s){
+    memset(B_, 0, s*(s+1)*sizeof(double));
+    for(int i=1;i<(s+1);i++){
+        B_[i-1 + i*s] = 1.0;
+    }
 }
 
 /**
@@ -89,27 +112,6 @@ void get_R(double * R, double * R_, const int n){
     for(int i=0;i<(n-1);i++){
         memcpy(R + (n-1)*i, R_ + n*i, (n-1)*sizeof(double));
     }
-}
-
-/**
- * @brief Function that sets both change of basis matrices B_ and the internal part B. 
- * @param B The matrix which will hold the internal part of B_.
- * @param B_ The matrix which will hold B_.
- * @param s The number of columns in B_.
- */
-void set_B(double *B, double *B_, const int s){
-    /* Set B_ */    
-    memset(B_, 0, s*(s+1)*sizeof(double));
-    for(int i=1;i<(s+1);i++){
-        for(int j=0;j<s;j++){
-            if(i == (j+1)){
-                B_[i*s + j] = 1.0;
-            }
-        }
-    }
-
-    /* Set B */
-    memcpy(B, B_, s*s*sizeof(double));
 }
 
 /**

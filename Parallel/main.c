@@ -103,8 +103,11 @@ int main(int argc, char **argv){
                 mathcalH = malloc((s+1)*s*sizeof(double));
                 double * R = malloc(s*s*sizeof(double)); 
                 get_R(R, R_, s+1);
+                double * B_ = malloc(s*(s+1)*sizeof(double));
+                set_B_(B_, s);
                 calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
                 free(R);
+                free(B_)
             }
             free(R_);
         }else{
@@ -130,7 +133,7 @@ int main(int argc, char **argv){
             free(V);
 
             /* Update mathcal H */
-            double *mathcalH = malloc((s*(k+1)+1)*(s*(k+1))*sizeof(double)); // change: function should replace mathcalH
+            update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
         }
     }
     
