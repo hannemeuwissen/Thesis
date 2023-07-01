@@ -58,5 +58,5 @@ void bgs_on_transpose(double *Q, double *V, double * R, const int m, const int n
     free(localR);
 
     /* Step 3: Local Gramm-Schmidt step - V <- V - QR */
-    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, m, s, n, -1.0, Q, n, R, n, 1.0, V, s);
+    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, s, m, n, -1.0, Q, n, R, n, 1.0, V, m);
 }
