@@ -24,7 +24,7 @@
 
 int main(int argc, char **argv){  
     int myid, nprocs;
-    int degree,s,M,N,nnz;
+    int degree,s,M,nnz;
     char filename_v[100];
 
     MPI_Init(&argc, &argv);
@@ -38,18 +38,18 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        parse_command_line_regular(argc, argv, &M, &N, &nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
+        parse_command_line_regular(argc, argv, &M, &nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
         if(degree%s != 0){
             printf("Invalid input: the degree of the Krylov subspace should be a multiple of the blocksize (s)\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        if((M<=0) || (N<=0) || (M<N)){
+        if((M<=0) || (degree<=0) || (M<degree)){
             printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        if(floor(M/nprocs) < N){
+        if(floor(M/nprocs) < degree){
             printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process: %d x %d).\n", M/nprocs, N);
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
@@ -59,7 +59,6 @@ int main(int argc, char **argv){
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
     
     /* Determine the start index and size of part for calling process */
