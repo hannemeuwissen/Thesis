@@ -12,6 +12,7 @@
 #include <math.h>
 #include<mkl_cblas.h>
 #include<mkl_types.h>
+#include"decomp1d.h"
 #include"parse.h"
 #include"matrix.h"
 #include"graph.h"
