@@ -44,6 +44,44 @@ void calc_hess_on_transpose(double * H_, double * R_, double * B_, double * R, c
 }
 
 /**
+ * @brief Function that sets the change of basis matrix B_. 
+ * @param B_ The pointer to the matrix B_.
+ * @param s The number of columns in B_.
+ */
+void set_B_(double *B_, const int s){
+    memset(B_, 0, s*(s+1)*sizeof(double));
+    for(int i=1;i<(s+1);i++){
+        B_[i-1 + i*s] = 1.0;
+    }
+}
+
+/**
+ * @brief Function that gets the internal part from R_. 
+ * @param R The matrix which will hold the result.
+ * @param R_ The matrix which holds R_.
+ * @param n The number of rows in R_.
+ */
+void get_R(double * R, double * R_, const int n){
+    for(int i=0;i<(n-1);i++){
+        memcpy(R + (n-1)*i, R_ + n*i, (n-1)*sizeof(double));
+    }
+}
+
+/**
+ * @brief Function that transposes a square matrix.
+ * @param R Pointer to the matrix.
+ * @param transR Poiter to matrix that stores the result.
+ * @param s The dimension of the matrix.
+ */
+void transpose(double *R, double *transR, const int s){
+    for(int i=0;i<s;i++){
+        for(int j=0;j<s;j++){
+            transR[j + i*s] = R[i + j*s];
+        }
+    }
+}
+
+/**
  * @brief Function that updates the upper Hessenberg matrix from step 1.
  * @param H Pointer to the address of the previous upper Hessenberg matrix, and will store the next.
  * @param mathcalR_ Pointer to the matrix inproduct from B-CGS.
@@ -91,42 +129,4 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     free(MathcalB_);
     free(MathcalR_);
     free(MathcalR);
-}
-
-/**
- * @brief Function that sets the change of basis matrix B_. 
- * @param B_ The pointer to the matrix B_.
- * @param s The number of columns in B_.
- */
-void set_B_(double *B_, const int s){
-    memset(B_, 0, s*(s+1)*sizeof(double));
-    for(int i=1;i<(s+1);i++){
-        B_[i-1 + i*s] = 1.0;
-    }
-}
-
-/**
- * @brief Function that gets the internal part from R_. 
- * @param R The matrix which will hold the result.
- * @param R_ The matrix which holds R_.
- * @param n The number of rows in R_.
- */
-void get_R(double * R, double * R_, const int n){
-    for(int i=0;i<(n-1);i++){
-        memcpy(R + (n-1)*i, R_ + n*i, (n-1)*sizeof(double));
-    }
-}
-
-/**
- * @brief Function that transposes a square matrix.
- * @param R Pointer to the matrix.
- * @param transR Poiter to matrix that stores the result.
- * @param s The dimension of the matrix.
- */
-void transpose(double *R, double *transR, const int s){
-    for(int i=0;i<s;i++){
-        for(int j=0;j<s;j++){
-            transR[j + i*s] = R[i + j*s];
-        }
-    }
 }
