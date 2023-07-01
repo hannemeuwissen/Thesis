@@ -63,10 +63,8 @@ int main(int argc, char **argv){
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
-    if(myid == 1){
-        printf("%d\n", M);
-    }
-    
+    printf("Process %d passed line 66 \n", myid);
+
     /* Determine the start index and size of part for calling process */
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end);
@@ -74,7 +72,7 @@ int main(int argc, char **argv){
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
-    printf("Process %d passed line 71 \n", myid);
+    printf("Process %d passed line 75 \n", myid);
 
     if(!myid){
         print_CSR(&A);
