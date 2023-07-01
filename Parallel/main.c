@@ -30,7 +30,7 @@ int main(int argc, char **argv){
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-    if(!myid){
+    if(!myid){ /* Read input */
         float logprocs = log2(nprocs);
         if(ceil(logprocs) != floor(logprocs)){
             fprintf(stderr,"Error: The number of processes needs to be a power of 2 (because of TSQR).\n");
@@ -54,12 +54,14 @@ int main(int argc, char **argv){
         }
     }
 
+    /* Broadcast input to all processes */
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
-    int steps = degree/s;
+    
+    /* Determine the start index and size of part for calling process */
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end);
     int m = end - start + 1;
@@ -68,6 +70,7 @@ int main(int argc, char **argv){
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
 
     /* Initialize arrays */
+    int steps = degree/s;
     double *V;
     double *R_;
     double *mathcalQ = malloc((1 + steps*s)*m*sizeof(double));
@@ -75,7 +78,14 @@ int main(int argc, char **argv){
     double *mathcalR_;
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start, v, m, 1);
-    // NOTE: does this vector need to be normalized? -> don't thinks so because normalized by TSQR?
+    
+    /* Normalize start vector */
+    double local_dot = cblas_ddot(m, v, 1, v, 1);
+    double global_dot;
+    MPI_Allreduce(local_dot, global_dot, 1, MPI_DOUBLE, MPI_SUM, comm);
+    for(int i=0;i<m;i++){
+        v[i] /= sqrt(global_dot);
+    }
 
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     for(int block = 0;block < steps;block++){
@@ -117,8 +127,7 @@ int main(int argc, char **argv){
 
             /* Block-CGS to orthogonalize compared to previous blocks */
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
-            bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD);
-            // Note: mathcal R is not transposed
+            bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
 
             /* Orthogonalize block using parallel CA-TSQR */
             R_ = malloc(s*s*sizeof(double)); 
@@ -133,7 +142,11 @@ int main(int argc, char **argv){
             free(V);
 
             /* Update mathcal H */
-            update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
+            if(!myid){
+                update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
+            }
+            free(R_);
+            free(mathcalR_)
         }
     }
     

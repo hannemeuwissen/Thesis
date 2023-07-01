@@ -88,6 +88,9 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     /* Update H */
     *H = malloc(upperdim*lowerdim*sizeof(double));
     calc_hess(*H, MathcalR_, MathcalB_, MathcalR, upperdim, lowerdim);
+    free(MathcalB_);
+    free(MathcalR_);
+    free(MathcalR);
 }
 
 /**
