@@ -69,8 +69,9 @@ int main(int argc, char **argv){
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end);
     int m = end - start + 1;
+
     if(myid == 1){
-        printf("start %d end %d\n", start, end);
+        printf("%d %d %d\n", degree, s, M);
     }
 
     /* Generate part of transition matrix for calling process */
