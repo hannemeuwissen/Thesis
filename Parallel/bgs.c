@@ -51,7 +51,7 @@ void bgs(double *Q, double *V, double * R, const int m, const int n, const int s
 void bgs_on_transpose(double *Q, double *V, double * R, const int m, const int n, const int s, MPI_Comm comm){
     /* Step 1: matrix-matrix multiplication */
     double * localR = malloc(n*s*sizeof(double));
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, n, s, m, 1.0, Q, m, V, m, 0.0, localR, s);
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, n, s, m, 1.0, Q, n, V, s, 0.0, localR, n);
 
     /* Step 2: Communicate - Allreduce for each element */
     MPI_Allreduce(localR, R, n*s, MPI_DOUBLE, MPI_SUM, comm);
