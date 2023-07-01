@@ -55,16 +55,12 @@ int main(int argc, char **argv){
         }
     }
 
-    printf("Process %d passed line 58 \n", myid);
-
     /* Broadcast input to all processes */
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
-
-    printf("Process %d passed line 66 \n", myid);
 
     /* Determine the start index and size of part for calling process */
     int start, end;
@@ -73,7 +69,6 @@ int main(int argc, char **argv){
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
-    printf("Process %d passed line 75 \n", myid);
 
     if(!myid){
         print_CSR(&A);
@@ -88,12 +83,6 @@ int main(int argc, char **argv){
     double *mathcalR_;
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start, v, m, 1);
-    if(!myid){
-        print_vector(v, m);
-    }
-    if(myid == 1){
-        print_vector(v, m);
-    }
     
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
@@ -148,7 +137,7 @@ int main(int argc, char **argv){
             /* Orthogonalize block using parallel CA-TSQR */
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
-            MPI_Barrier(MPI_COMM_WORLD); 
+            // MPI_Barrier(MPI_COMM_WORLD); 
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ + (1 + block*s)*m, V, s*m*sizeof(double));
@@ -164,6 +153,8 @@ int main(int argc, char **argv){
             free(R_);
             free(mathcalR_);
         }
+
+        MPI_Barrier(MPI_COMM_WORLD);
     }
 
     if(!myid){
