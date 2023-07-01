@@ -154,6 +154,8 @@ int main(int argc, char **argv){
             free(mathcalR_);
         }
 
+        printf("Process %d finished block %d\n", myid, block);
+
         MPI_Barrier(MPI_COMM_WORLD);
     }
 
