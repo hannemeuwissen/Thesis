@@ -68,6 +68,7 @@ int main(int argc, char **argv){
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
+    printf("Process %d passed here\n", myid);
 
     if(!myid){
         print_CSR(&A);
