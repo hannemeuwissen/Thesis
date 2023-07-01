@@ -90,7 +90,7 @@ int main(int argc, char **argv){
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
     double global_dot;
-    MPI_Allreduce(local_dot, global_dot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&local_dot, &global_dot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
     double global_norm = sqrt(global_dot);
     for(int i=0;i<m;i++){v[i] /= global_norm;}
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv){
                 set_B_(B_, s);
                 calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
                 free(R);
-                free(B_)
+                free(B_);
             }
             free(R_);
         }else{
@@ -153,12 +153,12 @@ int main(int argc, char **argv){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
             }
             free(R_);
-            free(mathcalR_)
+            free(mathcalR_);
         }
     }
 
     if(!myid){
-        print_matrix(mathcalQ, (steps*k + 1), m);
+        print_matrix(mathcalQ, (steps*s + 1), m);
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
 
