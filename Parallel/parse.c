@@ -24,7 +24,7 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
     int c=0;
     *M = 800;
     *nnz = 50;
-    while((c = getopt(argc, argv, "d:s:v:m:n:z:")) != -1){
+    while((c = getopt(argc, argv, "d:s:v:m:z:")) != -1){
         switch(c){
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
@@ -34,12 +34,6 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
                 break;
             case 'm':
                 if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
-                    MPI_Abort(comm, 1);
-                }
-                break;
-            case 'n':
-                if(sscanf(optarg,"%d",N) == 0){
                     printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
                     MPI_Abort(comm, 1);
                 }
@@ -82,7 +76,7 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
 void parse_command_line_irregular(const int argc, char * const *argv, char * filename_A, int * M, char * filename_v, int * degree, int * s, MPI_Comm comm){
     int c=0;
     *M = 800;
-    while((c = getopt(argc, argv, "d:s:f:v:m:n:")) != -1){
+    while((c = getopt(argc, argv, "d:s:f:v:m:")) != -1){
         switch(c){
             case 'f':
                 if(sscanf(optarg,"%s",filename_A) == 0){
@@ -98,12 +92,6 @@ void parse_command_line_irregular(const int argc, char * const *argv, char * fil
                 break;
             case 'm':
                 if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-d degree] [-s blocksize]\n");
-                    MPI_Abort(comm, 1);
-                }
-                break;
-            case 'n':
-                if(sscanf(optarg,"%d",N) == 0){
                     printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-d degree] [-s blocksize]\n");
                     MPI_Abort(comm, 1);
                 }
