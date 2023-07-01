@@ -86,6 +86,7 @@ int main(int argc, char **argv){
         print_vector(v, m);
     }
     if(myid == 1){
+        printf("Here!\n");
         print_vector(v, m);
     }
     
