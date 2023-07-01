@@ -31,6 +31,8 @@ int main(int argc, char **argv){
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
+    printf("Number of processes: %d\n", nprocs);
+
     if(!myid){ /* Read input */
         float logprocs = log2(nprocs);
         if(ceil(logprocs) != floor(logprocs)){
