@@ -62,6 +62,10 @@ int main(int argc, char **argv){
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
+
+    if(myid == 1){
+        printf("%d\n", M);
+    }
     
     /* Determine the start index and size of part for calling process */
     int start, end;
