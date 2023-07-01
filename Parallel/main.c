@@ -69,6 +69,10 @@ int main(int argc, char **argv){
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
 
+    if(!myid){
+        print_CSR(&A);
+    }
+
     /* Initialize arrays */
     int steps = degree/s;
     double *V;
@@ -78,14 +82,16 @@ int main(int argc, char **argv){
     double *mathcalR_;
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start, v, m, 1);
+    if(!myid){
+        print_vector(v, m);
+    }
     
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
     double global_dot;
     MPI_Allreduce(local_dot, global_dot, 1, MPI_DOUBLE, MPI_SUM, comm);
-    for(int i=0;i<m;i++){
-        v[i] /= sqrt(global_dot);
-    }
+    double global_norm = sqrt(global_dot);
+    for(int i=0;i<m;i++){v[i] /= global_norm;}
 
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     for(int block = 0;block < steps;block++){
@@ -149,6 +155,14 @@ int main(int argc, char **argv){
             free(mathcalR_)
         }
     }
+
+    if(!myid){
+        print_matrix(mathcalQ, (steps*k + 1), m);
+        print_matrix(mathcalH, (steps*s + 1), steps*s);
+    }
+
+    free(mathcalQ);
+    free(mathcalH);
     
     MPI_Finalize();
     return 0;
