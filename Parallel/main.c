@@ -90,7 +90,7 @@ int main(int argc, char **argv){
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
     double global_dot;
-    MPI_Allreduce(local_dot, global_dot, 1, MPI_DOUBLE, MPI_SUM, comm);
+    MPI_Allreduce(local_dot, global_dot, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
     double global_norm = sqrt(global_dot);
     for(int i=0;i<m;i++){v[i] /= global_norm;}
 
