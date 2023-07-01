@@ -69,6 +69,9 @@ int main(int argc, char **argv){
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end);
     int m = end - start + 1;
+    if(myid == 1){
+        printf("start %d end %d\n", start, end);
+    }
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
