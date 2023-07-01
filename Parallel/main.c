@@ -31,8 +31,6 @@ int main(int argc, char **argv){
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-    printf("Number of processes: %d\n", nprocs);
-
     if(!myid){ /* Read input */
         float logprocs = log2(nprocs);
         if(ceil(logprocs) != floor(logprocs)){
@@ -57,6 +55,8 @@ int main(int argc, char **argv){
         }
     }
 
+    printf("Process %d passed line 58 \n", myid);
+
     /* Broadcast input to all processes */
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -70,7 +70,7 @@ int main(int argc, char **argv){
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
-    printf("Process %d passed here\n", myid);
+    printf("Process %d passed line 71 \n", myid);
 
     if(!myid){
         print_CSR(&A);
@@ -89,7 +89,6 @@ int main(int argc, char **argv){
         print_vector(v, m);
     }
     if(myid == 1){
-        printf("Here!\n");
         print_vector(v, m);
     }
     
