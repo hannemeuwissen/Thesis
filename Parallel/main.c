@@ -85,6 +85,9 @@ int main(int argc, char **argv){
     if(!myid){
         print_vector(v, m);
     }
+    if(myid == 1){
+        print_vector(v, m);
+    }
     
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
