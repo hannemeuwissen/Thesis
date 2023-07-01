@@ -61,6 +61,7 @@ int main(int argc, char **argv){
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
     printf("Process %d passed line 66 \n", myid);
@@ -69,10 +70,6 @@ int main(int argc, char **argv){
     int start, end;
     decomp1d(M, nprocs, myid, &start, &end);
     int m = end - start + 1;
-
-    if(myid == 1){
-        printf("%d %d %d\n", degree, s, M);
-    }
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
