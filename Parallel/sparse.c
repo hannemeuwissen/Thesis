@@ -46,7 +46,7 @@ void read_CSR(sparse_CSR * M, const char *const filename){
 		perror("Error trying to open the file that contains the csr matrix.");
 		exit(-1);
     }
-    double temp;
+    int temp;
     if(fscanf(fp, "%d", &temp) == 0){
         perror("Invalid CSR file");
         exit(-1);
@@ -62,6 +62,7 @@ void read_CSR(sparse_CSR * M, const char *const filename){
         exit(-1);
     }
     M->nnz = temp;
+    printf("%d", M->nnz);
     for(int i = 0;i<=M->nrows;i++){
         if(fscanf(fp, "%d", M->rowptrs + i ) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
