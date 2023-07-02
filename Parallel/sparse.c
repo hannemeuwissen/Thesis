@@ -63,17 +63,17 @@ void read_CSR(sparse_CSR M, const char *const filename){
     }
     M.nnz = temp;
     for(int i = 0;i<=M.nrows;i++){
-        if(fscanf(fp, "%d", M.rowptrs + i) == 0){
+        if(fscanf(fp, "%d", &(M.rowptrs[i])) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
             exit(-1);
         }
     }
     for (int i=0;i<M.nnz;i++){
-        if(fscanf(fp, "%d", M.colindex + i) == 0){
+        if(fscanf(fp, "%d", &(M.colindex[i]) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
             exit(-1);
         }
-        if(fscanf(fp, "%lf", M.values + i) == 0){
+        if(fscanf(fp, "%lf", &(M.values[i]) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
             exit(-1);
         }
