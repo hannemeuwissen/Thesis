@@ -30,6 +30,7 @@ typedef struct index_data {
 } index_data;
 
 void print_CSR(sparse_CSR * M);
+void read_CSR(sparse_CSR M, const char *const filename);
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm);
 void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, MPI_Comm comm);
 
