@@ -62,13 +62,13 @@ void read_CSR(sparse_CSR * M, const char *const filename){
         exit(-1);
     }
     M->nnz = temp;
-    for(int i = 0;i<=M.nrows;i++){
+    for(int i = 0;i<=M->nrows;i++){
         if(fscanf(fp, "%d", M->rowptrs + i ) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
             exit(-1);
         }
     }
-    for (int i=0;i<M.nnz;i++){
+    for (int i=0;i<M->nnz;i++){
         if(fscanf(fp, "%d", M->colindex + i) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
             exit(-1);
