@@ -71,7 +71,7 @@ sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int n
     // fclose(fpointer);
     // srandom(randomvalue);
     // fixed seed for testing
-    srandom(1999);
+    srandom(9499);
 
     /* Initialize sparse_CSR structure */
     sparse_CSR T;
