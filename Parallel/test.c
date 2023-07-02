@@ -162,7 +162,7 @@ int main(int argc, char **argv)
 
     /* Test read CSR */
     sparse_CSR A;
-    read_CSR(A, "smallcsr.txt");
+    read_CSR(&A, "smallcsr.txt");
 
     print_CSR(&A); 
 
