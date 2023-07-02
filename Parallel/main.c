@@ -109,6 +109,10 @@ int main(int argc, char **argv){
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
 
+            if(!myid){
+                print_matrix(mathcalQ, (steps*s + 1), m);
+            }
+
             /* Save last vector in v */
             memcpy(v, V + s*m, m*sizeof(double));
             free(V);
