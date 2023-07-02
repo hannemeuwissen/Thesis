@@ -11,7 +11,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= main
+EXECS= test main
 OBJ = decomp1d.o parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
@@ -40,11 +40,11 @@ hess.o:hess.c hess.h
 tsqr_mpi.o:tsqr_mpi.c
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS) -lm
 
-# test:test.c $(OBJ)
-# 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
-#         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
-#         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-#         -liomp5 -lpthread -lm
+test:test.c $(OBJ)
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+        -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
+        -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+        -liomp5 -lpthread -lm
 
 main:main.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \

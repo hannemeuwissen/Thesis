@@ -107,32 +107,32 @@ int main(int argc, char **argv)
     //     print_matrix(A, 1, 10);
     //     printf("Runtime: %lf\n", t2-t1);
     // }
-    /* Test TSQR */
-    int m = 5; // Total: 4000
-    int n = 4;
-    double * A = malloc(m*n*sizeof(double));
-    double * transA = malloc(m*n*sizeof(double));
-    read_matrix_from_file("smallA.txt", 0, A, m, n); // Change skip: read_matrix_function changed 
-    // Transpose A
-    for(int i=0;i<m;i++){
-        for(int j = 0;j<n;j++){
-            transA[j*m + i] = A[i*n + j];
-        }
-    }
-    // if(myid == 0){
-    //     print_matrix(transA, n, m);
+    // /* Test TSQR */
+    // int m = 5; // Total: 4000
+    // int n = 4;
+    // double * A = malloc(m*n*sizeof(double));
+    // double * transA = malloc(m*n*sizeof(double));
+    // read_matrix_from_file("smallA.txt", 0, A, m, n); // Change skip: read_matrix_function changed 
+    // // Transpose A
+    // for(int i=0;i<m;i++){
+    //     for(int j = 0;j<n;j++){
+    //         transA[j*m + i] = A[i*n + j];
+    //     }
     // }
-    double * transR = malloc(n*n*sizeof(double));
-    double t1 = MPI_Wtime();
-    TSQR_on_transpose(transA, m, n, transR, myid, nprocs, MPI_COMM_WORLD);
-    double t2 = MPI_Wtime();
-    if(!myid){
-        printf("Result for transR:\n");
-        print_matrix(transR, n, n);
-        printf("Result for transA:\n");
-        print_matrix(transA, n, m);
-        printf("Runtime: %lf\n", t2-t1);
-    }
+    // // if(myid == 0){
+    // //     print_matrix(transA, n, m);
+    // // }
+    // double * transR = malloc(n*n*sizeof(double));
+    // double t1 = MPI_Wtime();
+    // TSQR_on_transpose(transA, m, n, transR, myid, nprocs, MPI_COMM_WORLD);
+    // double t2 = MPI_Wtime();
+    // if(!myid){
+    //     printf("Result for transR:\n");
+    //     print_matrix(transR, n, n);
+    //     printf("Result for transA:\n");
+    //     print_matrix(transA, n, m);
+    //     printf("Runtime: %lf\n", t2-t1);
+    // }
 
     // /* Tesy BGS: 2 processes*/
     // double *V = malloc(6*sizeof(double)); 
@@ -158,7 +158,13 @@ int main(int argc, char **argv)
     // MPI_Barrier(MPI_COMM_WORLD);
     // if(myid == 1){
     //     print_matrix(W, 2, 2);
-    // }    
+    // }   
+
+    /* Test read CSR */
+    sparse_CSR A;
+    read_CSR(A, "smallcsr.txt");
+
+    print_CSR(&A); 
 
     MPI_Finalize();
     return 0;
