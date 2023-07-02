@@ -62,7 +62,9 @@ void read_CSR(sparse_CSR * M, const char *const filename){
         exit(-1);
     }
     M->nnz = temp;
-    printf("%d", M->nnz);
+    M->rowptrs = malloc((M->nrows + 1)*sizeof(int));
+    M->colindex = malloc((M->nnz)*sizeof(int));
+    M->values = malloc((M->nnz)*sizeof(double));
     for(int i = 0;i<=M->nrows;i++){
         if(fscanf(fp, "%d", M->rowptrs + i ) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
