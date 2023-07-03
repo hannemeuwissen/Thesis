@@ -158,6 +158,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
 
+    printf("start: %d %d, end: %d %d\n", start[0], start[1], end[0], end[1]);
+
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
     
