@@ -158,8 +158,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
 
-    print_CSR(&A);
-
+    // print_CSR(&A);
 
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
@@ -171,7 +170,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
-            printf("%d\n", colindex);
+            printf("colindex: %d, j: %d\n", colindex, j);
 
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
                 x_gathered_elements[nnz_i] = x[colindex - start[myid]];
