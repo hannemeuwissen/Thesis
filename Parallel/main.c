@@ -63,9 +63,12 @@ int main(int argc, char **argv){
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
     /* Determine the start index and size of part for calling process */
-    int start, end;
-    decomp1d(M, nprocs, myid, &start, &end);
-    int m = end - start + 1;
+    // int start, end;
+    // decomp1d(M, nprocs, myid, &start, &end);
+    // int m = end - start + 1;
+    int start[nprocs];
+    int end[nprocs];
+    get_indices(M, nprocs, start, end);
 
     // /* Generate part of transition matrix for calling process */
     // sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
@@ -86,7 +89,7 @@ int main(int argc, char **argv){
     double *mathcalH;
     double *mathcalR_;
     double *v = malloc(m*sizeof(double));
-    read_matrix_from_file(filename_v, start, v, m, 1);
+    read_matrix_from_file(filename_v, start[myid], v, m, 1);
     
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
@@ -103,7 +106,7 @@ int main(int argc, char **argv){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
-            matrix_powers(A, v, V + m, s, m, myid, nprocs, MPI_COMM_WORLD);
+            matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
             printf("Finished matrix powers\n");
 
             /* Orthogonalize first block using parallel CA-TSQR */
@@ -138,7 +141,7 @@ int main(int argc, char **argv){
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
             V = malloc(s*m*sizeof(double));
-            matrix_powers(A, v, V, s, m, myid, nprocs, MPI_COMM_WORLD);
+            matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
 
             /* Block-CGS to orthogonalize compared to previous blocks */
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
