@@ -171,9 +171,8 @@ int main(int argc, char **argv){
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
 
-    printf("Here!\n");
     free(mathcalQ);
-    free(mathcalH);
+    if(!myid){free(mathcalH);}
 
     free(start);
     free(end);
