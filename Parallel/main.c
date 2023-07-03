@@ -152,6 +152,7 @@ int main(int argc, char **argv){
             /* Orthogonalize block using parallel CA-TSQR */
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
+            print_matrix(R_, s, s);
             // MPI_Barrier(MPI_COMM_WORLD); 
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
