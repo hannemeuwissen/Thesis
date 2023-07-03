@@ -95,12 +95,12 @@ void read_CSR(sparse_CSR * M, const char *const filename){
 void get_indices(const int n, const int nprocs, int * start, int * end){
     int n_elements = n/nprocs;
     int remainder = n%nprocs;
-    (*start)[0] = 0;
-    (*end)[0] = ((!remainder) ? (n_elements-1) : n_elements);
+    start[0] = 0;
+    end[0] = ((!remainder) ? (n_elements-1) : n_elements);
     if(nprocs > 1){
         for(int i=1;i<nprocs;i++){
-            (*start)[i] = (*end)[i-1] + 1;
-            (*end)[i] = (*end)[i-1] + ((i<remainder) ? (n_elements+1) : n_elements); 
+            start[i] = end[i-1] + 1;
+            end[i] = end[i-1] + ((i<remainder) ? (n_elements+1) : n_elements); 
         }
     }
 
