@@ -108,12 +108,9 @@ int main(int argc, char **argv){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
-
-            printf()
+            printf("start: %d, end: %d (Process %d)\n", start[myid], end[myid], myid);
 
             matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
-
-            printf("start: %d, end: %d (Process %d)\n", start[myid], end[myid], myid);
 
             /* Orthogonalize first block using parallel CA-TSQR */
             R_ = malloc((s+1)*(s+1)*sizeof(double)); 
