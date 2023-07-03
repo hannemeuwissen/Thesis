@@ -62,7 +62,7 @@ int main(int argc, char **argv){
     MPI_Bcast(&nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
-    printf("Passed line 65!\n");
+    printf("Passed line 65! (Process %d)\n", myid);
 
     /* Determine the start index and size of part for calling process */
     // int start, end;
@@ -72,6 +72,7 @@ int main(int argc, char **argv){
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
+    printf("Passed line 75! (Process %d)\n", myid);
 
     // /* Generate part of transition matrix for calling process */
     // sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
