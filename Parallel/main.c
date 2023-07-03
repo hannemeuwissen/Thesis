@@ -125,7 +125,6 @@ int main(int argc, char **argv){
             /* Calculate mathcal H (note: only process 0 calculates H, and final H is not transposed!)*/
             if(!myid){
 
-                // print_matrix(R_, s+1, s+1);
                 mathcalH = malloc((s+1)*s*sizeof(double));
                 double * R = malloc(s*s*sizeof(double)); 
                 get_R(R, R_, s+1);
@@ -134,8 +133,6 @@ int main(int argc, char **argv){
                 calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
                 free(R);
                 free(B_);
-
-                // print_matrix(mathcalH, s+1, s);
             }
             free(R_);
         }else{
@@ -147,12 +144,10 @@ int main(int argc, char **argv){
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
             bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
             // MPI_Barrier(MPI_COMM_WORLD);
-            printf("Process %d finished bgs\n", myid);
             
             /* Orthogonalize block using parallel CA-TSQR */
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
-            // print_matrix(R_, s, s);
             // MPI_Barrier(MPI_COMM_WORLD); 
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
@@ -164,14 +159,11 @@ int main(int argc, char **argv){
 
             /* Update mathcal H */
             if(!myid){
-                // print_matrix(R_, s, s);
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
             }
             free(R_);
             free(mathcalR_);
         }
-
-        // printf("Process %d finished block %d\n", myid, block);
 
         MPI_Barrier(MPI_COMM_WORLD);
     }

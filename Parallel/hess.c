@@ -104,9 +104,7 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     }
     double * transR_ = malloc(s*s*sizeof(double));
     transpose(R_, transR_, s);
-    // print_matrix(transR_, s,s);
 
-    // SOMETHING GOES WRONG FROM HERE 
     int j = 0;
     for(int i=(s*k + 1);i<upperdim;i++){ /* Lower part: [0 R_]*/
         memset(MathcalR_ + i*upperdim, 0, (s*k + 1)*sizeof(double));
@@ -115,10 +113,6 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     }
     double * MathcalR = malloc((s*k + 1)*(s*k + 1)*sizeof(double));
     get_R(MathcalR, MathcalR_, upperdim);
-
-    // TO HERE
-
-    print_matrix(MathcalR_, upperdim, upperdim);
 
     /* Construct MathcalB_ ([H 0 ; 0,...,h B_]) */
     double * MathcalB_ = malloc(upperdim*lowerdim*sizeof(double));
@@ -131,7 +125,6 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
         if(i > s*k){MathcalB_[i-1 + i*lowerdim] = 1.0;}
     }
     MathcalB_[s*k - 1 + s*k*lowerdim] = (*H)[s*k - 1 + (s*k)*(s*k)];
-    // print_matrix(MathcalB_, upperdim, lowerdim);
     free(*H);
 
     /* Update H */
