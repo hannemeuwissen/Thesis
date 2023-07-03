@@ -92,7 +92,7 @@ void read_CSR(sparse_CSR * M, const char *const filename){
  * @param start The start indices.
  * @param end The end indices.
  */
-void get_indices(const int n, const int nprocs, int ** start, int ** end){
+void get_indices(const int n, const int nprocs, int * start, int * end){
     int n_elements = n/nprocs;
     int remainder = n%nprocs;
     (*start)[0] = 0;
@@ -278,7 +278,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, MPI_Comm comm){
     int start[nprocs];
     int end[nprocs];
-    get_indices(A.ncols, nprocs, &start, &end);
+    get_indices(A.ncols, nprocs, start, end);
     spmv(A, start_v, m, V, myid, nprocs, start, end, comm);
     for(int k=1;k<s;k++){
         spmv(A, V + (s-1)*m, m, V + s*m, myid, nprocs, start, end, comm);
