@@ -170,14 +170,14 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
-            printf("colindex: %d, j: %d\n", colindex, j);
+            // printf("colindex: %d, j: %d\n", colindex, j);
 
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
                 x_gathered_elements[nnz_i] = x[colindex - start[myid]];
             }else{ /* Element from x in other processes' memory*/
 
                 printf("myid: %d\n", myid);
-                
+
                 int smaller = ((colindex < start[myid]) ? 1 : 0);
                 int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
                 MPI_Get(x_gathered_elements + nnz_i, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
