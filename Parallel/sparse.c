@@ -176,7 +176,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 x_gathered_elements[nnz_i] = x[colindex - start[myid]];
             }else{ /* Element from x in other processes' memory*/
 
-                printf("myid: %d\n", myid);
+                printf("myid: %d, colindex: %d\n", myid, colindex);
 
                 int smaller = ((colindex < start[myid]) ? 1 : 0);
                 int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
