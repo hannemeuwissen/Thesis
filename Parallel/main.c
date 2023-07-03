@@ -136,7 +136,7 @@ int main(int argc, char **argv){
                 free(R);
                 free(B_);
 
-                // git print_matrix(mathcalH, s+1, s);
+                // print_matrix(mathcalH, s+1, s);
             }
             free(R_);
         }else{
