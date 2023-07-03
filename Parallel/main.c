@@ -97,7 +97,7 @@ int main(int argc, char **argv){
 
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     for(int block = 0;block < steps;block++){
-        printf("** Block %d\n", block);
+        // printf("** Block %d\n", block);
 
         if(!block){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
@@ -113,10 +113,6 @@ int main(int argc, char **argv){
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
-
-            // if(!myid){
-            //     print_matrix(mathcalQ, (steps*s + 1), m);
-            // }
 
             /* Save last vector in v */
             memcpy(v, V + s*m, m*sizeof(double));
@@ -169,10 +165,13 @@ int main(int argc, char **argv){
     }
 
     if(!myid){
+        printf("(Transposed) part of Q:\n");
         print_matrix(mathcalQ, (steps*s + 1), m);
+        printf("Hessenberg:\n");
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
 
+    printf("Here!\n");
     free(mathcalQ);
     free(mathcalH);
 
