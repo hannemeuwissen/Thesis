@@ -131,7 +131,6 @@ int main(int argc, char **argv){
                 get_R(R, R_, s+1);
                 double * B_ = malloc(s*(s+1)*sizeof(double));
                 set_B_(B_, s);
-                print_matrix(B_, s+1, s);
                 calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
                 free(R);
                 free(B_);
