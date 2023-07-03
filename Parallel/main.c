@@ -109,10 +109,11 @@ int main(int argc, char **argv){
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
 
-            matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
-            printf("Passed line 112 (process %d)\n", myid);
+            printf()
 
-            printf("Finished matrix powers\n");
+            matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+
+            printf("start: %d, end: %d (Process %d)\n", start[myid], end[myid], myid);
 
             /* Orthogonalize first block using parallel CA-TSQR */
             R_ = malloc((s+1)*(s+1)*sizeof(double)); 
