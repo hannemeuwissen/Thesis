@@ -105,12 +105,16 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     double * transR_ = malloc(s*s*sizeof(double));
     transpose(R_, transR_, s);
     // print_matrix(transR_, s,s);
-    for(int i=(s*k + 1);i<upperdim;i++){ /* Lower part: [0 R_]*/
+
+    // SOMETHING GOES WRONG FROM HERE 
+    for(int i=(s*k + 1), int j = 0;i<upperdim;i++, j++){ /* Lower part: [0 R_]*/
         memset(MathcalR_ + i*upperdim, 0, (s*k + 1)*sizeof(double));
-        memcpy(MathcalR_ + (s*k + 1) + i*upperdim, transR_ + i*s, s*sizeof(double));
+        memcpy(MathcalR_ + (s*k + 1) + i*upperdim, transR_ + j*s, s*sizeof(double));
     }
     double * MathcalR = malloc((s*k + 1)*(s*k + 1)*sizeof(double));
     get_R(MathcalR, MathcalR_, upperdim);
+
+    // TO HERE
 
     print_matrix(MathcalR_, upperdim, upperdim);
 
