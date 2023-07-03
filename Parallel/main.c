@@ -62,6 +62,8 @@ int main(int argc, char **argv){
     MPI_Bcast(&nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
+    printf("Passed line 65!\n");
+
     /* Determine the start index and size of part for calling process */
     // int start, end;
     // decomp1d(M, nprocs, myid, &start, &end);
