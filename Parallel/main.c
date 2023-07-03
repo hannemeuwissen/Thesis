@@ -79,9 +79,9 @@ int main(int argc, char **argv){
     sparse_CSR A;
     read_CSR(&A, "smallcsr.txt");
 
-    if(!myid){
-        print_CSR(&A);
-    }
+    // if(!myid){
+    //     print_CSR(&A);
+    // }
 
     /* Initialize arrays */
     int steps = degree/s;
@@ -92,6 +92,8 @@ int main(int argc, char **argv){
     double *mathcalR_;
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start[myid], v, m, 1);
+
+    printf("Passed line 96 (process %d)\n", myid);
     
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
