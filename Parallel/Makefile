@@ -12,12 +12,9 @@ MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
 EXECS= test main
-OBJ = decomp1d.o parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
+OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
-
-decomp1d.o:decomp1d.c decomp1d.h
-	$(CC) -c $< $(FLAGS)
 
 parse.o:parse.c parse.h
 	$(CC) -c $< $(FLAGS)

@@ -157,8 +157,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
-
-    // printf("Here\n");
     
     for(int i=0;i<len;i++){
         int nnz_i = 0;
@@ -167,18 +165,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
-            // printf("colindex: %d, j: %d\n", colindex, j);
-
-            // if(myid == 1){
-            //     printf("colindex: %d, start: %d, end: %d\n", colindex, start[1], end[1]);
-            // }
 
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
                 x_gathered_elements[nnz_i] = x[colindex - start[myid]];
             }else{ /* Element from x in other processes' memory*/
-
-                // printf("myid: %d, colindex: %d\n", myid, colindex);
-
                 int smaller = ((colindex < start[myid]) ? 1 : 0);
                 int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
                 MPI_Get(x_gathered_elements + nnz_i, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
@@ -191,16 +181,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }
-
-    // printf("Here\n");
-
     free(x_gathered_elements);
-
-    MPI_Win_free(&win);
-
-    printf("Here\n");
-
-    
+    MPI_Win_free(&win);    
 }
 // void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
     
@@ -282,9 +264,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
  * @param comm The MPI communicator.
  */
 void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm){
-    printf("Before spmv\n");
     spmv(A, start_v, m, V, myid, nprocs, start, end, comm);
-    printf("After first spmv\n");
     for(int k=1;k<s;k++){
         spmv(A, V + (s-1)*m, m, V + s*m, myid, nprocs, start, end, comm);
     }

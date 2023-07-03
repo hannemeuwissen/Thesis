@@ -12,7 +12,6 @@
 #include <math.h>
 #include<mkl_cblas.h>
 #include<mkl_types.h>
-#include"decomp1d.h"
 #include"parse.h"
 #include"matrix.h"
 #include"graph.h"
@@ -63,14 +62,10 @@ int main(int argc, char **argv){
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
     /* Determine the start index and size of part for calling process */
-    // int start, end;
-    // decomp1d(M, nprocs, myid, &start, &end);
-    // int m = end - start + 1;
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
-    // printf("start: %d, end: %d (Process %d)\n", start[myid], end[myid], myid);
 
     // /* Generate part of transition matrix for calling process */
     // sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
@@ -108,7 +103,6 @@ int main(int argc, char **argv){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
-            printf("start: %d, end: %d (Process %d)\n", start[myid], end[myid], myid);
 
             matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
 
@@ -116,7 +110,6 @@ int main(int argc, char **argv){
             R_ = malloc((s+1)*(s+1)*sizeof(double)); 
             TSQR_on_transpose(V, m, s + 1, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             MPI_Barrier(MPI_COMM_WORLD);
-            printf("Finished TSQR\n");
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
