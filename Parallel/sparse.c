@@ -145,7 +145,7 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
  * @param nprocs Number of processes.
  * @param comm MPI communicator between processes.
  */
-void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
+void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm){
     
     if(len != A.nrows){
         perror("Incompatible dimensions in parallel spmv.\n");
@@ -154,9 +154,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     
     int M = A.ncols;
     double * x_gathered_elements = malloc(M*sizeof(int)); // maximum size
-    int * start = malloc(nprocs*sizeof(int));
-    int * end = malloc(nprocs*sizeof(int));
-    get_indices(M, nprocs, &start, &end);
 
     // print_CSR(&A);
 
@@ -197,8 +194,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
     MPI_Win_free(&win);
 
-    free(start);
-    free(end);
     free(x_gathered_elements);
 }
 // void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
@@ -281,8 +276,13 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
  * @param comm The MPI communicator.
  */
 void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, MPI_Comm comm){
+    int * start = malloc(nprocs*sizeof(int));
+    int * end = malloc(nprocs*sizeof(int));
+    get_indices(A.ncols, nprocs, &start, &end);
     spmv(A, start_v, m, V, myid, nprocs, comm);
     for(int k=1;k<s;k++){
-        spmv(A, V + (s-1)*m, m, V + s*m, myid, nprocs, comm);
+        spmv(A, V + (s-1)*m, m, V + s*m, myid, nprocs, start, end, comm);
     }
+    free(start);
+    free(end);
 }
