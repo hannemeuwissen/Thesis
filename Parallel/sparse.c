@@ -172,11 +172,15 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             int colindex = A.colindex[j];
             // printf("colindex: %d, j: %d\n", colindex, j);
 
+            if(myid == 1){
+                printf("colindex: %d, start: %d, end: %d\n", colindex, start[1], end[1]);
+            }
+
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
                 x_gathered_elements[nnz_i] = x[colindex - start[myid]];
             }else{ /* Element from x in other processes' memory*/
 
-                printf("myid: %d, colindex: %d\n", myid, colindex);
+                // printf("myid: %d, colindex: %d\n", myid, colindex);
 
                 int smaller = ((colindex < start[myid]) ? 1 : 0);
                 int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
