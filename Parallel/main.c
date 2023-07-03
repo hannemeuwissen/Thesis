@@ -66,8 +66,8 @@ int main(int argc, char **argv){
     // int start, end;
     // decomp1d(M, nprocs, myid, &start, &end);
     // int m = end - start + 1;
-    int start[nprocs];
-    int end[nprocs];
+    int * start = malloc(nprocs*sizeof(int));
+    int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
 
@@ -181,6 +181,9 @@ int main(int argc, char **argv){
 
     free(mathcalQ);
     free(mathcalH);
+
+    free(start);
+    free(end);
     
     MPI_Finalize();
     return 0;
