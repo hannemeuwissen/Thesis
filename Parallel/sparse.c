@@ -155,10 +155,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int M = A.ncols;
     double * x_gathered_elements = malloc(M*sizeof(int)); // maximum size
 
-    // print_CSR(&A);
-
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
+
+    printf("Here\n");
     
     for(int i=0;i<len;i++){
         int nnz_i = 0;
