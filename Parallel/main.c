@@ -114,9 +114,9 @@ int main(int argc, char **argv){
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
 
-            if(!myid){
-                print_matrix(mathcalQ, (steps*s + 1), m);
-            }
+            // if(!myid){
+            //     print_matrix(mathcalQ, (steps*s + 1), m);
+            // }
 
             /* Save last vector in v */
             memcpy(v, V + s*m, m*sizeof(double));
@@ -124,6 +124,8 @@ int main(int argc, char **argv){
 
             /* Calculate mathcal H (note: only process 0 calculates H, and final H is not transposed!)*/
             if(!myid){
+
+                print_matrix(R_, s+1, s+1);
                 mathcalH = malloc((s+1)*s*sizeof(double));
                 double * R = malloc(s*s*sizeof(double)); 
                 get_R(R, R_, s+1);
@@ -133,7 +135,7 @@ int main(int argc, char **argv){
                 free(R);
                 free(B_);
 
-                print_matrix(mathcalH, s+1, s);
+                // print_matrix(mathcalH, s+1, s);
             }
             free(R_);
         }else{
@@ -166,7 +168,7 @@ int main(int argc, char **argv){
             free(mathcalR_);
         }
 
-        printf("Process %d finished block %d\n", myid, block);
+        // printf("Process %d finished block %d\n", myid, block);
 
         MPI_Barrier(MPI_COMM_WORLD);
     }
