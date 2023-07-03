@@ -158,7 +158,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
 
-    printf("Here\n");
+    // printf("Here\n");
     
     for(int i=0;i<len;i++){
         int nnz_i = 0;
@@ -191,6 +191,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }
+
+    printf("Here\n");
 
     MPI_Win_free(&win);
 
