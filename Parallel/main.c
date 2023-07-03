@@ -69,6 +69,7 @@ int main(int argc, char **argv){
     int start[nprocs];
     int end[nprocs];
     get_indices(M, nprocs, start, end);
+    int m = end[myid] - start[myid] + 1;
 
     // /* Generate part of transition matrix for calling process */
     // sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
