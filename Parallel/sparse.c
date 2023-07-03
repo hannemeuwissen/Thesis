@@ -92,15 +92,15 @@ void read_CSR(sparse_CSR * M, const char *const filename){
  * @param start The start indices.
  * @param end The end indices.
  */
-void get_indices(const int n, const int nprocs, int * start, int * end){
+void get_indices(const int n, const int nprocs, int ** start, int ** end){
     int n_elements = n/nprocs;
     int remainder = n%nprocs;
-    start[0] = 0;
-    end[0] = ((!remainder) ? (n_elements-1) : n_elements);
+    (*start)[0] = 0;
+    (*end)[0] = ((!remainder) ? (n_elements-1) : n_elements);
     if(nprocs > 1){
         for(int i=1;i<nprocs;i++){
-            start[i] = end[i-1] + 1;
-            end[i] = end[i-1] + ((i<remainder) ? (n_elements+1) : n_elements); 
+            (*start)[i] = (*end)[i-1] + 1;
+            (*end)[i] = (*end)[i-1] + ((i<remainder) ? (n_elements+1) : n_elements); 
         }
     }
 
@@ -156,7 +156,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     double * x_gathered_elements = malloc(M*sizeof(int)); // maximum size
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
-    get_indices(M, nprocs, start, end);
+    get_indices(M, nprocs, &start, &end);
 
     // print_CSR(&A);
 
