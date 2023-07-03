@@ -104,11 +104,13 @@ int main(int argc, char **argv){
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
             matrix_powers(A, v, V + m, s, m, myid, nprocs, MPI_COMM_WORLD);
+            printf("Finished matrix powers\n");
 
             /* Orthogonalize first block using parallel CA-TSQR */
             R_ = malloc((s+1)*(s+1)*sizeof(double)); 
             TSQR_on_transpose(V, m, s + 1, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             MPI_Barrier(MPI_COMM_WORLD);
+            printf("Finished TSQR\n");
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
