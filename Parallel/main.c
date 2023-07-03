@@ -182,8 +182,8 @@ int main(int argc, char **argv){
     free(mathcalQ);
     free(mathcalH);
 
-    free(start);
-    free(end);
+    // free(start);
+    // free(end);
     
     MPI_Finalize();
     return 0;
