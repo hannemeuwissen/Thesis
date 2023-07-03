@@ -72,7 +72,7 @@ int main(int argc, char **argv){
 
     /* Test: read from file (each process)*/
     sparse_CSR A;
-    read_CSR(&A, "smallcsr.txt");
+    read_CSR(&A, "smallcsr4.txt");
 
     // if(!myid){
     //     print_CSR(&A);
