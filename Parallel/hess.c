@@ -12,6 +12,7 @@
 #include<mkl_cblas.h>
 #include<string.h>
 #include"mkl.h"
+#include"matrix.h"
 
 /**
  * @brief Function that calculates the upper Hessenberg matrix based on R_, R and B_. 
@@ -121,6 +122,7 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
         if(i > s*k){MathcalB_[i-1 + i*lowerdim] = 1.0;}
     }
     MathcalB_[s*k - 1 + s*k*lowerdim] = (*H)[s*k - 1 + (s*k)*(s*k)];
+    print_matrix(MathcalB_, upperdim, lowerdim);
     free(*H);
 
     /* Update H */
