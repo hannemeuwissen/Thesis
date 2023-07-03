@@ -92,8 +92,6 @@ int main(int argc, char **argv){
     double *mathcalR_;
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start[myid], v, m, 1);
-
-    printf("Passed line 96 (process %d)\n", myid);
     
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
@@ -110,6 +108,9 @@ int main(int argc, char **argv){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
+
+            printf("Passed line 112 (process %d)\n", myid);
+
             matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
             printf("Finished matrix powers\n");
 
