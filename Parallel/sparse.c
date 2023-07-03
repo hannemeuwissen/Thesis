@@ -279,7 +279,7 @@ void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, cons
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(A.ncols, nprocs, &start, &end);
-    spmv(A, start_v, m, V, myid, nprocs, comm);
+    spmv(A, start_v, m, V, myid, nprocs, start, end, comm);
     for(int k=1;k<s;k++){
         spmv(A, V + (s-1)*m, m, V + s*m, myid, nprocs, start, end, comm);
     }
