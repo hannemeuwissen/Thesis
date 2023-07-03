@@ -132,6 +132,8 @@ int main(int argc, char **argv){
                 calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
                 free(R);
                 free(B_);
+
+                print_matrix(mathcalH, s+1, s);
             }
             free(R_);
         }else{
