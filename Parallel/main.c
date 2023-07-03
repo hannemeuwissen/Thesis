@@ -164,7 +164,7 @@ int main(int argc, char **argv){
 
             /* Update mathcal H */
             if(!myid){
-                print_matrix(R_, s, s);
+                // print_matrix(R_, s, s);
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
             }
             free(R_);
