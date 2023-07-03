@@ -194,11 +194,13 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
     // printf("Here\n");
 
+    free(x_gathered_elements);
+
     MPI_Win_free(&win);
 
     printf("Here\n");
 
-    free(x_gathered_elements);
+    
 }
 // void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
     
