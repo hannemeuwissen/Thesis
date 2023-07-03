@@ -276,6 +276,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
  * @param comm The MPI communicator.
  */
 void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm){
+    printf("Before spmv\n");
     spmv(A, start_v, m, V, myid, nprocs, start, end, comm);
     for(int k=1;k<s;k++){
         spmv(A, V + (s-1)*m, m, V + s*m, myid, nprocs, start, end, comm);

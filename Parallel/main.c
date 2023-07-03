@@ -70,7 +70,7 @@ int main(int argc, char **argv){
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
-    printf("start: %d, end: %d (Process %d)\n", start[myid], end[myid], myid);
+    // printf("start: %d, end: %d (Process %d)\n", start[myid], end[myid], myid);
 
     // /* Generate part of transition matrix for calling process */
     // sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
