@@ -39,7 +39,7 @@ void calc_hess(double * H_, double * R_, double * B_, double * R, const int n, c
  */
 void calc_hess_on_transpose(double * H_, double * R_, double * B_, double * R, const int n, const int m){
     memcpy(H_, B_, n*m*sizeof(double));
-    cblas_dtrmm(CblasRowMajor, CblasLeft, CblasUpper, CblasTrans, CblasNonUnit, n, m, 1.0, R_, n, H_, m);
+    cblas_dtrmm(CblasRowMajor, CblasLeft, CblasLower, CblasTrans, CblasNonUnit, n, m, 1.0, R_, n, H_, m);
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasTrans, CblasNonUnit, n, m, 1.0, R, m, H_, m);
 }
 
