@@ -19,7 +19,7 @@
  * @param M The sparse_CSR structure to be printed.
  */
 void print_CSR(sparse_CSR * M){
-    printf("Number of columns and rows: %d\nNumber of nonzeros: %d\n", M->ncols, M->nnz);
+    printf("Number of columns: %d\nNumber of rows: %d\nNumber of nonzeros: %d\n", M->ncols, M->nrows, M->nnz);
     printf("Row pointers: ");
     for(int i=0;i<(M->nrows+1);i++){
         printf("%d ", M->rowptrs[i]);
