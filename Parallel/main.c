@@ -146,7 +146,7 @@ int main(int argc, char **argv){
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             // MPI_Barrier(MPI_COMM_WORLD); 
-            printf("Here\n");
+            // printf("Here\n");
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ + (1 + block*s)*m, V, s*m*sizeof(double));
@@ -155,6 +155,7 @@ int main(int argc, char **argv){
             memcpy(v, V + (s-1)*m, m*sizeof(double));
             free(V);
 
+            printf("Here\n");
             /* Update mathcal H */
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
