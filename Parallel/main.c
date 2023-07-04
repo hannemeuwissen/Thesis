@@ -116,6 +116,7 @@ int main(int argc, char **argv){
 
             /* Save last vector in v */
             memcpy(v, V + s*m, m*sizeof(double));
+            printf("Here\n");
             free(V);
 
             printf("Here\n");
