@@ -103,7 +103,6 @@ int main(int argc, char **argv){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
-
             matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
 
             /* Orthogonalize first block using parallel CA-TSQR */
@@ -116,15 +115,10 @@ int main(int argc, char **argv){
 
             /* Save last vector in v */
             memcpy(v, V + s*m, m*sizeof(double));
-
             free(V);
-
-            printf("Process %d freed V\n", myid);
-            MPI_Barrier(MPI_COMM_WORLD);
 
             /* Calculate mathcal H (note: only process 0 calculates H, and final H is not transposed!)*/
             if(!myid){
-
                 mathcalH = malloc((s+1)*s*sizeof(double));
                 double * R = malloc(s*s*sizeof(double)); 
                 get_R(R, R_, s+1);
@@ -135,12 +129,12 @@ int main(int argc, char **argv){
                 free(B_);
             }
             free(R_);
-
-            printf("Process %d had no problem with block 0\n", myid);
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
             V = malloc(s*m*sizeof(double));
             matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+
+            printf("Here\n");
 
             /* Block-CGS to orthogonalize compared to previous blocks */
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
