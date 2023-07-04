@@ -104,7 +104,6 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     }
     double * transR_ = malloc(s*s*sizeof(double));
     transpose(R_, transR_, s);
-
     int j = 0;
     for(int i=(s*k + 1);i<upperdim;i++){ /* Lower part: [0 R_]*/
         memset(MathcalR_ + i*upperdim, 0, (s*k + 1)*sizeof(double));
@@ -130,6 +129,8 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     /* Update H */
     *H = malloc(upperdim*lowerdim*sizeof(double));
     calc_hess(*H, MathcalR_, MathcalB_, MathcalR, upperdim, lowerdim);
+
+    printf("End of hess\n");
     free(MathcalB_);
     free(MathcalR_);
     free(MathcalR);
