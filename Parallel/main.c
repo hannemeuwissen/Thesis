@@ -155,13 +155,15 @@ int main(int argc, char **argv){
             memcpy(v, V + (s-1)*m, m*sizeof(double));
             free(V);
 
-            printf("Here\n");
+            // printf("Here\n");
             /* Update mathcal H */
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
             }
             free(R_);
             free(mathcalR_);
+
+            printf("Here (process %d)\n", myid);
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
