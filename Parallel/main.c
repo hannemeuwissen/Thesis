@@ -111,15 +111,17 @@ int main(int argc, char **argv){
             TSQR_on_transpose(V, m, s + 1, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             // MPI_Barrier(MPI_COMM_WORLD);
 
+            printf("Here\n");
+
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
 
             /* Save last vector in v */
             memcpy(v, V + s*m, m*sizeof(double));
-            printf("Here\n");
+            
             free(V);
 
-            printf("Here\n");
+            // printf("Here\n");
 
             /* Calculate mathcal H (note: only process 0 calculates H, and final H is not transposed!)*/
             if(!myid){
