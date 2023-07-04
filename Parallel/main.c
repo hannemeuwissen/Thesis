@@ -131,6 +131,8 @@ int main(int argc, char **argv){
                 free(B_);
             }
             free(R_);
+
+            printf("Process %d had no problem with block 0\n", myid);
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
             V = malloc(s*m*sizeof(double));
