@@ -116,7 +116,11 @@ int main(int argc, char **argv){
 
             /* Save last vector in v */
             memcpy(v, V + s*m, m*sizeof(double));
+
             free(V);
+
+            printf("Process %d freed V\n", myid);
+            MPI_Barrier(MPI_COMM_WORLD);
 
             /* Calculate mathcal H (note: only process 0 calculates H, and final H is not transposed!)*/
             if(!myid){
