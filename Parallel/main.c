@@ -160,10 +160,10 @@ int main(int argc, char **argv){
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
             }
+            printf("Here (process %d)\n", myid);
             free(R_);
             free(mathcalR_);
 
-            printf("Here (process %d)\n", myid);
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
