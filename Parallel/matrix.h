@@ -10,5 +10,6 @@
 #define MATRIX_H_TWYFUKH2
 void print_vector(double * v, const int len);
 void print_matrix(double * A, const int n, const int m);
+void print_matrix_transposed(double * A, const int n, const int m);
 void read_matrix_from_file(const char *const filename, const int skip, double *A, const int M, const int N);
 #endif /* end of include guard: MATRIX_H_TWYFUKH2 */

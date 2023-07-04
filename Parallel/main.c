@@ -97,7 +97,7 @@ int main(int argc, char **argv){
 
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     for(int block = 0;block < steps;block++){
-        printf("** Block %d\n", block);
+        // printf("** Block %d\n", block);
 
         if(!block){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
@@ -134,19 +134,15 @@ int main(int argc, char **argv){
             V = malloc(s*m*sizeof(double));
             matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
 
-            // printf("Here\n");
-
             /* Block-CGS to orthogonalize compared to previous blocks */
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
             bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
             // MPI_Barrier(MPI_COMM_WORLD);
-            // printf("Here\n");
             
             /* Orthogonalize block using parallel CA-TSQR */
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             // MPI_Barrier(MPI_COMM_WORLD); 
-            // printf("Here\n");
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ + (1 + block*s)*m, V, s*m*sizeof(double));
@@ -155,12 +151,10 @@ int main(int argc, char **argv){
             memcpy(v, V + (s-1)*m, m*sizeof(double));
             free(V);
 
-            // printf("Here\n");
             /* Update mathcal H */
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
             }
-            printf("Here (process %d)\n", myid);
             free(R_);
             free(mathcalR_);
 
@@ -170,16 +164,16 @@ int main(int argc, char **argv){
     }
 
     if(!myid){ /* Print out results */
-        printf("(Transposed) part of Q process 0:\n");
-        print_matrix(mathcalQ, (steps*s + 1), m);
+        printf("Part of Q process 0:\n");
+        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
         printf("Hessenberg:\n");
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){ /* Print out results */
-        printf("(Transposed) part of Q process 1:\n");
-        print_matrix(mathcalQ, (steps*s + 1), m);
+        printf("Part of Q process 1:\n");
+        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
     }
 
 

@@ -130,10 +130,7 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     *H = malloc(upperdim*lowerdim*sizeof(double));
     calc_hess(*H, MathcalR_, MathcalB_, MathcalR, upperdim, lowerdim);
 
-    // printf("End of hess\n");
     free(MathcalB_);
-    // printf("End of hess\n");
     free(MathcalR_);
-    printf("End of hess\n");
     free(MathcalR);
 }

@@ -35,6 +35,21 @@ void print_matrix(double * A, const int n, const int m){
 }
 
 /**
+ * @brief Function that prints the transpose of a matrix of given dimensions.
+ * @param A The matrix.
+ * @param n The number of rows (before transpose).
+ * @param m The number of columns (before transpose).
+ */
+void print_matrix_transposed(double * A, const int n, const int m){
+    for(int j = 0;j<n;j++){
+        for(int i=0;i<m;i++){
+            printf("%lf ", A[i*m + j]);
+        }
+        printf("\n");
+    }
+}
+
+/**
  * @brief Function that reads data from a file and stores it in a matrix.
  * @param[in] filename File to read the matrix from.
  * @param[in] skip The number of elements to skip.
