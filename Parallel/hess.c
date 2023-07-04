@@ -132,7 +132,8 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
 
     // printf("End of hess\n");
     free(MathcalB_);
-    printf("End of hess\n");
+    // printf("End of hess\n");
     free(MathcalR_);
+    printf("End of hess\n");
     free(MathcalR);
 }
