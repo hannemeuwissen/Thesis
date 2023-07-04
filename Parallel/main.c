@@ -67,16 +67,16 @@ int main(int argc, char **argv){
     get_indices(M, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
 
-    // /* Generate part of transition matrix for calling process */
-    // sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
+    /* Generate part of transition matrix for calling process */
+    sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
 
-    /* Test: read from file (each process)*/
-    sparse_CSR A;
-    read_CSR(&A, "smallcsr4.txt");
+    // /* Test: read from file (each process)*/
+    // sparse_CSR A;
+    // read_CSR(&A, "smallcsr4.txt");
 
-    // if(!myid){
-    //     print_CSR(&A);
-    // }
+    if(!myid){
+        print_CSR(&A);
+    }
 
     /* Initialize arrays */
     int steps = degree/s;
@@ -164,7 +164,7 @@ int main(int argc, char **argv){
         MPI_Barrier(MPI_COMM_WORLD);
     }
 
-    if(!myid){
+    if(!myid){ /* Print out results */
         printf("(Transposed) part of Q:\n");
         print_matrix(mathcalQ, (steps*s + 1), m);
         printf("Hessenberg:\n");
@@ -173,7 +173,6 @@ int main(int argc, char **argv){
 
     free(mathcalQ);
     if(!myid){free(mathcalH);}
-
     free(start);
     free(end);
     
