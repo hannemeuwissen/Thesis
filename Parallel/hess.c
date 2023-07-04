@@ -110,7 +110,7 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
         memcpy(MathcalR_ + (s*k + 1) + i*upperdim, transR_ + j*s, s*sizeof(double));
         j++;
     }
-    double * MathcalR = malloc((s*k + 1)*(s*k + 1)*sizeof(double));
+    double * MathcalR = malloc(lowerdim*lowerdim*sizeof(double));
     get_R(MathcalR, MathcalR_, upperdim);
 
     /* Construct MathcalB_ ([H 0 ; 0,...,h B_]) */
