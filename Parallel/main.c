@@ -165,11 +165,18 @@ int main(int argc, char **argv){
     }
 
     if(!myid){ /* Print out results */
-        printf("(Transposed) part of Q:\n");
+        printf("(Transposed) part of Q process 0:\n");
         print_matrix(mathcalQ, (steps*s + 1), m);
         printf("Hessenberg:\n");
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 1){ /* Print out results */
+        printf("(Transposed) part of Q process 1:\n");
+        print_matrix(mathcalQ, (steps*s + 1), m);
+    }
+
 
     free(mathcalQ);
     if(!myid){free(mathcalH);}
