@@ -80,7 +80,6 @@ int main(int argc, char **argv){
 
     /* Initialize arrays */
     int steps = degree/s;
-    printf("steps: %d\n", steps);
     double *V;
     double *R_;
     double *mathcalQ = malloc((1 + steps*s)*m*sizeof(double));
