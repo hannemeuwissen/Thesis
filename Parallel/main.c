@@ -67,8 +67,6 @@ int main(int argc, char **argv){
     get_indices(M, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
 
-    printf("m: %d\n", m);
-
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
 
@@ -76,12 +74,13 @@ int main(int argc, char **argv){
     // sparse_CSR A;
     // read_CSR(&A, "smallcsr4.txt");
 
-    if(!myid){
-        print_CSR(&A);
-    }
+    // if(!myid){
+    //     print_CSR(&A);
+    // }
 
     /* Initialize arrays */
     int steps = degree/s;
+    printf("steps: %d\n");
     double *V;
     double *R_;
     double *mathcalQ = malloc((1 + steps*s)*m*sizeof(double));
