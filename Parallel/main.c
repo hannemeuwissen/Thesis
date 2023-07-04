@@ -49,7 +49,7 @@ int main(int argc, char **argv){
         }
 
         if(floor(M/nprocs) < s+1){
-            printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process: %d x %d).\n", M/nprocs, s);
+            printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process in step 0: %d x %d).\n", M/nprocs, s+1);
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
