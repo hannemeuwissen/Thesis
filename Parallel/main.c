@@ -118,6 +118,8 @@ int main(int argc, char **argv){
             memcpy(v, V + s*m, m*sizeof(double));
             free(V);
 
+            printf("Here\n");
+
             /* Calculate mathcal H (note: only process 0 calculates H, and final H is not transposed!)*/
             if(!myid){
 
