@@ -140,12 +140,13 @@ int main(int argc, char **argv){
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
             bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
             // MPI_Barrier(MPI_COMM_WORLD);
-            printf("Here\n");
+            // printf("Here\n");
             
             /* Orthogonalize block using parallel CA-TSQR */
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             // MPI_Barrier(MPI_COMM_WORLD); 
+            printf("Here\n");
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ + (1 + block*s)*m, V, s*m*sizeof(double));
