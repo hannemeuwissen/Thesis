@@ -30,8 +30,6 @@ int main(int argc, char **argv){
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-    printf("Here!\n");
-
     if(!myid){ /* Read input */
         float logprocs = log2(nprocs);
         if(ceil(logprocs) != floor(logprocs)){
@@ -56,12 +54,16 @@ int main(int argc, char **argv){
         }
     }
 
+    printf("Here!\n");
+
     /* Broadcast input to all processes */
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
+
+    printf("Input read!\n");
 
     /* Determine the start index and size of part for calling process */
     int * start = malloc(nprocs*sizeof(int));
@@ -71,6 +73,7 @@ int main(int argc, char **argv){
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz);
+    printf("Graph generated!\n");
 
     // /* Test: read from file (each process)*/
     // sparse_CSR A;
