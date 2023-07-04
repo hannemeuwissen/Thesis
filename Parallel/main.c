@@ -80,11 +80,11 @@ int main(int argc, char **argv){
 
     /* Initialize arrays */
     int steps = degree/s;
-    // double *V;
-    // double *R_;
+    double *V;
+    double *R_;
     double *mathcalQ = malloc((1 + steps*s)*m*sizeof(double));
     double *mathcalH;
-    // double *mathcalR_;
+    double *mathcalR_;
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start[myid], v, m, 1);
     
@@ -101,24 +101,22 @@ int main(int argc, char **argv){
 
         if(!block){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
-            double * V = malloc((s+1)*m*sizeof(double));
+            V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
 
             matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
 
             /* Orthogonalize first block using parallel CA-TSQR */
-            double * R_ = malloc((s+1)*(s+1)*sizeof(double)); 
+            R_ = malloc((s+1)*(s+1)*sizeof(double)); 
             TSQR_on_transpose(V, m, s + 1, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             // MPI_Barrier(MPI_COMM_WORLD);
-
-            printf("Here\n");
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
 
             /* Save last vector in v */
             memcpy(v, V + s*m, m*sizeof(double));
-            
+            // printf("Here\n");
             // free(V);
 
             // printf("Here\n");
@@ -140,16 +138,16 @@ int main(int argc, char **argv){
             printf("Process %d had no problem with block 0\n", myid);
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
-            double * V = malloc(s*m*sizeof(double));
+            V = malloc(s*m*sizeof(double));
             matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
 
             /* Block-CGS to orthogonalize compared to previous blocks */
-            double * mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
+            mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
             bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
             // MPI_Barrier(MPI_COMM_WORLD);
             
             /* Orthogonalize block using parallel CA-TSQR */
-            double * R_ = malloc(s*s*sizeof(double)); 
+            R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             // MPI_Barrier(MPI_COMM_WORLD); 
 
