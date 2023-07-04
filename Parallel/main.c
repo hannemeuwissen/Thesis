@@ -158,7 +158,7 @@ int main(int argc, char **argv){
 
             /* Save last vector in v */
             memcpy(v, V + (s-1)*m, m*sizeof(double));
-            free(V);
+            // free(V);
 
             /* Update mathcal H */
             if(!myid){
