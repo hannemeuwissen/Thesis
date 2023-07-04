@@ -134,8 +134,14 @@ int main(int argc, char **argv){
                 free(B_);
             }
             // free(R_);
-            realloc(V, s*m*sizeof(double));
-            realloc(R_, s*s*sizeof(double));
+            if(realloc(V, s*m*sizeof(double)) == NULL){
+                printf("Cannot reallocate memory.\n");
+                MPI_Abort(MPI_COMM_WORLD, 1);
+            }
+            if(realloc(R_, s*s*sizeof(double)) == NULL){
+                printf("Cannot reallocate memory.\n");
+                MPI_Abort(MPI_COMM_WORLD, 1);
+            }
 
             printf("Process %d had no problem with block 0\n", myid);
         }else{
@@ -165,7 +171,10 @@ int main(int argc, char **argv){
             }
             // free(R_);
             // free(mathcalR_);
-            realloc(mathcalR_, ((block+1)*s + 1)*s*sizeof(double));
+            if(realloc(mathcalR_, ((block+1)*s + 1)*s*sizeof(double)) == NULL){
+                printf("Cannot reallocate memory.\n");
+                MPI_Abort(MPI_COMM_WORLD, 1);
+            }
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
