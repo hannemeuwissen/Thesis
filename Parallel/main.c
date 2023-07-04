@@ -134,12 +134,13 @@ int main(int argc, char **argv){
             V = malloc(s*m*sizeof(double));
             matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
 
-            printf("Here\n");
+            // printf("Here\n");
 
             /* Block-CGS to orthogonalize compared to previous blocks */
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
             bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
             // MPI_Barrier(MPI_COMM_WORLD);
+            free(): invalid next size (fast)
             
             /* Orthogonalize block using parallel CA-TSQR */
             R_ = malloc(s*s*sizeof(double)); 
