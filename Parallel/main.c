@@ -164,8 +164,8 @@ int main(int argc, char **argv){
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
             }
-            free(R_);
-            free(mathcalR_);
+            // free(R_);
+            // free(mathcalR_);
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
