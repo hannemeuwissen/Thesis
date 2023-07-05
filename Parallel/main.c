@@ -134,8 +134,8 @@ int main(int argc, char **argv){
 
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 // printf("Breakdown block %d: %d\n", block, breakdown);
-                MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             }
+            MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             free(R_);
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
@@ -164,8 +164,9 @@ int main(int argc, char **argv){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 // printf("Breakdown block %d: %d\n", block, breakdown);
-                MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             }
+            MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
             free(R_);
             free(mathcalR_);
 
