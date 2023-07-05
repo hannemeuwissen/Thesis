@@ -132,10 +132,10 @@ int main(int argc, char **argv){
                 free(R);
                 free(B_);
 
-                // breakdown = breakdown_check(mathcalH, s, block, tol);
+                breakdown = breakdown_check(mathcalH, s, block, tol);
                 // printf("Breakdown block %d: %d\n", block, breakdown);
             }
-            // MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             free(R_);
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
@@ -162,10 +162,10 @@ int main(int argc, char **argv){
             /* Update mathcal H */
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
-                // breakdown = breakdown_check(mathcalH, s, block, tol);
+                breakdown = breakdown_check(mathcalH, s, block, tol);
                 // printf("Breakdown block %d: %d\n", block, breakdown);
             }
-            // MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
             free(R_);
             free(mathcalR_);
@@ -174,24 +174,24 @@ int main(int argc, char **argv){
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        // if(breakdown != -1){
-        //     /* Set matching vectors in mathcalQ to zero */
-        //     memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
+        if(breakdown != -1){
+            /* Set matching vectors in mathcalQ to zero */
+            memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
 
-        //     if(!myid){
-        //         /* Fill mathcall H with zeros */
-        //         double * temp = malloc((degree + 1)*degree*sizeof(double));
-        //         for(int i=0;i<=breakdown;i++){
-        //             memcpy(temp + i*degree, mathcalH + i*(s*(block+1)), (s*(block+1))*sizeof(double));
-        //             memset(temp + (s*(block+1)) + i*degree, 0, (degree - (breakdown - 1))*sizeof(double));
-        //         }
-        //         memset(temp + (breakdown+1)*degree, 0, degree*((1 + degree) - (breakdown -1))*sizeof(double));
-        //         free(mathcalH);
-        //         mathcalH = temp;
-        //     }
+            if(!myid){
+                /* Fill mathcall H with zeros */
+                double * temp = malloc((degree + 1)*degree*sizeof(double));
+                for(int i=0;i<=breakdown;i++){
+                    memcpy(temp + i*degree, mathcalH + i*(s*(block+1)), (s*(block+1))*sizeof(double));
+                    memset(temp + (s*(block+1)) + i*degree, 0, (degree - (breakdown - 1))*sizeof(double));
+                }
+                memset(temp + (breakdown+1)*degree, 0, degree*((1 + degree) - (breakdown -1))*sizeof(double));
+                free(mathcalH);
+                mathcalH = temp;
+            }
 
-        //     break;
-        // }
+            break;
+        }
     }
 
     if(!myid){ /* Print out results */
