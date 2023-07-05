@@ -182,7 +182,7 @@ int main(int argc, char **argv){
                     memcpy(temp + i*degree, mathcalH + i*(s*(block+1)), (s*(block+1))*sizeof(double));
                     memset(temp + (s*(block+1)) + i*degree, 0, (degree - (breakdown - 1))*sizeof(double));
                 }
-                memset(temp + i*degree, 0, degree*((1 + degree) - (breakdown -1))*sizeof(double));
+                memset(temp + (breakdown+1)*degree, 0, degree*((1 + degree) - (breakdown -1))*sizeof(double));
                 free(*mathcalH);
                 mathcalH = temp;
             }
