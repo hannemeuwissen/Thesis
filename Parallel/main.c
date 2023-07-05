@@ -133,7 +133,8 @@ int main(int argc, char **argv){
                 free(B_);
 
                 breakdown = breakdown_check(mathcalH, s, block, tol);
-                printf("Breakdown block %d: %d\n", block, breakdown);
+                // printf("Breakdown block %d: %d\n", block, breakdown);
+                MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             }
             free(R_);
         }else{
@@ -162,7 +163,8 @@ int main(int argc, char **argv){
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
-                printf("Breakdown block %d: %d\n", block, breakdown);
+                // printf("Breakdown block %d: %d\n", block, breakdown);
+                MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             }
             free(R_);
             free(mathcalR_);
