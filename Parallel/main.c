@@ -189,6 +189,7 @@ int main(int argc, char **argv){
             //     free(mathcalH);
             //     mathcalH = temp;
             // }
+            printf("%d\n", breakdown);
 
             break;
         }
@@ -202,6 +203,7 @@ int main(int argc, char **argv){
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
+
     if(myid == 1){ /* Print out results */
         printf("Part of Q process 1:\n");
         print_matrix_transposed(mathcalQ, (steps*s + 1), m);
