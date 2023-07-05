@@ -134,3 +134,23 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
     free(MathcalR_);
     free(MathcalR);
 }
+
+/**
+ * @brief Function that checks if breakdown has occured in calculated Hessenberg
+ * @param H The Hessenberg matrix.
+ * @param s The blocksize.
+ * @param k The current block index.
+ * @return The function returns -1 when no breakdown has occured, and the row index of 
+ * the first zero if breakdown occured.
+ */
+int breakdown_check(double *H, const int s, const int k, const double tol){
+    const int lowerdim = s*(k+1);
+    const int upperdim = s*(k+1) + 1;
+
+    for(int j=s*k + 1;j<lowerdim;j++){
+        if(H[j + (j+1)*lowerdim] < tol){
+            return j+1;
+        }
+    }
+    return -1;
+}

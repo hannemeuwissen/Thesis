@@ -21,7 +21,8 @@
 #include"hess.h"
 #include"mkl.h"
 
-int main(int argc, char **argv){  
+int main(int argc, char **argv){
+    const double tol = 1.0E-10;  
     int myid, nprocs;
     int degree,s,M,nnz;
     char filename_v[100];
@@ -87,6 +88,9 @@ int main(int argc, char **argv){
     double *mathcalR_;
     double *v = malloc(m*sizeof(double));
     read_matrix_from_file(filename_v, start[myid], v, m, 1);
+
+    /* Initialize breakdown indicator */
+    int breakdown = -1;
     
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
@@ -127,6 +131,8 @@ int main(int argc, char **argv){
                 calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
                 free(R);
                 free(B_);
+
+                breakdown = breakdown_check(mathcalH, s, block, tol);
             }
             free(R_);
         }else{
@@ -154,6 +160,7 @@ int main(int argc, char **argv){
             /* Update mathcal H */
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
+                breakdown = breakdown_check(mathcalH, s, block, tol);
             }
             free(R_);
             free(mathcalR_);
@@ -161,6 +168,12 @@ int main(int argc, char **argv){
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
+
+        if(breakdown > -1){
+            memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
+            // delete also H entries
+            break;
+        }
     }
 
     if(!myid){ /* Print out results */
