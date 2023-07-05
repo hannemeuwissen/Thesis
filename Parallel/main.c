@@ -101,7 +101,7 @@ int main(int argc, char **argv){
 
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     for(int block = 0;block < steps;block++){
-        // printf("** Block %d\n", block);
+        printf("** Block %d\n", block);
 
         if(!block){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
@@ -133,6 +133,7 @@ int main(int argc, char **argv){
                 free(B_);
 
                 breakdown = breakdown_check(mathcalH, s, block, tol);
+                printf("Breakdown block %d: %d\n", block, breakdown);
             }
             free(R_);
         }else{
@@ -161,6 +162,7 @@ int main(int argc, char **argv){
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
+                printf("Breakdown block %d: %d\n", block, breakdown);
             }
             free(R_);
             free(mathcalR_);
@@ -169,7 +171,7 @@ int main(int argc, char **argv){
 
         MPI_Barrier(MPI_COMM_WORLD);
 
-        if(breakdown > -1){
+        if(breakdown != -1){
             memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
             // delete also H entries
             break;
