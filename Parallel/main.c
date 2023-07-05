@@ -74,9 +74,9 @@ int main(int argc, char **argv){
     // sparse_CSR A;
     // read_CSR(&A, "smallcsr4.txt");
 
-    // if(!myid){
-    //     print_CSR(&A);
-    // }
+    if(!myid){
+        print_CSR(&A);
+    }
 
     /* Initialize arrays */
     int steps = degree/s;
