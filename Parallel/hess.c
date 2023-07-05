@@ -5,9 +5,10 @@
  * @version 0.1
  * @date 2023-06-19
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <mpi.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<math.h>
+#include<mpi.h>
 #include<mkl_types.h>
 #include<mkl_cblas.h>
 #include<string.h>
@@ -148,7 +149,7 @@ int breakdown_check(double *H, const int s, const int k, const double tol){
     const int upperdim = s*(k+1) + 1;
 
     for(int j=s*k + 1;j<lowerdim;j++){
-        if(H[j + (j+1)*lowerdim] < tol){
+        if(fabs(H[j + (j+1)*lowerdim]) < tol){
             return j+1;
         }
     }
