@@ -176,7 +176,7 @@ int main(int argc, char **argv){
 
         if(breakdown != -1){
             /* Set matching vectors in mathcalQ to zero */
-            memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
+            // memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
 
             // if(!myid){
             //     /* Fill mathcall H with zeros */
