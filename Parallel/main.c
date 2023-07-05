@@ -172,8 +172,21 @@ int main(int argc, char **argv){
         MPI_Barrier(MPI_COMM_WORLD);
 
         if(breakdown != -1){
+            /* Set matching vectors in mathcalQ to zero */
             memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
-            // delete also H entries
+
+            if(!myid){
+                /* Fill mathcall H with zeros */
+                double * temp = malloc((degree + 1)*degree*sizeof(double));
+                for(int i=0;i<=breakdown;i++){
+                    memcpy(temp + i*degree, mathcalH + i*(s*(block+1)), (s*(block+1))*sizeof(double));
+                    memset(temp + (s*(block+1)) + i*degree, 0, (degree - (breakdown - 1))*sizeof(double));
+                }
+                memset(temp + i*degree, 0, degree*((1 + degree) - (breakdown -1))*sizeof(double));
+                free(*mathcalH);
+                mathcalH = temp;
+            }
+
             break;
         }
     }

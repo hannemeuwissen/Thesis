@@ -148,10 +148,7 @@ int breakdown_check(double *H, const int s, const int k, const double tol){
     const int lowerdim = s*(k+1);
     const int upperdim = s*(k+1) + 1;
 
-    printf("s*k: %d, lowerdim: %d\n", s*k+1, lowerdim);
-
     for(int j=s*k;j<lowerdim;j++){
-        printf("%lf\n", fabs(H[j + (j+1)*lowerdim]));
         if(fabs(H[j + (j+1)*lowerdim]) < tol){
             return j+1;
         }
