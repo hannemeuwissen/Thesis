@@ -182,17 +182,17 @@ int main(int argc, char **argv){
             printf("set from column %d (%d elements) to zero\n", breakdown, ((1 + degree) - breakdown)*m);
             memset(mathcalQ + breakdown*m, 0, ((1 + degree) - breakdown)*m*sizeof(double));
 
-            // if(!myid){
-            //     /* Fill mathcall H with zeros */
-            //     double * temp = malloc((degree + 1)*degree*sizeof(double));
-            //     for(int i=0;i<=breakdown;i++){
-            //         memcpy(temp + i*degree, mathcalH + i*(s*(block+1)), (s*(block+1))*sizeof(double));
-            //         memset(temp + (s*(block+1)) + i*degree, 0, (degree - (breakdown - 1))*sizeof(double));
-            //     }
-            //     memset(temp + (breakdown+1)*degree, 0, degree*((1 + degree) - (breakdown -1))*sizeof(double));
-            //     free(mathcalH);
-            //     mathcalH = temp;
-            // }
+            if(!myid){
+                /* Fill mathcall H with zeros */
+                double * temp = malloc((degree + 1)*degree*sizeof(double));
+                for(int i=0;i<breakdown;i++){
+                    memcpy(temp + i*degree, mathcalH + i*(s*(block+1)), (s*(block+1))*sizeof(double));
+                    memset(temp + (s*(block+1)) + i*degree, 0, (degree - breakdown)*sizeof(double));
+                }
+                memset(temp + breakdown*degree, 0, degree*((1 + degree) - breakdown)*sizeof(double));
+                free(mathcalH);
+                mathcalH = temp;
+            }
             printf("Breakdown row %d in block %d\n", breakdown, block);
 
             break;
