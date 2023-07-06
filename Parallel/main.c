@@ -132,6 +132,8 @@ int main(int argc, char **argv){
                 free(R);
                 free(B_);
 
+                print_matrix(mathcalH, s+1, s);
+
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 // printf("Breakdown block %d: %d\n", block, breakdown);
             }
@@ -162,6 +164,7 @@ int main(int argc, char **argv){
             /* Update mathcal H */
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
+                print_matrix(mathcalH, s*(block + 1) + 1, s*(block + 1));
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 // printf("Breakdown block %d: %d\n", block, breakdown);
             }
@@ -176,7 +179,7 @@ int main(int argc, char **argv){
 
         if(breakdown != -1){
             /* Set matching vectors in mathcalQ to zero */
-            printf("set from column %d (%d elements) to zero\n", breakdown, ((1 + degree) - (breakdown -1))*m);
+            // printf("set from column %d (%d elements) to zero\n", breakdown, ((1 + degree) - (breakdown -1))*m);
             // memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
 
             // if(!myid){
@@ -197,18 +200,18 @@ int main(int argc, char **argv){
     }
 
     if(!myid){ /* Print out results */
-        printf("Part of Q process 0:\n");
-        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+        // printf("Part of Q process 0:\n");
+        // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
         printf("Hessenberg:\n");
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
 
-    if(myid == 1){ /* Print out results */
-        printf("Part of Q process 1:\n");
-        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
-    }
+    // if(myid == 1){ /* Print out results */
+    //     printf("Part of Q process 1:\n");
+    //     print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+    // }
 
 
     free(mathcalQ);
