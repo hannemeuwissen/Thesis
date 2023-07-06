@@ -75,9 +75,9 @@ int main(int argc, char **argv){
     // sparse_CSR A;
     // read_CSR(&A, "smallcsr4.txt");
 
-    if(!myid){
-        print_CSR(&A);
-    }
+    // if(!myid){
+    //     print_CSR(&A);
+    // }
 
     /* Initialize arrays */
     int steps = degree/s;
@@ -176,7 +176,7 @@ int main(int argc, char **argv){
 
         if(breakdown != -1){
             /* Set matching vectors in mathcalQ to zero */
-            // memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
+            memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
 
             // if(!myid){
             //     /* Fill mathcall H with zeros */
@@ -189,7 +189,7 @@ int main(int argc, char **argv){
             //     free(mathcalH);
             //     mathcalH = temp;
             // }
-            printf("%d\n", breakdown);
+            printf("Breakdown row %d in block %d\n", breakdown, block);
 
             break;
         }
