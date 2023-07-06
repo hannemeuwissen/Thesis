@@ -187,7 +187,8 @@ int main(int argc, char **argv){
                 double * temp = malloc((degree + 1)*degree*sizeof(double));
                 for(int i=0;i<breakdown;i++){
                     memcpy(temp + i*degree, mathcalH + i*(s*(block+1)), (s*(block+1))*sizeof(double));
-                    memset(temp + (s*(block+1)) + i*degree, 0, (degree - breakdown)*sizeof(double));
+                    // memset(temp + (s*(block+1)) + i*degree, 0, (degree - breakdown)*sizeof(double));
+                    memset(temp + breakdown + i*degree, 0, (degree - breakdown)*sizeof(double));
                 }
                 memset(temp + breakdown*degree, 0, degree*((1 + degree) - breakdown)*sizeof(double));
                 free(mathcalH);
