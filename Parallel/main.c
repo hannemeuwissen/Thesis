@@ -131,11 +131,7 @@ int main(int argc, char **argv){
                 calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
                 free(R);
                 free(B_);
-
-                print_matrix(mathcalH, s+1, s);
-
                 breakdown = breakdown_check(mathcalH, s, block, tol);
-                // printf("Breakdown block %d: %d\n", block, breakdown);
             }
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             free(R_);
@@ -164,9 +160,7 @@ int main(int argc, char **argv){
             /* Update mathcal H */
             if(!myid){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
-                print_matrix(mathcalH, s*(block + 1) + 1, s*(block + 1));
                 breakdown = breakdown_check(mathcalH, s, block, tol);
-                // printf("Breakdown block %d: %d\n", block, breakdown);
             }
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -179,7 +173,6 @@ int main(int argc, char **argv){
 
         if(breakdown != -1){
             /* Set matching vectors in mathcalQ to zero */
-            printf("set from column %d (%d elements) to zero\n", breakdown, ((1 + degree) - breakdown)*m);
             memset(mathcalQ + breakdown*m, 0, ((1 + degree) - breakdown)*m*sizeof(double));
 
             if(!myid){
@@ -187,14 +180,12 @@ int main(int argc, char **argv){
                 double * temp = malloc((degree + 1)*degree*sizeof(double));
                 for(int i=0;i<breakdown;i++){
                     memcpy(temp + i*degree, mathcalH + i*(s*(block+1)), (s*(block+1))*sizeof(double));
-                    // memset(temp + (s*(block+1)) + i*degree, 0, (degree - breakdown)*sizeof(double));
                     memset(temp + breakdown + i*degree, 0, (degree - breakdown)*sizeof(double));
                 }
                 memset(temp + breakdown*degree, 0, degree*((1 + degree) - breakdown)*sizeof(double));
                 free(mathcalH);
                 mathcalH = temp;
             }
-            printf("Breakdown row %d in block %d\n", breakdown, block);
 
             break;
         }
@@ -209,10 +200,10 @@ int main(int argc, char **argv){
 
     MPI_Barrier(MPI_COMM_WORLD);
 
-    // if(myid == 1){ /* Print out results */
-    //     printf("Part of Q process 1:\n");
-    //     print_matrix_transposed(mathcalQ, (steps*s + 1), m);
-    // }
+    if(myid == 1){ /* Print out results */
+        printf("Part of Q process 1:\n");
+        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+    }
 
 
     free(mathcalQ);
