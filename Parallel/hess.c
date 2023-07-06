@@ -145,7 +145,7 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
  * the first zero if breakdown occured.
  */
 int breakdown_check(double *H, const int s, const int k, const double tol){
-    printf("Breakdown check:\n")
+    printf("Breakdown check:\n");
     const int lowerdim = s*(k+1);
     const int upperdim = s*(k+1) + 1;
 
