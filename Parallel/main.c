@@ -200,8 +200,8 @@ int main(int argc, char **argv){
     }
 
     if(!myid){ /* Print out results */
-        // printf("Part of Q process 0:\n");
-        // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+        printf("Part of Q process 0:\n");
+        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
         printf("Hessenberg:\n");
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
