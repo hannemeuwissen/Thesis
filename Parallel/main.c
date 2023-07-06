@@ -176,6 +176,7 @@ int main(int argc, char **argv){
 
         if(breakdown != -1){
             /* Set matching vectors in mathcalQ to zero */
+            printf("set from column %d (%d elements) to zero\n", breakdown, ((1 + degree) - (breakdown -1))*m);
             // memset(mathcalQ + breakdown*m, 0, ((1 + degree) - (breakdown -1))*m*sizeof(double));
 
             // if(!myid){
