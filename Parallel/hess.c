@@ -1,8 +1,9 @@
 /**
  * @file hess.c
- * @author Hanne Meuwissen (22307813)
- * @brief Code for thesis at Trinity College Dublin.
- * @version 0.1
+ * @brief Code related to the calculation of the upper Hessenberg matrix as part of CA-Arnoldi, 
+ * part of Thesis project in High Performance Computing at Trinity College Dublin.
+ * @author Hanne Meuwissen (meuwissh@tcd.ie)
+ * @version 2.0
  * @date 2023-06-19
  */
 #include<stdlib.h>
@@ -72,7 +73,7 @@ void get_R(double * R, double * R_, const int n){
 /**
  * @brief Function that transposes a square matrix.
  * @param R Pointer to the matrix.
- * @param transR Poiter to matrix that stores the result.
+ * @param transR Pointer to matrix that stores the result.
  * @param s The dimension of the matrix.
  */
 void transpose(double *R, double *transR, const int s){
@@ -84,9 +85,9 @@ void transpose(double *R, double *transR, const int s){
 }
 
 /**
- * @brief Function that updates the upper Hessenberg matrix from step 1.
+ * @brief Function that updates the upper Hessenberg matrix (from step 1 on).
  * @param H Pointer to the address of the previous upper Hessenberg matrix, and will store the next.
- * @param mathcalR_ Pointer to the matrix inproduct from B-CGS.
+ * @param mathcalR_ Pointer to the matrix inproduct from block (classical) Gram-Schmidt.
  * @param R Pointer to the R matrix from TSQR.
  * @param s The blocksize.
  * @param k The index of the current block.
@@ -137,8 +138,8 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
 }
 
 /**
- * @brief Function that checks if breakdown has occured in calculated Hessenberg
- * @param H The Hessenberg matrix.
+ * @brief Function that checks if breakdown has occured in calculated upper Hessenberg matrix.
+ * @param H The upper Hessenberg matrix.
  * @param s The blocksize.
  * @param k The current block index.
  * @return The function returns -1 when no breakdown has occured, and the row index of 
@@ -146,8 +147,6 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
  */
 int breakdown_check(double *H, const int s, const int k, const double tol){
     const int lowerdim = s*(k+1);
-    const int upperdim = s*(k+1) + 1;
-
     for(int j=s*k;j<lowerdim;j++){
         if(fabs(H[j + (j+1)*lowerdim]) < tol){
             return j+1;

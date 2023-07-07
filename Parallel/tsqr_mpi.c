@@ -1,20 +1,21 @@
 /**
  * @file tsqr_mpi.c
- * @author Hanne Meuwissen (22307813)
- * @brief Code for thesis at Trinity College Dublin.
- * @version 0.1
+ * @brief Code related to the calculation of CA-TSQR as part of CA-Arnoldi, part 
+ * of Thesis project in High Performance Computing at Trinity College Dublin.
+ * @author Hanne Meuwissen (meuwissh@tcd.ie)
+ * @version 2.0
  * @date 2023-05-27
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <mpi.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<math.h>
+#include<mpi.h>
 #include<mkl_types.h>
 #include<mkl_cblas.h>
 #include<string.h>
 #include"mkl.h"
-#include "sparse.h"
-#include "matrix.h"
+#include"sparse.h"
+#include"matrix.h"
 
 /**
  * @brief Function that determines if the process is active in a certain step of the TSQR algorithm.
@@ -42,7 +43,7 @@ int find_lower_active(const int rank, const int step){
 }
 
 /**
- * @brief Function that performs the communication avoiding TSQR (A = QR) using OpenMP.
+ * @brief Function that performs the communication avoiding TSQR (A = QR).
  * @param[in] A The matrix part of A for the calling process.
  * @param[in] m Number of rows in the matrix part.
  * @param[in] N Number of columns of the matrix.
@@ -110,15 +111,14 @@ void TSQR(double *A, const int m, const int N, double *R, const int rank, const 
 
     /* Overwrite A with resulting Q for each part */
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, N);
-    // MPI_Barrier(MPI_COMM_WORLD);
 }
 
 /**
- * @brief Function that performs the communication avoiding TSQR (A = QR) using OpenMP.
- * @param[in] A The matrix part of A for the calling process.
- * @param[in] m Number of rows in the matrix part.
- * @param[in] N Number of columns of the matrix.
- * @param[in] R The matrix that will hold the result for R. Rank 0 holds the final result.
+ * @brief Function that performs the communication avoiding TSQR (A = QR), where the transpose of A is used.
+ * @param[in] A The matrix part of A for the calling process (transposed).
+ * @param[in] m Number of rows in the matrix part (before transposing).
+ * @param[in] N Number of columns of the matrix (before transposing).
+ * @param[in] R The matrix that will hold the result for R. Rank 0 holds the final result (transposed). 
  * @param[in] rank The rank of the calling process.
  * @param[in] nprocs The number of processes.
  * @param[in] comm The MPI communicator
@@ -151,19 +151,12 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                 }
             }
 
-            // if(!rank){
-            //     print_matrix(tempA, cols, rows);
-            // }
-
             /* Save R part */
             for(int i=0;i<N;i++){ 
                 for(int j=0;j<N;j++){
                     R[j + i*N] = ((j > i)? 0 : tempA[j + i*rows]);
                 }
-            } 
-            // if(!rank){
-            //     print_matrix(R, cols, cols);
-            // }
+            }
             free(tempA);
             
             if(step<steps){
@@ -194,6 +187,4 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
 
     /* Overwrite A with resulting Q for each part */
     cblas_dtrsm(CblasColMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, m, N, 1.0, R, N, A, m);
-    // MPI_Barrier(MPI_COMM_WORLD);
-
 }

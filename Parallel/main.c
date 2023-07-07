@@ -1,15 +1,16 @@
 /**
  * @file main.c
- * @author Hanne Meuwissen (22307813)
- * @brief Code for thesis at Trinity College Dublin.
- * @version 1.0
+ * @brief Main code to investigate CA-Arnoldi, part of Thesis project in 
+ * High Performance Computing at Trinity College Dublin.
+ * @author Hanne Meuwissen (meuwissh@tcd.ie)
+ * @version 4.0
  * @date 2023-06-02
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <mpi.h>
-#include <string.h>
-#include <math.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<mpi.h>
+#include<string.h>
+#include<math.h>
 #include<mkl_cblas.h>
 #include<mkl_types.h>
 #include"parse.h"

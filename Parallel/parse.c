@@ -1,7 +1,8 @@
 /**
  * @file parse.c
- * @author Hanne Meuwissen (22307813)
- * @brief Code for thesis at Trinity College Dublin.
+ * @brief Code related to parsing the input parameters to investigate CA-Arnoldi, part of
+ * Thesis project in High Performance Computing at Trinity College Dublin.
+ * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0
  * @date 2023-06-02
  */
@@ -12,9 +13,9 @@
 
 /**
  * @brief Function that handles the input arguments. 
- * @param argc
- * @param argv
- * @param M The number of nodes.
+ * @param argc First standard input parameter.
+ * @param argv Second standard input parameter.
+ * @param M The number of nodes in the full graph.
  * @param nnz The number of edges per node in the random generated graph.
  * @param filename_v The name of the file that contains the initial vector.
  * @param degree The degree of the Krylov subspace.
@@ -64,11 +65,12 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
 }
 
 /**
- * @brief Function that handles the input arguments. 
- * @param argc
- * @param argv 
+ * @brief Function that handles the input arguments.
+ * @param argc First standard input parameter.
+ * @param argv Second standard input parameter.
  * @param filename_A The name of the file that contains the sparse CSR matrix.
- * @param M The number of nodes.
+ * @param M The number of nodes in the full graph.
+ * @param nnz The number of edges per node in the random generated graph.
  * @param filename_v The name of the file that contains the initial vector.
  * @param degree The degree of the Krylov subspace.
  * @param s The blocksize (s-step Krylov subspace method).

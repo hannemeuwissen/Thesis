@@ -1,8 +1,10 @@
 /**
  * @file graph.c
- * @brief Code for generating graphs in sparse format.
+ * @brief Code related to the generation of regular graph transition matrices in sparse 
+ * format to investigate CA-Arnoldi, part of Thesis project in High Performance Computing 
+ * at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 1.0
+ * @version 2.0
  * @date 2023-05-26
  */
 #include<stdlib.h>
@@ -29,8 +31,8 @@ int contains(int element, int * array, const int len){
 }
 
 /**
- * @brief Function that returns a result array with random selected and sorted column indices.
- * @param result The address of the result array.
+ * @brief Function that returns a result array with randomly selected and sorted column indices.
+ * @param result Pointer to the address of the result array.
  * @param n The number of columns.
  * @param nnz The number of nonzeros; the number of indices to be randomly selected.
  */
@@ -54,7 +56,7 @@ void random_col_indices(int ** result, const int n, const int nnz){
  * @param n The number of nodes (rows) in the part.
  * @param M Total number of nodes in the graph.
  * @param nnz_per_row The number of nonzeros; the number of edges per node.
- * @return sparse_CSR Sparse CSR matrix stucture of the part of the transition matrix.
+ * @return Sparse CSR matrix stucture of the part of the transition matrix.
  */
 sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int nnz_per_row){
     // /* Seed random using random device */

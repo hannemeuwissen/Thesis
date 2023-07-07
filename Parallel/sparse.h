@@ -1,8 +1,9 @@
 /**
  * @file sparse.h
- * @brief Header file for thesis.
+ * @brief Header file related to working with sparse CSR matrices, part of Thesis 
+ * project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 1.0
+ * @version 2.0
  * @date 2023-05-26
  */
 #ifndef SPARSE_H_TWYFUKH2
@@ -20,14 +21,6 @@ typedef struct sparse_CSR {
     int * colindex;
     double * values;
 } sparse_CSR;
-
-/**
- * @brief Structure that holds information of a certain index.
- */
-typedef struct index_data {
-    int rank;
-    int index;
-} index_data;
 
 void print_CSR(sparse_CSR * M);
 void read_CSR(sparse_CSR * M, const char *const filename);

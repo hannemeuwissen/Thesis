@@ -1,14 +1,14 @@
 /**
  * @file hess.h
- * @brief Header for thesis at Trinity College Dublin.
- * @author Hanne Meuwissen (22307813)
- * @version 1.0
+ * @brief Header file related to the calculation of the upper Hessenberg matrix as part 
+ * of CA-Arnoldi, part of Thesis project in High Performance Computing at Trinity College Dublin.
+ * @author Hanne Meuwissen (meuwissh@tcd.ie)
+ * @version 2.0
  * @date 2023-06-19
  */
 #ifndef HESS_H_7BZWC1IU
 #define HESS_H_7BZWC1IU
 
-void calc_hess(double * H_, double * R_, double * B_, double * R, const int n, const int m);
 void calc_hess_on_transpose(double * H_, double * R_, double * B_, double * R, const int n, const int m);
 void get_R(double * R, double * R_, const int n);
 void set_B_(double *B_, const int s);

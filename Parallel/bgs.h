@@ -1,8 +1,10 @@
 /**
  * @file bgs.h
- * @brief Header for thesis at Trinity College Dublin.
- * @author Hanne Meuwissen (22307813)
- * @version 1.0
+ * @brief Header file related to the calculation of block (classical) Gram-Schmidt 
+ * as part of CA-Arnoldi, part of Thesis project in High Performance Computing at 
+ * Trinity College Dublin.
+ * @author Hanne Meuwissen (meuwissh@tcd.ie)
+ * @version 2.0
  * @date 2023-06-11
  */
 #ifndef BGS_H_7BZWC1IU

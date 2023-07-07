@@ -1,7 +1,8 @@
 /**
  * @file tsqr_mpi.h
- * @brief Header for thesis at Trinity College Dublin.
- * @author Hanne Meuwissen (22307813)
+ * @brief Header file related to the calculation of CA-TSQR as part of CA-Arnoldi, part 
+ * of Thesis project in High Performance Computing at Trinity College Dublin.
+ * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 2.0
  * @date 2023-05-27
  */

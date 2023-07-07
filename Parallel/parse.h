@@ -1,8 +1,9 @@
 /**
  * @file parse.h
- * @brief Header for thesis at Trinity College Dublin.
- * @author Hanne Meuwissen (22307813)
- * @version 1.0
+ * @brief Header file related to parsing the input parameters to investigate CA-Arnoldi, 
+ * part of Thesis project in High Performance Computing at Trinity College Dublin.
+ * @author Hanne Meuwissen (meuwissh@tcd.ie)
+ * @version 2.0
  * @date 2023-06-02
  */
 #ifndef PARSE_H_7BZWC1IU

@@ -1,8 +1,9 @@
 /**
  * @file sparse.c
- * @brief Code for parallel calculations with sparse CSR matrices.
+ * @brief Code related to working with sparse CSR matrices, part of Thesis 
+ * project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 1.0
+ * @version 2.0
  * @date 2023-06-02
  */
 #include<stdlib.h>
@@ -146,26 +147,23 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
  * @param comm MPI communicator between processes.
  */
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm){
-    
-    if(len != A.nrows){
+    if(len != A.nrows){ /* Sanity check */
         perror("Incompatible dimensions in parallel spmv.\n");
         exit(EXIT_FAILURE);
     }
-    
     int M = A.ncols;
-    double * x_gathered_elements = malloc(M*sizeof(double)); // maximum size
+    double * x_gathered_elements = malloc(M*sizeof(double)); /* maximum size */
 
+    /* Create window with accessible memory */
     MPI_Win win;
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
     
-    for(int i=0;i<len;i++){
+    for(int i=0;i<len;i++){ /* For all rows: gather elements + dot product of row and gathered elements */
+        /* Gather elements */
         int nnz_i = 0;
-
         MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
-
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
-
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
                 x_gathered_elements[nnz_i] = x[colindex - start[myid]];
             }else{ /* Element from x in other processes' memory*/
@@ -173,84 +171,15 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
                 int colindex_rank = find_rank_colindex(colindex, nprocs, end, smaller, myid);
                 MPI_Get(x_gathered_elements + nnz_i, 1, MPI_DOUBLE, colindex_rank, colindex - start[colindex_rank], 1, MPI_DOUBLE, win);
             }
-
             nnz_i++;
         }
-
         MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
-
+        /* Dot product */
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }
     free(x_gathered_elements);
     MPI_Win_free(&win);    
 }
-// void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, MPI_Comm comm){
-    
-//     if(len != A.nrows){
-//         perror("Incompatible dimensions in parallel spmv.\n");
-//         exit(EXIT_FAILURE);
-//     }
-    
-//     int M = A.ncols;
-//     int * start = malloc(nprocs*sizeof(int));
-//     int * end = malloc(nprocs*sizeof(int));
-//     get_indices(M, nprocs, start, end);
-//     double * x_gathered_elements = malloc(M*sizeof(double));
-
-//     MPI_Datatype indexed_values;
-//     MPI_Win win;
-//     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
-    
-//     for(int i=0;i<len;i++){
-//         int j = A.rowptrs[i];
-//         int nnz_i = 0;
-        
-//         while(j<A.rowptrs[i+1]){
-//             int colindex = A.colindex[j];
-//             for(int p=0;p<nprocs;p++){ /* Per process: get all elements at once */
-//                 int cnt = 0; /* number of elements to get from this process */
-//                 int * indices = malloc((end[p] - start[p]+1)*sizeof(int)); /* Indices of element in other process */
-//                 while(colindex < end[p] && j < A.rowptrs[i+1]){
-//                     if(p != myid){
-//                         indices[cnt] = colindex - start[p];
-//                         cnt++;
-//                     }else{
-//                         x_gathered_elements[nnz_i] = x[colindex - start[p]];
-//                     }
-//                     nnz_i++;
-//                     j++;
-//                     if(j < A.rowptrs[i+1]){
-//                         colindex = A.colindex[j];
-//                     }
-//                 }
-//                 if(p != myid){
-//                     int * lengths = malloc(cnt*sizeof(int));
-//                     for(int i=0;i<cnt;i++){lengths[i] = 1;}
-//                     MPI_Type_indexed(cnt, lengths, indices, MPI_DOUBLE, &indexed_values);
-//                     MPI_Type_commit(&indexed_values);
-
-//                     MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
-//                     MPI_Get(x_gathered_elements + start[p], cnt, MPI_DOUBLE, p, 0, 1, indexed_values, win);
-//                     MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
-
-//                     free(lengths);
-//                 }
-//                 free(indices);
-//             }
-//             j++;
-
-//         }
-
-//         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
-//     }
-
-//     MPI_Win_free(&win);
-//     MPI_Type_free(&indexed_values);
-
-//     free(start);
-//     free(end);
-//     free(x_gathered_elements);
-// }
 
 /**
  * @brief Function that performs the matrix powers kernel, constructing {v, Av, ..., A^(s)v}. 

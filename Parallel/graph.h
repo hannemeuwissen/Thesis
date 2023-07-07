@@ -1,6 +1,8 @@
 /**
  * @file graph.h
- * @brief Main function for thesis.
+ * @brief Header file related to the generation of regular graph transition matrices in sparse 
+ * format to investigate CA-Arnoldi, part of Thesis project in High Performance Computing 
+ * at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0
  * @date 2023-05-26

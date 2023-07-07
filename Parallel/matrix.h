@@ -1,8 +1,9 @@
 /**
  * @file matrix.h
- * @brief Header file for functions on dense matrices for thesis at Trinity College Dublin.
+ * @brief Header file related to working with dense matrices, part of Thesis project in 
+ * High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 1.0
+ * @version 2.0
  * @date 2023-06-02
  */
 
