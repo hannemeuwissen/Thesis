@@ -11,6 +11,6 @@
 #define GRAPH_H_TWYFUKH2
 
 #include"sparse.h"
-sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int nnz_per_row);
+sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int nnz_per_row, const int random);
 
 #endif /* end of include guard: GRAPH_H_TWYFUKH2 */

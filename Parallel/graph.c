@@ -56,24 +56,26 @@ void random_col_indices(int ** result, const int n, const int nnz){
  * @param n The number of nodes (rows) in the part.
  * @param M Total number of nodes in the graph.
  * @param nnz_per_row The number of nonzeros; the number of edges per node.
+ * @param random Indicator if it generates using random device seeding or a fixed seed.
  * @return Sparse CSR matrix stucture of the part of the transition matrix.
  */
-sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int nnz_per_row){
-    // /* Seed random using random device */
-    // int randomvalue;
-    // FILE * fpointer;
-    // if((fpointer=fopen("/dev/random","r")) == NULL){
-    //     perror("Error opening random device");
-    //     exit(EXIT_FAILURE);
-    // }
-    // if(fread(&randomvalue,sizeof(int),1,fpointer) != 1){
-    //     perror("Error reading from random device");
-    //     exit(EXIT_FAILURE);
-    // }
-    // fclose(fpointer);
-    // srandom(randomvalue);
-    // fixed seed for testing
-    srandom(9499);
+sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int nnz_per_row, const int random){
+    if(!random){
+        srandom(9499);
+    }else{/* Seed random using random device */
+        int randomvalue;
+        FILE * fpointer;
+        if((fpointer=fopen("/dev/random","r")) == NULL){
+            perror("Error opening random device");
+            exit(EXIT_FAILURE);
+        }
+        if(fread(&randomvalue,sizeof(int),1,fpointer) != 1){
+            perror("Error reading from random device");
+            exit(EXIT_FAILURE);
+        }
+        fclose(fpointer);
+        srandom(randomvalue);
+    }
 
     /* Initialize sparse_CSR structure */
     sparse_CSR T;
