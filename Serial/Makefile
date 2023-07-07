@@ -1,7 +1,8 @@
 #
 # @file Makefile
-# @brief Makefile for thesis at Trinity College Dublin.
-# @author Hanne Meuwissen (22307813)
+# @brief Makefile for code to investigate serial Arnoldi, part of Thesis project in 
+# High Performance Computing at Trinity College Dublin.
+# @author Hanne Meuwissen (meuwissh@tcd.ie)
 # @version 1.0
 # @date 2023-05-26
 #

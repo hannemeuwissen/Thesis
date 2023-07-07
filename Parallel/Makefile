@@ -2,7 +2,7 @@
 # @file Makefile
 # @brief Makefile for code to investigate CA-Arnoldi, part of Thesis project in 
 # High Performance Computing at Trinity College Dublin.
-# @author Hanne Meuwissen (22307813)
+# @author Hanne Meuwissen (meuwissh@tcd.ie)
 # @version 3.0
 # @date 2023-05-26
 #

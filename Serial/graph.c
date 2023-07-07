@@ -1,6 +1,7 @@
 /**
  * @file graph.c
- * @brief Code for generating graphs in sparse format.
+ * @brief Code related to generating sparse transition matrices of random graphs, 
+ * part of Thesis project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0
  * @date 2023-05-26

@@ -1,6 +1,7 @@
 /**
  * @file sparse.h
- * @brief Main function for thesis.
+ * @brief Header file related to working with sparse CSR matrices, part of Thesis 
+ * project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0
  * @date 2023-05-26

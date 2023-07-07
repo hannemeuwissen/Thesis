@@ -1,6 +1,7 @@
 /**
  * @file sparse.c
- * @brief Code for calculations with sparse CSR matrices.
+ * @brief Code related to working with sparse CSR matrices, part of Thesis 
+ * project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0
  * @date 2023-05-27
@@ -100,11 +101,9 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, double * H, co
     cblas_dcopy(len, b, 1, Q_trans, 1); /* Set first vector of Q */
     double norm_b = cblas_dnrm2(len, Q_trans, 1);
     cblas_dscal(len, 1/norm_b, Q_trans, 1); /* Normalize */
-    // double h;
     double * w = malloc(len*sizeof(double));
     for(int j=1;j < m;j++){
         spmv(A, Q_trans + (j-1)*len, len, w);
-        // print_vector(w, len);
         for(int i=0;i<j;i++){
             H[i*(m-1) + (j-1)] = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
             cblas_daxpy(len,-H[i*(m-1) + (j-1)],Q_trans + i*len,1,w, 1);
