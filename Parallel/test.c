@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     }
 
     /* Test irregular graph generator */
-    sparse_CSR A = generate_irregular_graph_part_csr(5, 10, 2, 7, 0, MPI_COMM_WORLD);
+    sparse_CSR A = generate_irregular_graph_part_csr(5, 10, 2, 7, 0);
     /* Print in order */
     if(!myid){
         printf("Rank %d:\n", myid);
