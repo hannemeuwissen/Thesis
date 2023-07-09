@@ -40,12 +40,12 @@ int main(int argc, char **argv)
     /* Print in order */
     if(!myid){
         printf("Rank %d:\n", myid);
-        print_CSR(&M);
+        print_CSR(&A);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){
         printf("Rank %d:\n", myid);
-        print_CSR(&M);
+        print_CSR(&A);
     }
     
     // /* Test SPMV */
