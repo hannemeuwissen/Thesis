@@ -104,3 +104,64 @@ sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int n
     free(col_indices);
     return T;
 }
+
+/**
+ * @brief Function that generates a part of the transition matrix (CSR) of a random graph 
+ * where each node has a number of edges between specified min and max, which are randomly selected.
+ * @param n The number of nodes (rows) in the part.
+ * @param M Total number of nodes in the graph.
+ * @param min_nnz_per_row The minimum of the number of nonzeros; the number of edges per node.
+ * @param max_nnz_per_row The maximum of the number of nonzeros; the number of edges per node.
+ * @param random Indicator if it generates using random device seeding or a fixed seed.
+ * @param comm The MPI communicator..
+ * @return Sparse CSR matrix stucture of the part of the transition matrix.
+ */
+sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int min_nnz_per_row, const int max_nnz_per_row, const int random, MPI_Comm comm){
+    if(!random){
+        srandom(9499);
+    }else{/* Seed random using random device */
+        int randomvalue;
+        FILE * fpointer;
+        if((fpointer=fopen("/dev/random","r")) == NULL){
+            perror("Error opening random device");
+            exit(EXIT_FAILURE);
+        }
+        if(fread(&randomvalue,sizeof(int),1,fpointer) != 1){
+            perror("Error reading from random device");
+            exit(EXIT_FAILURE);
+        }
+        fclose(fpointer);
+        srandom(randomvalue);
+    }
+
+    /* Get local and total nr of nonzeros */
+    int nnz_per_row = min_nnz_per_row + random() % (max_nnz_per_row+1 - min_nnz_per_row);
+    MPI_Allreduce(&(T.nnz), &nnz_per_row, 1, MPI_INT, MPI_SUM, comm);
+
+    /* Initialize sparse_CSR structure */
+    sparse_CSR T;
+    T.nrows = n;
+    T.ncols = M;
+    // T.nnz = n*nnz_per_row;
+    T.rowptrs = malloc((n+1)*sizeof(int));
+    T.colindex = malloc(T.nnz*sizeof(int));
+    T.values = malloc(T.nnz*sizeof(double));
+
+    /* Set nonzero elements per row at random */
+    int i = 0;
+    int row_index = 0;
+    double value = 1.0/((double) nnz_per_row);
+    int * col_indices;
+    while(i<T.nnz){
+        T.rowptrs[row_index++] = i;
+        random_col_indices(&col_indices, M, nnz_per_row);
+        for(int j=0;j<nnz_per_row;j++){
+            T.values[i] = value;            
+            T.colindex[i] = col_indices[j];
+            i++;
+        }
+    }
+    T.rowptrs[row_index] = T.nnz;
+    free(col_indices);
+    return T;
+}

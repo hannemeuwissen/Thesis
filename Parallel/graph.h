@@ -12,5 +12,6 @@
 
 #include"sparse.h"
 sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int nnz_per_row, const int random);
+sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int min_nnz_per_row, const int max_nnz_per_row, const int random, MPI_Comm comm);
 
 #endif /* end of include guard: GRAPH_H_TWYFUKH2 */

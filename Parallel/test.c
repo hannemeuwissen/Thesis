@@ -34,6 +34,19 @@ int main(int argc, char **argv)
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
+
+    /* Test irregular graph generator */
+    sparse_CSR A = generate_irregular_graph_part_csr(5, 10, 2, 7, 0, MPI_COMM_WORLD);
+    /* Print in order */
+    if(!myid){
+        printf("Rank %d:\n", myid);
+        print_CSR(&M);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 1){
+        printf("Rank %d:\n", myid);
+        print_CSR(&M);
+    }
     
     // /* Test SPMV */
     // int m = 10000;
