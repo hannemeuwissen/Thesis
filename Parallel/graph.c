@@ -106,18 +106,33 @@ sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int n
 }
 
 /**
+ * @brief Function that generates a vector of random numbers of nonzeros between a minimim and maximum.
+ * @param result The resulting vector.
+ * @param sum The sum of all nonzeros.
+ * @param min_nnz_per_row The maximum number of nonzeros per row.
+ * @param max_nnz_per_row The minimum number of nonzeros per row.
+ * @param n The number of rows.
+ */
+void random_nnz_per_row(int *result, int *sum, const int min_nnz_per_row, const int max_nnz_per_row, const int n){
+    *sum = 0;
+    for(int i=0;i<n;i++){
+        result[i] = min_nnz_per_row + random() % (max_nnz_per_row+1 - min_nnz_per_row);
+        *sum += result[i];
+    }
+}
+
+/**
  * @brief Function that generates a part of the transition matrix (CSR) of a random graph 
  * where each node has a number of edges between specified min and max, which are randomly selected.
  * @param n The number of nodes (rows) in the part.
  * @param M Total number of nodes in the graph.
  * @param min_nnz_per_row The minimum of the number of nonzeros; the number of edges per node.
  * @param max_nnz_per_row The maximum of the number of nonzeros; the number of edges per node.
- * @param random Indicator if it generates using random device seeding or a fixed seed.
- * @param comm The MPI communicator..
+ * @param random_ind Indicator if it generates using random device seeding or a fixed seed.
  * @return Sparse CSR matrix stucture of the part of the transition matrix.
  */
-sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int min_nnz_per_row, const int max_nnz_per_row, const int random, MPI_Comm comm){
-    if(!random){
+sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int min_nnz_per_row, const int max_nnz_per_row, const int random_ind){
+    if(!random_ind){
         srandom(9499);
     }else{/* Seed random using random device */
         int randomvalue;
@@ -134,34 +149,32 @@ sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int
         srandom(randomvalue);
     }
 
-    /* Get local and total nr of nonzeros */
-    int nnz_per_row = min_nnz_per_row + random() % (max_nnz_per_row+1 - min_nnz_per_row);
-    MPI_Allreduce(&(T.nnz), &nnz_per_row, 1, MPI_INT, MPI_SUM, comm);
-
     /* Initialize sparse_CSR structure */
     sparse_CSR T;
     T.nrows = n;
     T.ncols = M;
-    // T.nnz = n*nnz_per_row;
     T.rowptrs = malloc((n+1)*sizeof(int));
+    int *nnz_per_row = malloc(n*sizeof(int));
+    random_nnz_per_row(nnz_per_row, &(T.nnz), min_nnz_per_row, max_nnz_per_row, n);
     T.colindex = malloc(T.nnz*sizeof(int));
     T.values = malloc(T.nnz*sizeof(double));
 
     /* Set nonzero elements per row at random */
     int i = 0;
     int row_index = 0;
-    double value = 1.0/((double) nnz_per_row);
     int * col_indices;
     while(i<T.nnz){
-        T.rowptrs[row_index++] = i;
-        random_col_indices(&col_indices, M, nnz_per_row);
-        for(int j=0;j<nnz_per_row;j++){
+        double value = 1.0/((double) nnz_per_row[row_index]);
+        T.rowptrs[row_index] = i;
+        random_col_indices(&col_indices, M, nnz_per_row[row_index];
+        for(int j=0;j<nnz_per_row[row_index];j++){
             T.values[i] = value;            
             T.colindex[i] = col_indices[j];
             i++;
         }
+        row_index++;
     }
-    T.rowptrs[row_index] = T.nnz;
+    T.rowptrs[nnz_per_row[row_index]] = T.nnz;
     free(col_indices);
     return T;
 }
