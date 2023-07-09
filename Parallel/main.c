@@ -70,7 +70,7 @@ int main(int argc, char **argv){
     int m = end[myid] - start[myid] + 1;
 
     /* Generate part of transition matrix for calling process */
-    sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 1);
+    sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 0);
     printf("Process %d is done generating its part!\n", myid);
 
     // /* Test: read from file (each process)*/
