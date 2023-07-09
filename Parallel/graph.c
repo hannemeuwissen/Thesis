@@ -163,10 +163,11 @@ sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int
     int i = 0;
     int row_index = 0;
     int * col_indices;
+    double value;
     while(i<T.nnz){
-        double value = 1.0/((double) nnz_per_row[row_index]);
+        value = 1.0/((double) nnz_per_row[row_index]);
         T.rowptrs[row_index] = i;
-        random_col_indices(&col_indices, M, nnz_per_row[row_index];
+        random_col_indices(&col_indices, M, nnz_per_row[row_index]);
         for(int j=0;j<nnz_per_row[row_index];j++){
             T.values[i] = value;            
             T.colindex[i] = col_indices[j];
