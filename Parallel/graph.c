@@ -175,7 +175,7 @@ sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int
         }
         row_index++;
     }
-    T.rowptrs[nnz_per_row[row_index]] = T.nnz;
+    T.rowptrs[row_index] = T.nnz;
     free(col_indices);
     return T;
 }
