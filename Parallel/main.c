@@ -71,6 +71,7 @@ int main(int argc, char **argv){
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 1);
+    printf("Process %d is done generating tis part!\n", myid);
 
     // /* Test: read from file (each process)*/
     // sparse_CSR A;
@@ -193,18 +194,18 @@ int main(int argc, char **argv){
     }
 
     if(!myid){ /* Print out results */
-        printf("Part of Q process 0:\n");
-        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+        // printf("Part of Q process 0:\n");
+        // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
         printf("Hessenberg:\n");
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
 
-    if(myid == 1){ /* Print out results */
-        printf("Part of Q process 1:\n");
-        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
-    }
+    // if(myid == 1){ /* Print out results */
+    //     printf("Part of Q process 1:\n");
+    //     print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+    // }
 
 
     free(mathcalQ);
