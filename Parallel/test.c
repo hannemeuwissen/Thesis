@@ -173,11 +173,11 @@ int main(int argc, char **argv)
     //     print_matrix(W, 2, 2);
     // }   
 
-    /* Test read CSR */
-    sparse_CSR A;
-    read_CSR(&A, "smallcsr.txt");
+    // /* Test read CSR */
+    // sparse_CSR A;
+    // read_CSR(&A, "smallcsr.txt");
 
-    print_CSR(&A); 
+    // print_CSR(&A); 
 
     MPI_Finalize();
     return 0;
