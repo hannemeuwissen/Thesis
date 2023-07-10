@@ -1,10 +1,10 @@
 /**
- * @file main.c
- * @brief Main code to investigate CA-Arnoldi, part of Thesis project in 
- * High Performance Computing at Trinity College Dublin.
+ * @file main_irreg.c
+ * @brief Main code to investigate CA-Arnoldi on irregular graph transition matrices, 
+ * part of Thesis project ins High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 4.0
- * @date 2023-06-02
+ * @version 1.0
+ * @date 2023-07-10
  */
 #include<stdlib.h>
 #include<stdio.h>
@@ -25,8 +25,8 @@
 int main(int argc, char **argv){
     const double tol = 1.0E-10;  
     int myid, nprocs;
-    int degree,s,M,nnz;
-    char filename_v[100];
+    int degree,s,M,min_nnz, max_nnz;
+    char filename_v[100], filename_A[100];
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        parse_command_line_regular(argc, argv, &M, &nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
+        parse_command_line_irregular(argc, argv, filename_A, &M, &min_nnz, &max_nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
         if(degree%s != 0){
             printf("Invalid input: the degree of the Krylov subspace should be a multiple of the blocksize (s)\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
@@ -55,8 +55,13 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        if(nnz > M){
-            printf("Invalid input: Number of nonzeros per row is larger than length of row (%d > %d).\n", nnz, M);
+        if(min_nnz > max_nnz){
+            printf("Invalid input: Minimum number of nonzeros larger than maximum (%d > %d).\n", min_nnz, max_nnz);
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+
+        if(max_nnz > M){
+            printf("Invalid input: Number of nonzeros per row is larger than length of row (%d > %d).\n", max_nnz, M);
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
     }
@@ -65,7 +70,8 @@ int main(int argc, char **argv){
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&min_nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&max_nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
     /* Determine the start index and size of part for calling process */
@@ -75,7 +81,7 @@ int main(int argc, char **argv){
     int m = end[myid] - start[myid] + 1;
 
     /* Generate part of transition matrix for calling process */
-    sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 0);
+    sparse_CSR A = generate_irregular_graph_part_csr(m, M, min_nnz, max_nnz, 0);
     printf("Process %d is done generating its part!\n", myid);
 
     // /* Test: read from file (each process)*/
