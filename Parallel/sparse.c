@@ -148,6 +148,7 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
  */
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm){
     if(len != A.nrows){ /* Sanity check */
+    printf("Here\n");
         perror("Incompatible dimensions in parallel spmv.\n");
         exit(EXIT_FAILURE);
     }
