@@ -83,13 +83,13 @@ int main(int argc, char **argv)
     double t1 = MPI_Wtime();
     
     MPI_Win win;
-    MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win);
+    MPI_Win_create(x, n*sizeof(double), sizeof(double), MPI_INFO_NULL, MPI_COMM_WORLD, &win);
 
     spmv(M, x, n, result, myid, nprocs, start, end, MPI_COMM_WORLD, win);
     MPI_Barrier(MPI_COMM_WORLD);
 
     MPI_Win_free(&win);
-    
+
     double t2 = MPI_Wtime();
     printf("Process %d finished spmv\n",myid);
     if(!myid){
