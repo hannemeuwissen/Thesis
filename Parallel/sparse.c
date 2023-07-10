@@ -178,8 +178,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }
 
-    MPI_Win_fence(0);
-    
+    MPI_Win_fence(0, win);
+
     free(x_gathered_elements);
 
     MPI_Win_free(&win);  
