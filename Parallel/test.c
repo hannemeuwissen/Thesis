@@ -27,32 +27,35 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-    if(!myid){
-        float logprocs = log2(nprocs);
-        if(ceil(logprocs) != floor(logprocs)){
-            fprintf(stderr,"Error: The number of processes needs to be a power of 2 (because of TSQR).\n");
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
-    }
+    // if(!myid){
+    //     float logprocs = log2(nprocs);
+    //     if(ceil(logprocs) != floor(logprocs)){
+    //         fprintf(stderr,"Error: The number of processes needs to be a power of 2 (because of TSQR).\n");
+    //         MPI_Abort(MPI_COMM_WORLD, 1);
+    //     }
+    // }
 
-    /* Test irregular graph generator */
-    sparse_CSR A = generate_irregular_graph_part_csr(5, 10, 2, 7, 1);
-    /* Print in order */
-    if(!myid){
-        printf("Rank %d:\n", myid);
-        print_CSR(&A);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 1){
-        printf("Rank %d:\n", myid);
-        print_CSR(&A);
-    }
+    // /* Test irregular graph generator */
+    // sparse_CSR A = generate_irregular_graph_part_csr(5, 10, 2, 7, 1);
+    // /* Print in order */
+    // if(!myid){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&A);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     printf("Rank %d:\n", myid);
+    //     print_CSR(&A);
+    // }
     
-    // /* Test SPMV */
-    // int m = 10000;
-    // int n = 2500;
-    // int nnz_per_row = 2000;
-    // sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
+    /* Test SPMV */
+    int m = 20;
+    int nnz_per_row = 5;
+    int * start = malloc(nprocs*sizeof(int));
+    int * end = malloc(nprocs*sizeof(int));
+    get_indices(m, nprocs, start, end);
+    int n = end[myid] - start[myid] + 1;
+    sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
     // printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
     // /* Print in order */
     // if(!myid){
@@ -74,17 +77,17 @@ int main(int argc, char **argv)
     //     printf("Rank %d:\n", myid);
     //     print_CSR(&M);
     // }
-    // double * x = malloc(n*sizeof(double));
-    // for(int i=0;i<n;i++){x[i] = 1.0;}
-    // double * result = malloc(n*sizeof(double));
-    // double t1 = MPI_Wtime();
-    // spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
-    // double t2 = MPI_Wtime();
-    // if(!myid){
-    //     printf("First lines from result on process 0:\n");
-    //     print_vector(result, 10); // result should be 1 overall (sum of row elements)
-    //     printf("Runtime: %lf\n", t2-t1);
-    // }
+    double * x = malloc(n*sizeof(double));
+    for(int i=0;i<n;i++){x[i] = 1.0;}
+    double * result = malloc(n*sizeof(double));
+    double t1 = MPI_Wtime();
+    spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
+    double t2 = MPI_Wtime();
+    if(!myid){
+        printf("First lines from result on process 0:\n");
+        print_vector(result, 10); // result should be 1 overall (sum of row elements)
+        printf("Runtime: %lf\n", t2-t1);
+    }
     // MPI_Barrier(MPI_COMM_WORLD);
     // if(myid == 3){
     //     printf("First lines from result on process 3:\n");
