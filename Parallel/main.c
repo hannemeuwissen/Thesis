@@ -129,14 +129,18 @@ int main(int argc, char **argv){
             memcpy(V, v, m*sizeof(double));
             matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
             tend = MPI_Wtime();
-            mp_times[block] = fabs(tend-tbeg);
+            mp_times[block] = tend - tbeg;
+
+            printf("Process %d finished MP\n", myid);
 
             /* Orthogonalize first block using parallel CA-TSQR */
             tbeg = MPI_Wtime();
             R_ = malloc((s+1)*(s+1)*sizeof(double)); 
             TSQR_on_transpose(V, m, s + 1, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             tend = MPI_Wtime();
-            tsqr_times[block] = fabs(tend-tbeg);
+            tsqr_times[block] = tend - tbeg;
+
+            printf("Process %d is finished TSQR\n", myid);
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
@@ -158,7 +162,7 @@ int main(int argc, char **argv){
                 free(B_);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 tend = MPI_Wtime();
-                hess_times[block] = fabs(tend-tbeg);
+                hess_times[block] = tend-tbeg;
             }
 
             printf("Process %d is here\n", myid);
@@ -171,21 +175,21 @@ int main(int argc, char **argv){
             V = malloc(s*m*sizeof(double));
             matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
             tend = MPI_Wtime();
-            mp_times[block] = fabs(tend-tbeg);
+            mp_times[block] = tend-tbeg;
 
             /* Block-CGS to orthogonalize compared to previous blocks */
             tbeg = MPI_Wtime();
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
             bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
             tend = MPI_Wtime();
-            bgs_times[block-1] = fabs(tend-tbeg);
+            bgs_times[block-1] = tend-tbeg;
             
             /* Orthogonalize block using parallel CA-TSQR */
             tbeg = MPI_Wtime();
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             tend = MPI_Wtime(); 
-            tsqr_times[block] = fabs(tend-tbeg);
+            tsqr_times[block] = tend - tbeg;
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ + (1 + block*s)*m, V, s*m*sizeof(double));
@@ -200,7 +204,7 @@ int main(int argc, char **argv){
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 tend = MPI_Wtime();
-                hess_times[block] = fabs(tend-tbeg);
+                hess_times[block] = tend-tbeg;
             }
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
