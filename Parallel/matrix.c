@@ -3,11 +3,25 @@
  * @brief Code related to working with dense matrices, part of Thesis project in 
  * High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 2.0
+ * @version 3.0
  * @date 2023-06-02
  */
 #include<stdlib.h>
 #include<stdio.h>
+
+/**
+ * @brief Function that calculates the average of a given vector.
+ * @param v The vector.
+ * @param n The length of the vector.
+ * @return The average.
+ */
+double average(double * v, const int n){
+    double res = 0;
+    for(int i=0;i<n;i++){
+        res += v[i];
+    }
+    return res/n;
+}
 
 /**
  * @brief Function that prints a vector of given length.

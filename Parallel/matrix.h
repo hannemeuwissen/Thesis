@@ -9,6 +9,7 @@
 
 #ifndef MATRIX_H_TWYFUKH2
 #define MATRIX_H_TWYFUKH2
+double average(double * v, const int n);
 void print_vector(double * v, const int len);
 void print_matrix(double * A, const int n, const int m);
 void print_matrix_transposed(double * A, const int n, const int m);
