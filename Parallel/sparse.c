@@ -162,7 +162,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     for(int i=0;i<len;i++){ /* For all rows: gather elements + dot product of row and gathered elements */
         /* Gather elements */
         int nnz_i = 0;
-        MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
+        // MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
+        MPI_Win_fence(0,win);
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
