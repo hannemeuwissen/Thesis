@@ -96,13 +96,13 @@ void parse_command_line_irregular(const int argc, char * const *argv, char * fil
                 }
                 break;
             case 'z':
-                if(sscanf(optarg,"%d",nnz) == 0){
+                if(sscanf(optarg,"%d",min_nnz) == 0){
                     printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'x':
-                if(sscanf(optarg,"%d",nnz) == 0){
+                if(sscanf(optarg,"%d",max_nnz) == 0){
                     printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
                     MPI_Abort(comm, 1);
                 }
