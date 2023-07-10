@@ -118,7 +118,7 @@ int main(int argc, char **argv){
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     int block = 0;
     for(block = 0;block < steps;block++){
-        // printf("** Block %d\n", block);
+        printf("** Block %d\n", block);
 
         if(!block){
 
