@@ -146,7 +146,7 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
  * @param nprocs Number of processes.
  * @param comm MPI communicator between processes.
  */
-void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm){
+void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm, MPI_Win win){
     printf("Process %d starts spmv\n", myid);
     if(len != A.nrows){ /* Sanity check */
         perror("Incompatible dimensions in parallel spmv.\n");
@@ -155,9 +155,9 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int M = A.ncols;
     double * x_gathered_elements = malloc(M*sizeof(double)); /* maximum size */
 
-    /* Create window with accessible memory */
-    MPI_Win win;
-    MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
+    // /* Create window with accessible memory */
+    // MPI_Win win;
+    // MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
     
     for(int i=0;i<len;i++){ /* For all rows: gather elements + dot product of row and gathered elements */
         /* Gather elements */
@@ -175,7 +175,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             }
             nnz_i++;
         }
-        // MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
+        MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
         MPI_Win_fence(0,win);
         /* Dot product */
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
@@ -183,7 +183,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
     free(x_gathered_elements);
 
-    MPI_Win_free(&win);  
+    // MPI_Win_free(&win);  
 }
 
 /**
