@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     for(int i=0;i<n;i++){x[i] = 1.0;}
     double * result = malloc(n*sizeof(double));
     double t1 = MPI_Wtime();
-    spmv(M, x, n, result, myid, nprocs, start, end);
+    spmv(M, x, n, result, myid, nprocs, start, end, MPI_COMM_WORLD);
     double t2 = MPI_Wtime();
     if(!myid){
         printf("First lines from result on process 0:\n");
