@@ -159,8 +159,11 @@ int main(int argc, char **argv){
                 tend = MPI_Wtime();
                 hess_times[block] = tend-tbeg;
             }
+
+            printf("Process %d is here\n", myid);
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             free(R_);
+
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
             tbeg = MPI_Wtime();
