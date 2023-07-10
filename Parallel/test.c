@@ -83,6 +83,7 @@ int main(int argc, char **argv)
     double t1 = MPI_Wtime();
     spmv(M, x, n, result, myid, nprocs, start, end, MPI_COMM_WORLD);
     double t2 = MPI_Wtime();
+    printf("Process %d finished spmv\n",myid);
     if(!myid){
         printf("First lines from result on process 0:\n");
         print_vector(result, 10); // result should be 1 overall (sum of row elements)

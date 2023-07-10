@@ -147,6 +147,7 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
  * @param comm MPI communicator between processes.
  */
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm){
+    printf("Process %d starts spmv\n", myid);
     if(len != A.nrows){ /* Sanity check */
         perror("Incompatible dimensions in parallel spmv.\n");
         exit(EXIT_FAILURE);
