@@ -146,7 +146,7 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
  * @param nprocs Number of processes.
  * @param comm MPI communicator between processes.
  */
-void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm, MPI_Win win){
+void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm){
     printf("Process %d starts spmv\n", myid);
     if(len != A.nrows){ /* Sanity check */
         perror("Incompatible dimensions in parallel spmv.\n");
@@ -155,16 +155,20 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     int M = A.ncols;
     double * x_gathered_elements = malloc(M*sizeof(double)); /* maximum size */
 
-    // /* Create window with accessible memory */
-    // MPI_Win win;
-    // MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
-    
-    MPI_Win_fence(0,win);
+    /* Create window with accessible memory and necessary group*/
+    MPI_Group world_group;
+    MPI_Comm_group(comm, &world_group);
+    MPI_Win win;
+    MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
+
+    MPI_Win_post(world_group, 0, win);
     
     for(int i=0;i<len;i++){ /* For all rows: gather elements + dot product of row and gathered elements */
+        
         /* Gather elements */
         int nnz_i = 0;
-        MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
+        // MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
+        MPI_Win_start(world_group, 0, win);
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
@@ -176,34 +180,35 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             }
             nnz_i++;
         }
-        MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
-        // MPI_Win_fence(0,win);
+        // MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
+        MPI_Win_complete(win);
+
         /* Dot product */
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }
 
-    MPI_Win_fence(0,win);
+    MPI_Win_wait(win);
 
     free(x_gathered_elements);
 
-    // MPI_Win_free(&win);  
+    MPI_Win_free(&win);  
 }
 
-// /**
-//  * @brief Function that performs the matrix powers kernel, constructing {v, Av, ..., A^(s)v}. 
-//  * @param A The part of the sparse CSR matrix A for calling process.
-//  * @param start_v The start vector v.
-//  * @param V The matrix that stores the result.
-//  * @param s The maximum power of A.
-//  * @param m The number of rows in the part A.
-//  * @param myid The rank of the calling process.
-//  * @param nprocs The number of processes.
-//  * @param comm The MPI communicator.
-//  */
-// void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm){
-//     spmv(A, start_v, m, V, myid, nprocs, start, end, comm);
-//     printf("Process %d finished first spmv\n", myid);
-//     for(int k=1;k<s;k++){
-//         spmv(A, V + (k-1)*m, m, V + k*m, myid, nprocs, start, end, comm);
-//     }
-// }
+/**
+ * @brief Function that performs the matrix powers kernel, constructing {v, Av, ..., A^(s)v}. 
+ * @param A The part of the sparse CSR matrix A for calling process.
+ * @param start_v The start vector v.
+ * @param V The matrix that stores the result.
+ * @param s The maximum power of A.
+ * @param m The number of rows in the part A.
+ * @param myid The rank of the calling process.
+ * @param nprocs The number of processes.
+ * @param comm The MPI communicator.
+ */
+void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm){
+    spmv(A, start_v, m, V, myid, nprocs, start, end, comm);
+    printf("Process %d finished first spmv\n", myid);
+    for(int k=1;k<s;k++){
+        spmv(A, V + (k-1)*m, m, V + k*m, myid, nprocs, start, end, comm);
+    }
+}
