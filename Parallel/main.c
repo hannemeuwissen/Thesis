@@ -243,13 +243,21 @@ int main(int argc, char **argv){
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
+    
     printf("Total runtime process %d: %lf\n", myid, t2 - t1);
+    
     MPI_Barrier(MPI_COMM_WORLD);
+    
     printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block - 1));
+    
     MPI_Barrier(MPI_COMM_WORLD);
+    
     printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 2));
+    
     MPI_Barrier(MPI_COMM_WORLD);
+    
     printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block - 1));
+    
     MPI_Barrier(MPI_COMM_WORLD);
 
     if(myid == 1){ /* Print out results */
