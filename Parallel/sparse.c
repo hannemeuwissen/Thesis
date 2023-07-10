@@ -186,21 +186,21 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     // MPI_Win_free(&win);  
 }
 
-/**
- * @brief Function that performs the matrix powers kernel, constructing {v, Av, ..., A^(s)v}. 
- * @param A The part of the sparse CSR matrix A for calling process.
- * @param start_v The start vector v.
- * @param V The matrix that stores the result.
- * @param s The maximum power of A.
- * @param m The number of rows in the part A.
- * @param myid The rank of the calling process.
- * @param nprocs The number of processes.
- * @param comm The MPI communicator.
- */
-void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm){
-    spmv(A, start_v, m, V, myid, nprocs, start, end, comm);
-    printf("Process %d finished first spmv\n", myid);
-    for(int k=1;k<s;k++){
-        spmv(A, V + (k-1)*m, m, V + k*m, myid, nprocs, start, end, comm);
-    }
-}
+// /**
+//  * @brief Function that performs the matrix powers kernel, constructing {v, Av, ..., A^(s)v}. 
+//  * @param A The part of the sparse CSR matrix A for calling process.
+//  * @param start_v The start vector v.
+//  * @param V The matrix that stores the result.
+//  * @param s The maximum power of A.
+//  * @param m The number of rows in the part A.
+//  * @param myid The rank of the calling process.
+//  * @param nprocs The number of processes.
+//  * @param comm The MPI communicator.
+//  */
+// void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm){
+//     spmv(A, start_v, m, V, myid, nprocs, start, end, comm);
+//     printf("Process %d finished first spmv\n", myid);
+//     for(int k=1;k<s;k++){
+//         spmv(A, V + (k-1)*m, m, V + k*m, myid, nprocs, start, end, comm);
+//     }
+// }
