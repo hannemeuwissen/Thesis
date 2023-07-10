@@ -55,7 +55,7 @@ int main(int argc, char **argv)
     int * end = malloc(nprocs*sizeof(int));
     get_indices(m, nprocs, start, end);
     int n = end[myid] - start[myid] + 1;
-    sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row);
+    sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row, 1);
     // printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
     // /* Print in order */
     // if(!myid){
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     for(int i=0;i<n;i++){x[i] = 1.0;}
     double * result = malloc(n*sizeof(double));
     double t1 = MPI_Wtime();
-    spmv(M, x, n, result, myid, nprocs, MPI_COMM_WORLD);
+    spmv(M, x, n, result, myid, nprocs, start, end);
     double t2 = MPI_Wtime();
     if(!myid){
         printf("First lines from result on process 0:\n");
