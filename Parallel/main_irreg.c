@@ -122,7 +122,8 @@ int main(int argc, char **argv){
     for(int i=0;i<m;i++){v[i] /= global_norm;}
 
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
-    for(int block = 0;block < steps;block++){
+    int block = 0;
+    for(block = 0;block < steps;block++){
         // printf("** Block %d\n", block);
 
         if(!block){
