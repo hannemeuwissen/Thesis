@@ -200,17 +200,19 @@ int main(int argc, char **argv){
     if(!myid){ /* Print out results */
         // printf("Part of Q process 0:\n");
         // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
-        printf("Runtime: %lf\n", t2 - t1);
+        printf("Runtime process %d: %lf\n", myid, t2 - t1);
         printf("Hessenberg:\n");
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
 
-    // MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
+    printf("Runtime process %d: %lf\n", myid, t2 - t1);
 
-    // if(myid == 1){ /* Print out results */
-    //     printf("Part of Q process 1:\n");
-    //     print_matrix_transposed(mathcalQ, (steps*s + 1), m);
-    // }
+    if(myid == 1){ /* Print out results */
+        // printf("Part of Q process 1:\n");
+        // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+        // printf("Runtime process %d: %lf\n", myid, t2 - t1);
+    }
 
 
     free(mathcalQ);
