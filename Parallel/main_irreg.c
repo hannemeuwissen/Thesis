@@ -92,8 +92,6 @@ int main(int argc, char **argv){
     //     print_CSR(&A);
     // }
 
-    double t1 = MPI_Wtime();
-
     /* Initialize arrays */
     int steps = degree/s;
     double *V;
@@ -106,6 +104,15 @@ int main(int argc, char **argv){
 
     /* Initialize breakdown indicator */
     int breakdown = -1;
+
+    /* Initialize timing variables */
+    double * mp_times = malloc(steps*sizeof(double));
+    double * bgs_times = malloc((steps-1)*sizeof(double));
+    double * tsqr_times = malloc(steps*sizeof(double));
+    double * hess_times;
+    if(!myid){hess_times = malloc(steps*sizeof(double));}
+    double t1 = MPI_Wtime();
+    double tbeg, tend;
     
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
@@ -119,15 +126,21 @@ int main(int argc, char **argv){
         // printf("** Block %d\n", block);
 
         if(!block){
+
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!)*/
+            tbeg = MPI_Wtime();
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
             matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            tend = MPI_Wtime();;
+            mp_times[block] = tend-tbeg;
 
             /* Orthogonalize first block using parallel CA-TSQR */
+            tbeg = MPI_Wtime();
             R_ = malloc((s+1)*(s+1)*sizeof(double)); 
             TSQR_on_transpose(V, m, s + 1, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
-            // MPI_Barrier(MPI_COMM_WORLD);
+            tend = MPI_Wtime();
+            tsqr_times[block] = tend-tbeg;
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
@@ -138,6 +151,7 @@ int main(int argc, char **argv){
 
             /* Calculate mathcal H (note: only process 0 calculates H, and final H is not transposed!)*/
             if(!myid){
+                tbeg = MPI_Wtime();
                 mathcalH = malloc((s+1)*s*sizeof(double));
                 double * R = malloc(s*s*sizeof(double)); 
                 get_R(R, R_, s+1);
@@ -147,23 +161,32 @@ int main(int argc, char **argv){
                 free(R);
                 free(B_);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
+                tend = MPI_Wtime();
+                hess_times[block] = tend - tbeg;
             }
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             free(R_);
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
+            tbeg = MPI_Wtime();
             V = malloc(s*m*sizeof(double));
             matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            tend = MPI_Wtime();
+            mp_times[block] = tend - tbeg;
 
             /* Block-CGS to orthogonalize compared to previous blocks */
+            tbeg = MPI_Wtime();
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
             bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
-            // MPI_Barrier(MPI_COMM_WORLD);
+            tend = MPI_Wtime();
+            bgs_times[block-1] = tend - tbeg;
             
             /* Orthogonalize block using parallel CA-TSQR */
+            tbeg = MPI_Wtime();
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
-            // MPI_Barrier(MPI_COMM_WORLD); 
+            tend = MPI_Wtime();
+            tsqr_times[block] = tend - tbeg;
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ + (1 + block*s)*m, V, s*m*sizeof(double));
@@ -174,8 +197,11 @@ int main(int argc, char **argv){
 
             /* Update mathcal H */
             if(!myid){
+                tbeg =  MPI_Wtime();
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
+                tend = MPI_Wtime();
+                hess_times[block] = tend - tbeg;
             }
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -211,13 +237,20 @@ int main(int argc, char **argv){
     if(!myid){ /* Print out results */
         // printf("Part of Q process 0:\n");
         // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
-        printf("Runtime process %d (%d nonzeros): %lf\n", myid,A.nnz, t2 - t1);
+        printf("Total runtime process %d: %lf\n", myid, t2 - t1);
+        printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block - 1));
+        printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 2));
+        printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block - 1));
+        printf("Upper Hessenberg: %lf\n", average(hess_times, block - 1));
         printf("Hessenberg:\n");
         print_matrix(mathcalH, (steps*s + 1), steps*s);
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    printf("Runtime process %d (%d nonzeros): %lf\n", myid,A.nnz, t2 - t1);
+    printf("Total runtime process %d: %lf\n", myid, t2 - t1);
+    printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block - 1));
+    printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 2));
+    printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block - 1));
 
     if(myid == 1){ /* Print out results */
         // printf("Part of Q process 1:\n");
