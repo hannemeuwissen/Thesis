@@ -78,14 +78,6 @@ int main(int argc, char **argv){
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 0);
     printf("Process %d is done generating its part!\n", myid);
 
-    // /* Test: read from file (each process)*/
-    // sparse_CSR A;
-    // read_CSR(&A, "smallcsr4.txt");
-
-    // if(!myid){
-    //     print_CSR(&A);
-    // }
-
     /* Initialize arrays */
     int steps = degree/s;
     double *V;
