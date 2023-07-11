@@ -202,8 +202,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     }
 
     while (sum_ind < nprocs){
-        MPI_Win_fence(0, win);
-        MPI_Win_fence(0, win);
+        MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE, win);
+        MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT, win);
         MPI_Allreduce(&finished, &sum_ind, 1, MPI_INT, MPI_SUM, comm);
     }
 
