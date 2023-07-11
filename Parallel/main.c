@@ -73,7 +73,6 @@ int main(int argc, char **argv){
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
-    printf("Process %d: start %d end %d -> %d rows\n", myid, start[myid], end[myid], m);
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 1);
@@ -119,7 +118,7 @@ int main(int argc, char **argv){
     /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
     int block = 0;
     for(block = 0;block < steps;block++){
-        printf("** Block %d\n", block);
+        // printf("** Block %d\n", block);
 
         if(!block){
 
@@ -131,7 +130,7 @@ int main(int argc, char **argv){
             tend = MPI_Wtime();
             mp_times[block] = tend - tbeg;
 
-            printf("Process %d finished MP\n", myid);
+            // printf("Process %d finished MP\n", myid);
 
             /* Orthogonalize first block using parallel CA-TSQR */
             tbeg = MPI_Wtime();
@@ -140,7 +139,7 @@ int main(int argc, char **argv){
             tend = MPI_Wtime();
             tsqr_times[block] = tend - tbeg;
 
-            printf("Process %d is finished TSQR\n", myid);
+            // printf("Process %d is finished TSQR\n", myid);
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
@@ -165,7 +164,6 @@ int main(int argc, char **argv){
                 hess_times[block] = tend-tbeg;
             }
 
-            printf("Process %d is here\n", myid);
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             free(R_);
 
