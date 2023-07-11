@@ -232,8 +232,8 @@ int main(int argc, char **argv){
     double t2 = MPI_Wtime();
 
     if(!myid){ /* Print out results */
-        // printf("Part of Q process 0:\n");
-        // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+        printf("Part of Q process 0:\n");
+        print_matrix_transposed(mathcalQ, (steps*s + 1), m);
         printf("Total runtime process %d: %lf\n", myid, t2 - t1);
         printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block - 1));
         printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 2));
