@@ -198,13 +198,13 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
 
         if(i == len-1){finished++;}
-        MPI_Allreduce(finished, sum_ind, 1, MPI_INT, MPI_SUM, comm);
+        MPI_Allreduce(&finished, &sum_ind, 1, MPI_INT, MPI_SUM, comm);
     }
 
     while (sum_ind < nprocs){
         MPI_Win_fence(0, win);
         MPI_Win_fence(0, win);
-        MPI_Allreduce(finished, sum_ind, 1, MPI_INT, MPI_SUM, comm);
+        MPI_Allreduce(&finished, &sum_ind, 1, MPI_INT, MPI_SUM, comm);
     }
 
     printf("Process %d got here!\n", myid);
