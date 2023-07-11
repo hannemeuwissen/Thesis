@@ -176,8 +176,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
 
         /* Gather elements */
         int nnz_i = 0;
-        MPI_Win_fence(0,win);
-        // MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
+        // MPI_Win_fence(0,win);
+        MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
         // MPI_Win_start(world_group, 0, win);
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
@@ -190,8 +190,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             }
             nnz_i++;
         }
-        MPI_Win_fence(0,win);
-        // MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
+        // MPI_Win_fence(0,win);
+        MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
         // MPI_Win_complete(win);
 
         /* Dot product */
