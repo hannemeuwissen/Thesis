@@ -169,12 +169,10 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         
         printf("Calculating row %d\n", i);
 
-        MPI_Win_post(world_group, 0, win);
-
         /* Gather elements */
         int nnz_i = 0;
-        // MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
-        MPI_Win_start(world_group, 0, win);
+        MPI_Win_fence(MPI_MODE_NOPRECEDE | MPI_MODE_NOPUT | MPI_MODE_NOSTORE,win);
+        // MPI_Win_start(world_group, 0, win);
         for(int j=A.rowptrs[i];j<A.rowptrs[i+1];j++){
             int colindex = A.colindex[j];
             if(colindex >= start[myid] && colindex <= end[myid]){ /* Element from x in own memory */
@@ -186,10 +184,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
             }
             nnz_i++;
         }
-        // MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
-        MPI_Win_complete(win);
-
-        MPI_Win_wait(win);
+        MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
+        // MPI_Win_complete(win);
 
         /* Dot product */
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
