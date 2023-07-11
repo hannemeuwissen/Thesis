@@ -12,8 +12,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= test 
-# main main_irreg
+EXECS= test main main_irreg
 OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
@@ -45,17 +44,17 @@ test:test.c $(OBJ)
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
         -liomp5 -lpthread -lm
 
-# main:main.c $(OBJ)
-# 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
-#         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
-#         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-#         -liomp5 -lpthread -lm
+main:main.c $(OBJ)
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+        -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
+        -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+        -liomp5 -lpthread -lm
 
-# main_irreg:main_irreg.c $(OBJ)
-# 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
-#         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
-#         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-#         -liomp5 -lpthread -lm
+main_irreg:main_irreg.c $(OBJ)
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+        -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
+        -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+        -liomp5 -lpthread -lm
 
 .PHONY:clean
 
