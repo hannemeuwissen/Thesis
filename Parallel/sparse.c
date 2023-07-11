@@ -3,7 +3,7 @@
  * @brief Code related to working with sparse CSR matrices, part of Thesis 
  * project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 2.0
+ * @version 3.0
  * @date 2023-06-02
  */
 #include<stdlib.h>

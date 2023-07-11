@@ -75,7 +75,7 @@ int main(int argc, char **argv){
     int m = end[myid] - start[myid] + 1;
 
     /* Generate part of transition matrix for calling process */
-    sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 1);
+    sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 0);
     printf("Process %d is done generating its part!\n", myid);
 
     // /* Test: read from file (each process)*/
@@ -130,16 +130,12 @@ int main(int argc, char **argv){
             tend = MPI_Wtime();
             mp_times[block] = tend - tbeg;
 
-            // printf("Process %d finished MP\n", myid);
-
             /* Orthogonalize first block using parallel CA-TSQR */
             tbeg = MPI_Wtime();
             R_ = malloc((s+1)*(s+1)*sizeof(double)); 
             TSQR_on_transpose(V, m, s + 1, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             tend = MPI_Wtime();
             tsqr_times[block] = tend - tbeg;
-
-            // printf("Process %d is finished TSQR\n", myid);
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
