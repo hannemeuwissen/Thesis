@@ -89,12 +89,12 @@ int main(int argc, char **argv)
         print_vector(result, n); // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 3){
-    //     printf("First lines from result on process 3:\n");
-    //     print_vector(result, 10); // result should be 1 overall (sum of row elements)
-    //     printf("Runtime: %lf\n", t2-t1);
-    // }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 3){
+        printf("First lines from result on process 3:\n");
+        print_vector(result, n); // result should be 1 overall (sum of row elements)
+        printf("Runtime: %lf\n", t2-t1);
+    }
 
     // /* Test TSQR */
     // int m = 25000; // Total: 100000
