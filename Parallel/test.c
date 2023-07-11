@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     printf("Process %d finished spmv\n",myid);
     if(!myid){
         printf("First lines from result on process 0:\n");
-        print_vector(result, 10); // result should be 1 overall (sum of row elements)
+        print_vector(result, n); // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
     // MPI_Barrier(MPI_COMM_WORLD);
