@@ -49,8 +49,8 @@ int main(int argc, char **argv)
     // }
     
     /* Test SPMV */
-    int m = 20;
-    int nnz_per_row = 5;
+    int m = 10000;
+    int nnz_per_row = 200;
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(m, nprocs, start, end);
@@ -85,14 +85,14 @@ int main(int argc, char **argv)
     double t2 = MPI_Wtime();
     printf("Process %d finished spmv\n",myid);
     if(!myid){
-        printf("First lines from result on process 0:\n");
-        print_vector(result, n); // result should be 1 overall (sum of row elements)
+        printf("Average result on process 0:\n");
+        average(result,n); // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 3){
-        printf("First lines from result on process 3:\n");
-        print_vector(result, n); // result should be 1 overall (sum of row elements)
+        printf("Average result on process 3:\n");
+        average(result, n); // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
 
