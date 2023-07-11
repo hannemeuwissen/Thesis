@@ -162,8 +162,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     MPI_Win_create(x, len*sizeof(double), sizeof(double), MPI_INFO_NULL, comm, &win);
 
     MPI_Win_post(world_group, 0, win);
-
-    MPI_Win_start(world_group, 0, win);
     
     for(int i=0;i<len;i++){ /* For all rows: gather elements + dot product of row and gathered elements */
         
@@ -189,7 +187,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }
 
-    MPI_Win_complete(win);
+    MPI_Barrier(comm);
 
     MPI_Win_wait(win);
 
