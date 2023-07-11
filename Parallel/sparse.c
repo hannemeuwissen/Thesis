@@ -191,6 +191,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
     }
 
+    printf("Process %d got here!\n", myid);
 
     MPI_Win_wait(win);
 
