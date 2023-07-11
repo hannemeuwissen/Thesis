@@ -182,6 +182,7 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         }
         // MPI_Win_fence(MPI_MODE_NOSUCCEED | MPI_MODE_NOSTORE | MPI_MODE_NOPUT,win);
         MPI_Win_complete(win);
+        printf("Completed a row\n");
 
         /* Dot product */
         result[i] = cblas_ddot(nnz_i, A.values + A.rowptrs[i], 1, x_gathered_elements, 1);
