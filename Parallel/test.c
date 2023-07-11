@@ -85,14 +85,14 @@ int main(int argc, char **argv)
     double t2 = MPI_Wtime();
     printf("Process %d finished spmv\n",myid);
     if(!myid){
-        printf("Average result on process 0:\n");
-        average(result,n); // result should be 1 overall (sum of row elements)
+        printf("Average result on process 0: %lf\n", average(result, n));
+        // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 3){
-        printf("Average result on process 3:\n");
-        average(result, n); // result should be 1 overall (sum of row elements)
+        printf("Average result on process 3: %lf\n", average(result, n));
+        // result should be 1 overall (sum of row elements)
         printf("Runtime: %lf\n", t2-t1);
     }
 

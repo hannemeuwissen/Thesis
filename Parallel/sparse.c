@@ -148,7 +148,6 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
  */
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm){
     
-    printf("Process %d starts spmv\n", myid);
     if(len != A.nrows){ /* Sanity check */
         perror("Incompatible dimensions in parallel spmv.\n");
         exit(EXIT_FAILURE);
@@ -172,7 +171,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
     
     for(int i=0;i<len;i++){ /* For all rows: gather elements + dot product of row and gathered elements */
         
-        printf("Calculating row %d\n", i);
 
         /* Gather elements */
         int nnz_i = 0;
@@ -207,7 +205,6 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
         MPI_Allreduce(&finished, &sum_ind, 1, MPI_INT, MPI_SUM, comm);
     }
 
-    printf("Process %d got here!\n", myid);
 
     // MPI_Win_complete(win);
 
