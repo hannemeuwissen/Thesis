@@ -50,7 +50,7 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
                     printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
                     MPI_Abort(comm, 1);
                 }
-                degree--;
+                (*degree)--;
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
@@ -119,8 +119,8 @@ void parse_command_line_irregular(const int argc, char * const *argv, char * fil
                     printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
                     MPI_Abort(comm, 1);
                 }
+                (*degree)--;
                 break;
-                degree--;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
                     printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
