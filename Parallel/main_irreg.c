@@ -40,7 +40,7 @@ int main(int argc, char **argv){
         }
 
         parse_command_line_irregular(argc, argv, filename_A, &M, &min_nnz, &max_nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
-        if(degree%s != 0){
+        if((degree < 1) || (degree%s != 0)){
             printf("Invalid input: the degree of the Krylov subspace should be a multiple of the blocksize (s)\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
