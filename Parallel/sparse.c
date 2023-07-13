@@ -39,7 +39,10 @@ void print_CSR(sparse_CSR * M){
 /**
  * @brief Function that reads a CSR matrix from a txt file. 
  * @param M The sparse_CSR matrix object that will hold the matrix.
- * @param filename The name of the file.
+ * @param filename The name of the file. This file contains first the number of columns, the number of
+ * rows and the number of nonzeros (each on one line), after this it contains the array of row pointers
+ * (each value on one line), and then the column indices and values (one index and corresponding value
+ * on one line).
  */
 void read_CSR(sparse_CSR * M, const char *const filename){
     FILE *fp;
@@ -86,6 +89,44 @@ void read_CSR(sparse_CSR * M, const char *const filename){
 }
 
 /**
+ * @brief Function that reads only the number of rows, columns, nonzero elements and the array with
+ * row pointers from a file containing a sparse CSR matrix.
+ * @param M The sparse_CSR object that will hold the info.
+ * @param filename The name of the file that holds the data.
+ */
+void read_CSR_data(sparse_CSR * M, const char * filename){
+    FILE *fp;
+    if((fp = fopen(filename, "r"))==NULL){
+		perror("Error trying to open the file that contains the csr matrix.");
+		exit(-1);
+    }
+    int temp;
+    if(fscanf(fp, "%d", &temp) == 0){
+        perror("Invalid CSR file");
+        exit(-1);
+    }
+    M->ncols = temp;
+    if(fscanf(fp, "%d", &temp) == 0){
+        perror("Invalid CSR file");
+        exit(-1);
+    }
+    M->nrows = temp;
+    if(fscanf(fp, "%d", &temp) == 0){
+        perror("Invalid CSR file");
+        exit(-1);
+    }
+    M->nnz = temp;
+    M->rowptrs = malloc((M->nrows + 1)*sizeof(int));
+    for(int i = 0;i<=M->nrows;i++){
+        if(fscanf(fp, "%d", M->rowptrs + i ) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+    }
+    fclose(fp);
+}
+
+/**
  * @brief Get the start and end indices of the rows for each part that each process holds of
  * the full matrix. 
  * @param n The total number of rows.
@@ -104,7 +145,25 @@ void get_indices(const int n, const int nprocs, int * start, int * end){
             end[i] = end[i-1] + ((i<remainder) ? (n_elements+1) : n_elements); 
         }
     }
+}
 
+void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int * end){
+    /* Determine the exact nnz indices */
+    int * start_nnz = malloc(nprocs*sizeof(int));
+    int * end_nnz = malloc(nprocs*sizeof(int));
+    get_indices(A.nnz, nprocs, start, end);
+
+    /* Determine which process gets the edge row */
+    int row_ptr_index = 1;
+    start[0] = 0;
+    end[nprocs-1] = A.nrows-1;
+    for(int p=0;p<nprocs-1;p++){
+        while(!(end_nnz[p] < A.rowptrs[row_ptr_index])){
+            row_ptr_index++;
+        }
+
+
+    }
 }
 
 /**

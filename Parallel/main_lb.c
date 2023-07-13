@@ -1,10 +1,10 @@
 /**
- * @file main_irreg.c
- * @brief Main code to investigate CA-Arnoldi on irregular graph transition matrices, 
- * part of Thesis project ins High Performance Computing at Trinity College Dublin.
+ * @file main_lb.c
+ * @brief Main code to investigate CA-Arnoldi with load-balancing, part of Thesis project in 
+ * High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0
- * @date 2023-07-10
+ * @date 2023-07-13
  */
 #include<stdlib.h>
 #include<stdio.h>
@@ -25,8 +25,8 @@
 int main(int argc, char **argv){
     const double tol = 1.0E-10;  
     int myid, nprocs;
-    int degree,original_degree,s,M,min_nnz,max_nnz;
-    char filename_v[100];
+    int degree,original_degree,s,M,total_nnz;
+    char filename_v[100], filename_A[100];
 
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        parse_command_line_irregular(argc, argv, &M, &min_nnz, &max_nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
+        parse_command_line_lb(argc, argv, filename_A, filename_v, &degree, &s, MPI_COMM_WORLD);
         if((degree < 1) || (s > degree)){
             printf("Invalid input: the degree of the Krylov subspace should be at least 1 and the blocksize should be smaller\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
@@ -53,45 +53,42 @@ int main(int argc, char **argv){
             }
         }
 
-        if((M<=0) || (M<degree)){
-            printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
+        // if((M<=0) || (M<degree)){
+        //     printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
+        //     MPI_Abort(MPI_COMM_WORLD, 1);
+        // }
 
-        if(floor(M/nprocs) < s+1){
-            printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process in step 0: %d x %d).\nSuggestion: lower the blocksize.\n", M/nprocs, s+1);
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
+        // if(floor(M/nprocs) < s+1){
+        //     printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process in step 0: %d x %d).\nSuggestion: lower the blocksize.\n", M/nprocs, s+1);
+        //     MPI_Abort(MPI_COMM_WORLD, 1);
+        // }
 
-        if(min_nnz > max_nnz){
-            printf("Invalid input: Minimum number of nonzeros larger than maximum (%d > %d).\n", min_nnz, max_nnz);
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
-
-        if(max_nnz > M){
-            printf("Invalid input: Number of nonzeros per row is larger than length of row (%d > %d).\n", max_nnz, M);
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }
+        // if(nnz > M){
+        //     printf("Invalid input: Number of nonzeros per row is larger than length of row (%d > %d).\n", nnz, M);
+        //     MPI_Abort(MPI_COMM_WORLD, 1);
+        // }
     }
 
     /* Broadcast input to all processes */
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&original_degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&min_nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&max_nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
+    MPI_Bcast(filename_A, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
-    /* Determine the start index and size of part for calling process */
+    /* Read first CSR data from the file */
+    sparse_CSR A;
+    read_CSR_data(&A, filename_A);
+
+    /* Determine the start index, end index and size of part for calling process */
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
-    get_indices(M, nprocs, start, end);
+    get_indices_load_balanced(A, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
 
     /* Generate part of transition matrix for calling process */
-    sparse_CSR A = generate_irregular_graph_part_csr(m, M, min_nnz, max_nnz, 1);
-    printf("Process %d is done generating its part!\n", myid);
+    // sparse_CSR A = generate_regular_graph_part_csr(m, M, nnz, 0);
+    printf("Process %d is done reading its part!\n", myid);
 
     /* Initialize arrays */
     int steps = degree/s;
@@ -134,15 +131,15 @@ int main(int argc, char **argv){
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
             matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
-            tend = MPI_Wtime();;
-            mp_times[block] = tend-tbeg;
+            tend = MPI_Wtime();
+            mp_times[block] = tend - tbeg;
 
             /* Orthogonalize first block using parallel CA-TSQR */
             tbeg = MPI_Wtime();
             R_ = malloc((s+1)*(s+1)*sizeof(double)); 
             TSQR_on_transpose(V, m, s + 1, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
             tend = MPI_Wtime();
-            tsqr_times[block] = tend-tbeg;
+            tsqr_times[block] = tend - tbeg;
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
             memcpy(mathcalQ, V, (s+1)*m*sizeof(double));
@@ -164,7 +161,7 @@ int main(int argc, char **argv){
                 free(B_);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 tend = MPI_Wtime();
-                hess_times[block] = tend - tbeg;
+                hess_times[block] = tend-tbeg;
             }
 
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -176,20 +173,20 @@ int main(int argc, char **argv){
             V = malloc(s*m*sizeof(double));
             matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
             tend = MPI_Wtime();
-            mp_times[block] = tend - tbeg;
+            mp_times[block] = tend-tbeg;
 
             /* Block-CGS to orthogonalize compared to previous blocks */
             tbeg = MPI_Wtime();
             mathcalR_ = malloc((block*s + 1)*s*sizeof(double));
             bgs_on_transpose(mathcalQ, V, mathcalR_, m, block*s + 1, s, MPI_COMM_WORLD); // note: mathcal R is not transposed
             tend = MPI_Wtime();
-            bgs_times[block-1] = tend - tbeg;
+            bgs_times[block-1] = tend-tbeg;
             
             /* Orthogonalize block using parallel CA-TSQR */
             tbeg = MPI_Wtime();
             R_ = malloc(s*s*sizeof(double)); 
             TSQR_on_transpose(V, m, s, R_, myid, nprocs, MPI_COMM_WORLD); // note: resulting R is transposed!
-            tend = MPI_Wtime();
+            tend = MPI_Wtime(); 
             tsqr_times[block] = tend - tbeg;
 
             /* Set mathcal Q (note: saved as transpose - vectors in rows!) */
@@ -201,11 +198,11 @@ int main(int argc, char **argv){
 
             /* Update mathcal H */
             if(!myid){
-                tbeg =  MPI_Wtime();
+                tbeg = MPI_Wtime();
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 tend = MPI_Wtime();
-                hess_times[block] = tend - tbeg;
+                hess_times[block] = tend-tbeg;
             }
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -261,7 +258,7 @@ int main(int argc, char **argv){
     if(!myid){ /* Print out results */
         // printf("Part of Q process 0:\n");
         // print_matrix_transposed(mathcalQ, original_degree +1, m);
-        printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
+        printf("Total runtime process %d: %lf\n", myid, t2 - t1);
         printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
         printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
         printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
@@ -271,7 +268,7 @@ int main(int argc, char **argv){
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
+    printf("Total runtime process %d: %lf\n", myid, t2 - t1);
     printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
     printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
     printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));

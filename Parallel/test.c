@@ -27,6 +27,12 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
+    /* Test load balancing indices */
+    int * start = malloc(nprocs*sizeof(int));
+    int * end = malloc(nprocs*sizeof(int));
+    get_indices(10, nprocs, start, end);
+    printf("Process %d has start %d and end %d\n", myid, start[myid], end[myid]);
+
     // if(!myid){
     //     float logprocs = log2(nprocs);
     //     if(ceil(logprocs) != floor(logprocs)){
@@ -48,53 +54,53 @@ int main(int argc, char **argv)
     //     print_CSR(&A);
     // }
     
-    /* Test SPMV */
-    int m = 10000;
-    int nnz_per_row = 200;
-    int * start = malloc(nprocs*sizeof(int));
-    int * end = malloc(nprocs*sizeof(int));
-    get_indices(m, nprocs, start, end);
-    int n = end[myid] - start[myid] + 1;
-    sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row, 1);
-    // printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
-    // /* Print in order */
+    // /* Test SPMV */
+    // int m = 10000;
+    // int nnz_per_row = 200;
+    // int * start = malloc(nprocs*sizeof(int));
+    // int * end = malloc(nprocs*sizeof(int));
+    // get_indices(m, nprocs, start, end);
+    // int n = end[myid] - start[myid] + 1;
+    // sparse_CSR M = generate_regular_graph_part_csr(n, m, nnz_per_row, 1);
+    // // printf("Process %d finished generating graph part of size %dx%d.\n", myid, n, m);
+    // // /* Print in order */
+    // // if(!myid){
+    // //     printf("Rank %d:\n", myid);
+    // //     print_CSR(&M);
+    // // }
+    // // MPI_Barrier(MPI_COMM_WORLD);
+    // // if(myid == 1){
+    // //     printf("Rank %d:\n", myid);
+    // //     print_CSR(&M);
+    // // }
+    // // MPI_Barrier(MPI_COMM_WORLD);
+    // // if(myid == 2){
+    // //     printf("Rank %d:\n", myid);
+    // //     print_CSR(&M);
+    // // }
+    // // MPI_Barrier(MPI_COMM_WORLD);
+    // // if(myid == 3){
+    // //     printf("Rank %d:\n", myid);
+    // //     print_CSR(&M);
+    // // }
+    // double * x = malloc(n*sizeof(double));
+    // for(int i=0;i<n;i++){x[i] = 1.0;}
+    // double * result = malloc(n*sizeof(double));
+    // double t1 = MPI_Wtime();
+    // spmv(M, x, n, result, myid, nprocs, start, end, MPI_COMM_WORLD);
+    // double t2 = MPI_Wtime();
+    // printf("Process %d finished spmv\n",myid);
     // if(!myid){
-    //     printf("Rank %d:\n", myid);
-    //     print_CSR(&M);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 1){
-    //     printf("Rank %d:\n", myid);
-    //     print_CSR(&M);
-    // }
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // if(myid == 2){
-    //     printf("Rank %d:\n", myid);
-    //     print_CSR(&M);
+    //     printf("Average result on process 0: %lf\n", average(result, n));
+    //     // result should be 1 overall (sum of row elements)
+    //     printf("Runtime: %lf\n", t2-t1);
     // }
     // MPI_Barrier(MPI_COMM_WORLD);
     // if(myid == 3){
-    //     printf("Rank %d:\n", myid);
-    //     print_CSR(&M);
+    //     printf("Average result on process 3: %lf\n", average(result, n));
+    //     // result should be 1 overall (sum of row elements)
+    //     printf("Runtime: %lf\n", t2-t1);
     // }
-    double * x = malloc(n*sizeof(double));
-    for(int i=0;i<n;i++){x[i] = 1.0;}
-    double * result = malloc(n*sizeof(double));
-    double t1 = MPI_Wtime();
-    spmv(M, x, n, result, myid, nprocs, start, end, MPI_COMM_WORLD);
-    double t2 = MPI_Wtime();
-    printf("Process %d finished spmv\n",myid);
-    if(!myid){
-        printf("Average result on process 0: %lf\n", average(result, n));
-        // result should be 1 overall (sum of row elements)
-        printf("Runtime: %lf\n", t2-t1);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 3){
-        printf("Average result on process 3: %lf\n", average(result, n));
-        // result should be 1 overall (sum of row elements)
-        printf("Runtime: %lf\n", t2-t1);
-    }
 
     // /* Test TSQR */
     // int m = 25000; // Total: 100000

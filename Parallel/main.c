@@ -53,7 +53,7 @@ int main(int argc, char **argv){
             }
         }
 
-        if((M<=0) || (degree<=0) || (M<degree)){
+        if((M<=0) || (M<degree)){
             printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
@@ -275,7 +275,6 @@ int main(int argc, char **argv){
         // print_matrix_transposed(mathcalQ, original_degree + 1, m);
         // printf("Runtime process %d: %lf\n", myid, t2 - t1);
     }
-
 
     free(mathcalQ);
     if(!myid){free(mathcalH);}
