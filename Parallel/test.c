@@ -30,8 +30,8 @@ int main(int argc, char **argv)
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
-    get_indices(10, nprocs, start, end);
-    printf("Process %d has start %d and end %d\n", myid, start[myid], end[myid]);
+    // get_indices(10, nprocs, start, end);
+    // printf("Process %d has start %d and end %d\n", myid, start[myid], end[myid]);
 
     /* Read first CSR data from the file */
     sparse_CSR A;
