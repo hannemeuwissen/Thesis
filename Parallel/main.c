@@ -232,7 +232,7 @@ int main(int argc, char **argv){
     }
 
     /* Remove extra data in H and Q in case s doesn't divide degree */
-    if(rest > 0){
+    if(original_degree != degree){
         /* Remove necessary columns from mathcalQ */
         double * temp = malloc((original_degree + 1)*m*sizeof(double));
         memcpy(temp, mathcalQ, (original_degree+1)*m*sizeof(double));
