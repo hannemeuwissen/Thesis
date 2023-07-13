@@ -151,7 +151,7 @@ void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int 
     /* Determine the exact nnz indices */
     int * start_nnz = malloc(nprocs*sizeof(int));
     int * end_nnz = malloc(nprocs*sizeof(int));
-    get_indices(A.nnz, nprocs, start, end);
+    get_indices(A.nnz, nprocs, start_nnz, end_nnz);
 
     /* Determine which process gets the edge row */
     int row_ptr_index = 1;
@@ -161,8 +161,13 @@ void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int 
         while(!(end_nnz[p] < A.rowptrs[row_ptr_index])){
             row_ptr_index++;
         }
-
-
+        if((end_nnz[p] - A.rowptrs[row_ptr_index - 1]) > (A.rowptrs[row_ptr_index] - end_nnz[p])){
+            end[p] = row_ptr_index;
+            start[p+1] = row_ptr_index + 1;
+        }else{
+            end[p] = row_ptr_index - 1;
+            start[p+1] = row_ptr_index;
+        }
     }
 }
 
