@@ -46,7 +46,7 @@ int main(int argc, char **argv){
         }
 
         /* Handle the case if s doesn't divide degree */
-        int original_degree = degree;
+        original_degree = degree;
         if(degree%s != 0){
             while(degree%s != 0){
                 degree++;
