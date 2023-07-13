@@ -25,7 +25,7 @@
 int main(int argc, char **argv){
     const double tol = 1.0E-10;  
     int myid, nprocs;
-    int degree,original_degree,s,M,nnz;
+    int degree,original_degree,s,M,min_nnz,max_nnz;
     char filename_v[100], filename_A[100];
 
     MPI_Init(&argc, &argv);
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        parse_command_line_regular(argc, argv, &M, &nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
+        parse_command_line_irregular(argc, argv, filename_A, &M, &min_nnz, &max_nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
         if((degree < 1) || (s > degree)){
             printf("Invalid input: the degree of the Krylov subspace should be at least 1 and the blocksize should be smaller\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
