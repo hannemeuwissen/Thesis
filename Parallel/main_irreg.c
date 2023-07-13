@@ -25,7 +25,7 @@
 int main(int argc, char **argv){
     const double tol = 1.0E-10;  
     int myid, nprocs;
-    int degree,s,M,min_nnz, max_nnz;
+    int degree,original_degree,s,M,nnz;
     char filename_v[100], filename_A[100];
 
     MPI_Init(&argc, &argv);
@@ -39,15 +39,18 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        parse_command_line_irregular(argc, argv, filename_A, &M, &min_nnz, &max_nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
-        if((degree < 1) || (degree%s != 0)){
-            printf("Invalid input: the degree of the Krylov subspace should be a multiple of the blocksize (s)\n");
+        parse_command_line_regular(argc, argv, &M, &nnz, filename_v, &degree, &s, MPI_COMM_WORLD);
+        if((degree < 1) || (s > degree)){
+            printf("Invalid input: the degree of the Krylov subspace should be at least 1 and the blocksize should be smaller\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        if((M<=0) || (degree<=0) || (M<degree)){
-            printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
-            MPI_Abort(MPI_COMM_WORLD, 1);
+        /* Handle the case if s doesn't divide degree */
+        original_degree = degree;
+        if(degree%s != 0){
+            while(degree%s != 0){
+                degree++;
+            }
         }
 
         if(floor(M/nprocs) < s+1){
@@ -68,6 +71,7 @@ int main(int argc, char **argv){
 
     /* Broadcast input to all processes */
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&original_degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&M, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&min_nnz, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -165,8 +169,10 @@ int main(int argc, char **argv){
                 tend = MPI_Wtime();
                 hess_times[block] = tend - tbeg;
             }
+
             MPI_Bcast(&breakdown, 1, MPI_INT, 0, MPI_COMM_WORLD);
             free(R_);
+
         }else{
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
             tbeg = MPI_Wtime();
@@ -213,6 +219,7 @@ int main(int argc, char **argv){
 
         MPI_Barrier(MPI_COMM_WORLD);
 
+        /* Handle extra data in H and Q in case of breakdown */
         if(breakdown != -1){
             /* Set matching vectors in mathcalQ to zero */
             memset(mathcalQ + breakdown*m, 0, ((1 + degree) - breakdown)*m*sizeof(double));
@@ -233,29 +240,48 @@ int main(int argc, char **argv){
         }
     }
 
+    /* Remove extra data in H and Q in case s doesn't divide degree */
+    if(original_degree != degree){
+        /* Remove necessary columns from mathcalQ */
+        double * temp = malloc((original_degree + 1)*m*sizeof(double));
+        memcpy(temp, mathcalQ, (original_degree+1)*m*sizeof(double));
+        free(mathcalQ);
+        mathcalQ = temp;
+
+        if(!myid){
+            /* Remove necessary rows and columns from mathcalH */
+            double * temp = malloc((original_degree + 1)*original_degree*sizeof(double));
+            for(int i=0;i<(original_degree+1);i++){
+                memcpy(temp + i*original_degree, mathcalH + i*degree, original_degree*sizeof(double));
+            }
+            free(mathcalH);
+            mathcalH = temp;
+        }
+    }
+
     double t2 = MPI_Wtime();
 
     if(!myid){ /* Print out results */
         // printf("Part of Q process 0:\n");
-        // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
-        printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
+        // print_matrix_transposed(mathcalQ, original_degree +1, m);
+        printf("Total runtime process %d: %lf\n", myid, t2 - t1);
         printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
         printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
         printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
-        printf("Upper Hessenberg: %lf\n", average(hess_times, block));
+        printf("Upper Hessenberg: %lf\n", average(hess_times, block - 1));
         printf("Hessenberg:\n");
-        print_matrix(mathcalH, (steps*s + 1), steps*s);
+        print_matrix(mathcalH, original_degree + 1, original_degree);
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
-    printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block ));
+    printf("Total runtime process %d: %lf\n", myid, t2 - t1);
+    printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
     printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
     printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
 
     if(myid == 1){ /* Print out results */
         // printf("Part of Q process 1:\n");
-        // print_matrix_transposed(mathcalQ, (steps*s + 1), m);
+        // print_matrix_transposed(mathcalQ, original_degree + 1, m);
         // printf("Runtime process %d: %lf\n", myid, t2 - t1);
     }
 
