@@ -26,6 +26,7 @@ void print_CSR(sparse_CSR * M);
 void read_CSR(sparse_CSR * M, const char *const filename);
 void read_CSR_data(sparse_CSR * M, const char * filename);
 void get_indices(const int n, const int nprocs, int * start, int * end);
+void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int * end);
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm);
 void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm);
 
