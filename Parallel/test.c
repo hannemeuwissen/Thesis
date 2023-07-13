@@ -27,6 +27,10 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
+    /* Read first CSR data from the file */
+    sparse_CSR A;
+    read_CSR_data(&A, "lbtestcsr10_reverse.txt");
+
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
@@ -36,10 +40,6 @@ int main(int argc, char **argv)
     int * end_nnz = malloc(nprocs*sizeof(int));
     get_indices(A.nnz, nprocs, start_nnz, end_nnz);
     printf("Before: process %d gets nonzero %d until %d\n", myid, start_nnz[myid], end_nnz[myid]);
-
-    /* Read first CSR data from the file */
-    sparse_CSR A;
-    read_CSR_data(&A, "lbtestcsr10_reverse.txt");
 
     /* Determine the start index, end index and size of part for calling process */
     // int * start = malloc(nprocs*sizeof(int));
