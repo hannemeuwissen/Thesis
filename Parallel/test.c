@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
     /* Read first CSR data from the file */
     sparse_CSR A;
-    read_CSR_data(&A, "lbtestcsr10.txt");
+    read_CSR_data(&A, "test10irr.txt");
 
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
@@ -47,8 +47,10 @@ int main(int argc, char **argv)
     printf("After: process %d has to start at row %d and end at row %d\n", myid, start[myid], end[myid]);
 
     /* Read own part */
-    read_CSR_part(&A, "lbtestcsr10.txt", start[myid], end[myid]);
-    print_CSR(&A);
+    if(myid == 1){
+        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        print_CSR(&A);
+    }
 
     // if(!myid){
     //     float logprocs = log2(nprocs);
