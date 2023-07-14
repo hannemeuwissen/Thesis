@@ -38,8 +38,8 @@ hess.o:hess.c hess.h
 tsqr_mpi.o:tsqr_mpi.c
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS) -lm
 
-generate_irr_main:generate_irr_main.c graph.o sparse.o
-	$(CC) -o $@ $< graph.o sparse.o $(FLAGS)
+generate_irr_main:generate_irr_main.c graph.o
+	$(CC) -o $@ $< graph.o $(FLAGS)
 
 test:test.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
