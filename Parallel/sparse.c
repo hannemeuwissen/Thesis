@@ -162,8 +162,9 @@ void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int 
             row_ptr_index++;
         }
         if(p == 1){
-            printf("%d\n",(end_nnz[p] - A.rowptrs[row_ptr_index - 1]));
-            printf("%d\n",(A.rowptrs[row_ptr_index] - end_nnz[p]));
+            printf("%d\n",(end_nnz[p]));
+            printf("%d\n", A.rowptrs[row_ptr_index - 1])
+            printf("%d\n",(A.rowptrs[row_ptr_index]));
         }
         if((end_nnz[p] - A.rowptrs[row_ptr_index - 1]) > (A.rowptrs[row_ptr_index] - end_nnz[p])){
             end[p] = row_ptr_index;
