@@ -26,7 +26,7 @@ void print_CSR(sparse_CSR * M);
 void read_CSR(sparse_CSR * M, const char *const filename);
 void read_CSR_data(sparse_CSR * M, const char * filename);
 void save_CSR(char * filename_A, sparse_CSR A);
-void read_CSR_values(sparse_CSR * M, const char * filename, const int start, const int end)
+void read_CSR_values(sparse_CSR * M, const char * filename, const int start, const int end);
 void get_indices(const int n, const int nprocs, int * start, int * end);
 void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int * end);
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm);
