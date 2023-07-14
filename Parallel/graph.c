@@ -201,7 +201,6 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
     random_nnz_per_row(nnz_per_row, &(T.nnz), min_nnz, max_nnz, M);
     int sorter(const void * f1, const void * f2){return (*(int*)f2 - *(int*)f1);}
     qsort(nnz_per_row, T.nnz, sizeof(int), sorter);
-    printf("Here!\n");
     T.colindex = malloc(T.nnz*sizeof(int));
     T.values = malloc(T.nnz*sizeof(double));
 
@@ -222,6 +221,7 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
         row_index++;
     }
     T.rowptrs[row_index] = T.nnz;
+    printf("Here!\n");
     free(col_indices);
     free(nnz_per_row);
     return T;
