@@ -135,7 +135,7 @@ void save_CSR(char * filename_A, sparse_CSR A){
     FILE *fp;
     fp = fopen(filename_A, "w");
     if(!fp){
-      fprintf(stderr, "Error: can't open file %s\n",fname);
+      fprintf(stderr, "Error: can't open file %s\n",filename_A);
       exit(4);
     }
     fprintf(fp, "%d\n", A.ncols);
