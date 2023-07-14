@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
     /* Read own part */
     if(myid == 0){
-        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        read_CSR_part(&A, "lbtestcsr10.txt", start[myid], end[myid]);
         print_CSR(&A);
     }
 
