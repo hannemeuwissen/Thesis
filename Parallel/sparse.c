@@ -168,7 +168,6 @@ void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const
     M->nrows = end - start + 1;
     M->nnz = M->rowptrs[end+1] - M->rowptrs[start];
     int nnz_to_skip = M->rowptrs[start];
-    printf("%d\n", nnz_to_skip);
     for(int i=0;i<(3+M->ncols+1);i++){
         if(fscanf(fp, "%d", &temp) == 0){
             perror("Invalid CSR file");
@@ -183,11 +182,11 @@ void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const
     M->rowptrs = temp_rowptrs;
     double temp_double;
     for(int i=0;i<nnz_to_skip;i++){
-        if(fscanf(fp, "%d",temp) == 0){
+        if(fscanf(fp, "%d",&temp) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
             exit(-1);
         }
-        if(fscanf(fp, "%lf",temp_double) == 0){
+        if(fscanf(fp, "%lf",&temp_double) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
             exit(-1);
         }
