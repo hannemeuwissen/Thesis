@@ -176,7 +176,7 @@ void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const
     }
     int * temp_rowptrs = malloc((M->nrows + 1)*sizeof(int));
     for(int i=0;i<(M->nrows+1);i++){
-        temp_rowptrs[i] = M->rowptrs[start + i];
+        temp_rowptrs[i] = M->rowptrs[start + i] - nnz_to_skip;
     }
     free(M->rowptrs);
     M->rowptrs = temp_rowptrs;
