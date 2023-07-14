@@ -158,14 +158,14 @@ void save_CSR(char * filename_A, sparse_CSR A){
  * @param start The row index where to start reading.
  * @param end The row index where to end reading.
  */
-void read_CSR_values(sparse_CSR * M, const char * filename, const int start, const int end){
+void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const int end){
     FILE *fp;
     if((fp = fopen(filename, "r"))==NULL){
 		perror("Error trying to open the file that contains the csr matrix.");
 		exit(-1);
     }
     int temp;
-    for(int i=0;i<(3+M->nrows+1);i++){
+    for(int i=0;i<3;i++){
         if(fscanf(fp, "%d", &temp) == 0){
             perror("Invalid CSR file");
             exit(-1);
@@ -173,10 +173,17 @@ void read_CSR_values(sparse_CSR * M, const char * filename, const int start, con
     }
     M->nrows = end - start + 1;
     M->nnz = M->rowptrs[end+1] - M->rowptrs[start];
-    M->colindex = malloc(M->nnz*sizeof(int));
-    M->values = malloc(M->nnz*sizeof(double));
+    int nnz_to_skip = M->rowptrs[start];
+    free(M->rowptrs);
+    M->rowptrs = malloc((M->nrows + 1)*sizeof(int));
+    for(int i=0;i<(M->nrows+1);i++){
+        if(fscanf(fp, "%d",M->rowptrs + i) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+    }
     double temp_double;
-    for(int i=0;i<M->rowptrs[start];i++){
+    for(int i=0;i<nnz_to_skip;i++){
         if(fscanf(fp, "%d",temp) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
             exit(-1);
@@ -186,6 +193,8 @@ void read_CSR_values(sparse_CSR * M, const char * filename, const int start, con
             exit(-1);
         }
     }
+    M->colindex = malloc(M->nnz*sizeof(int));
+    M->values = malloc(M->nnz*sizeof(double));
     for (int i=0;i<M->nnz;i++){
         if(fscanf(fp, "%d", M->colindex + i) == 0){
             perror("Incorrect CSR matrix dimensions in file.");
