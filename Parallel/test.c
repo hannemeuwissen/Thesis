@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 
     /* Read first CSR data from the file */
     sparse_CSR A;
-    read_CSR_data(&A, "test10irr.txt");
+    read_CSR_data(&A, "lbtestcsr10.txt");
 
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
