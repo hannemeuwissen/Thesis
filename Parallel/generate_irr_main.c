@@ -10,17 +10,6 @@
 #include<stdio.h>
 #include"graph.h"
 
-/**
- * @brief Structure that holds information of sparse CSR matrix.
- */
-typedef struct sparse_CSR {
-    int nrows;
-    int ncols;
-    int nnz;
-    int * rowptrs;
-    int * colindex;
-    double * values;
-} sparse_CSR;
 
 /**
  * @brief Function that saves a CSR matrix to a file.
