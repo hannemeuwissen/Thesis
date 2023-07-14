@@ -213,6 +213,7 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
     while(i<T.nnz){
         value = 1.0/((double) nnz_per_row[row_index]);
         T.rowptrs[row_index] = i;
+        printf("%d\n", nnz_per_row[row_index]);
         random_col_indices(&col_indices, M, nnz_per_row[row_index]);
         for(int j=0;j<nnz_per_row[row_index];j++){
             T.values[i] = value;            
