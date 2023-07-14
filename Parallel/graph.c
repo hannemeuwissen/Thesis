@@ -37,7 +37,6 @@ int contains(int element, int * array, const int len){
  * @param nnz The number of nonzeros; the number of indices to be randomly selected.
  */
 void random_col_indices(int ** result, const int n, const int nnz){
-    printf("Here!\n");
     *result = malloc(nnz*sizeof(int));
     int proposal;
     for(int i=0;i<nnz;i++){
