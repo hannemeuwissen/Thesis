@@ -8,6 +8,7 @@
  */
 #include<stdlib.h>
 #include<stdio.h>
+#include<mpi.h>
 #include"graph.h"
 #include"sparse.h"
 
