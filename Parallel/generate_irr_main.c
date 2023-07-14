@@ -8,9 +8,31 @@
  */
 #include<stdlib.h>
 #include<stdio.h>
-#include<mpi.h>
 #include"graph.h"
-#include"sparse.h"
+
+/**
+ * @brief Function that saves a CSR matrix to a file.
+ * @param filename_A The name of the file.
+ * @param A The CSR_matrix.
+ */
+void save_CSR(char * filename_A, sparse_CSR A){
+    FILE *fp;
+    fp = fopen(filename_A, "w");
+    if(!fp){
+      fprintf(stderr, "Error: can't open file %s\n",filename_A);
+      exit(4);
+    }
+    fprintf(fp, "%d\n", A.ncols);
+    fprintf(fp, "%d\n", A.nrows);
+    fprintf(fp, "%d\n", A.nnz);
+    for(int i=0;i<(A.nrows+1);i++){
+        fprintf(fp, "%d\n", A.rowptrs[i]);
+    }
+    for(int i=0;i<A.nnz;i++){
+        fprintf(fp,"%d %lf\n", A.colindex[i], A.values[i]);
+    }
+    fclose(fp);
+}
 
 int main(int argc, char **argv){
 
