@@ -47,10 +47,8 @@ int main(int argc, char **argv)
     printf("After: process %d has to start at row %d and end at row %d\n", myid, start[myid], end[myid]);
 
     /* Read own part */
-    if(myid == 1){
-        read_CSR_part(&A, "lbtestcsr10.txt", start[myid], end[myid]);
-        print_CSR(&A);
-    }
+    read_CSR_part(&A, "lbtestcsr10.txt", start[myid], end[myid]);
+    print_CSR(&A);
 
     // if(!myid){
     //     float logprocs = log2(nprocs);
