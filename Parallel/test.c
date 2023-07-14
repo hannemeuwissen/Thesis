@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     sparse_CSR A;
     read_CSR_data(&A, "lbtestcsr10_reverse.txt");
     if(myid == 0){
-        print_CSR(&A);
+        print_vector(A.rowptrs, 10+1);
     }
 
     /* Test load balancing indices */
