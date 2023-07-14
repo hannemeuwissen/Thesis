@@ -3,7 +3,7 @@
  * @brief Code related to working with sparse CSR matrices, part of Thesis 
  * project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 4.0
+ * @version 5.0
  * @date 2023-06-02
  */
 #include<stdlib.h>
@@ -127,6 +127,30 @@ void read_CSR_data(sparse_CSR * M, const char * filename){
 }
 
 /**
+ * @brief Function that saves a CSR matrix to a file.
+ * @param filename_A The name of the file.
+ * @param A The CSR_matrix.
+ */
+void save_CSR(char * filename_A, sparse_CSR A){
+    FILE *fp;
+    fp = fopen(filename_A, "w");
+    if(!fp){
+      fprintf(stderr, "Error: can't open file %s\n",fname);
+      exit(4);
+    }
+    fprintf(fp, "%d\n", A.ncols);
+    fprintf(fp, "%d\n", A.nrows);
+    fprintf(fp, "%d\n", A.nnz);
+    for(int i=0;i<(A.nrows+1);i++){
+        fprintf(fp, "%d\n", A.rowptrs[i]);
+    }
+    for(int i=0;i<A.nnz;i++){
+        fprintf(fp,"%d %lf\n", A.colindex[i], A.values[i]);
+    }
+    fclose(fp);
+}
+
+/**
  * @brief Get the start and end indices of the rows for each part that each process holds of
  * the full matrix. 
  * @param n The total number of rows.
@@ -147,6 +171,14 @@ void get_indices(const int n, const int nprocs, int * start, int * end){
     }
 }
 
+/**
+ * @brief Function that gets the indices of the rows of a CSR_matrix that all the processes
+ * need to work on while taking into account the number of nonzeros in total and in each row.
+ * @param A The sparse_CSR matrix.
+ * @param nprocs The number of processes.
+ * @param start The start indices of all processes.
+ * @param end The end indices of all processes.
+ */
 void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int * end){
     /* Determine the exact nnz indices */
     int * start_nnz = malloc(nprocs*sizeof(int));

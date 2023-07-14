@@ -12,7 +12,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= test main main_irreg
+EXECS= test main main_irreg generate_irr_main
 OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
@@ -37,6 +37,9 @@ hess.o:hess.c hess.h
 
 tsqr_mpi.o:tsqr_mpi.c
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS) -lm
+
+generate_irr_main:generate_irr_main.c graph.o sparse.o
+	$(CC) -o $@ $< graph.o sparse.o $(FLAGS)
 
 test:test.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
