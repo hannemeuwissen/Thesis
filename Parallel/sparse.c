@@ -166,10 +166,9 @@ void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const
     }
     int temp;
     M->nrows = end - start + 1;
-    printf("%d\n", M->nrows);
     M->nnz = M->rowptrs[end+1] - M->rowptrs[start];
-    printf("%d\n", M->nnz);
     int nnz_to_skip = M->rowptrs[start];
+    printf("%d\n", nnz_to_skip);
     for(int i=0;i<(3+M->ncols+1);i++){
         if(fscanf(fp, "%d", &temp) == 0){
             perror("Invalid CSR file");
@@ -177,7 +176,7 @@ void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const
         }
     }
     int * temp_rowptrs = malloc((M->nrows + 1)*sizeof(int));
-    for(int i=0;i<M->nrows+1;i++){
+    for(int i=0;i<(M->nrows+1);i++){
         temp_rowptrs[i] = M->rowptrs[start + i];
     }
     free(M->rowptrs);
