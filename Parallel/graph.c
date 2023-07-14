@@ -210,6 +210,7 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
     int * col_indices;
     double value;
     while(i<T.nnz){
+        printf("Here!\n");
         value = 1.0/((double) nnz_per_row[row_index]);
         T.rowptrs[row_index] = i;
         random_col_indices(&col_indices, M, nnz_per_row[row_index]);
@@ -221,7 +222,6 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
         row_index++;
     }
     T.rowptrs[row_index] = T.nnz;
-    printf("Here!\n");
     free(col_indices);
     free(nnz_per_row);
     return T;
