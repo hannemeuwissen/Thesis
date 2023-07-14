@@ -151,6 +151,55 @@ void save_CSR(char * filename_A, sparse_CSR A){
 }
 
 /**
+ * @brief Function that reads only the column indices and values from a file 
+ * containing a sparse CSR matrix.
+ * @param M The sparse_CSR object that will hold the info.
+ * @param filename The name of the file that holds the data.
+ * @param start The row index where to start reading.
+ * @param end The row index where to end reading.
+ */
+void read_CSR_values(sparse_CSR * M, const char * filename, const int start, const int end){
+    FILE *fp;
+    if((fp = fopen(filename, "r"))==NULL){
+		perror("Error trying to open the file that contains the csr matrix.");
+		exit(-1);
+    }
+    int temp;
+    for(int i=0;i<(3+M->nrows+1);i++){
+        if(fscanf(fp, "%d", &temp) == 0){
+            perror("Invalid CSR file");
+            exit(-1);
+        }
+    }
+    M->nrows = end - start + 1;
+    M->nnz = M->rowptrs[end+1] - M->rowptrs[start];
+    M->colindex = malloc(M->nnz*sizeof(int));
+    M->values = malloc(M->nnz*sizeof(double));
+    double temp_double;
+    for(int i=0;i<M->rowptrs[start];i++){
+        if(fscanf(fp, "%d",temp) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+        if(fscanf(fp, "%lf",temp_double) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+    }
+    for (int i=0;i<M->nnz;i++){
+        if(fscanf(fp, "%d", M->colindex + i) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+        if(fscanf(fp, "%lf", M->values + i) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+	}
+    fclose(fp);
+}
+
+/**
  * @brief Get the start and end indices of the rows for each part that each process holds of
  * the full matrix. 
  * @param n The total number of rows.

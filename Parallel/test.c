@@ -29,13 +29,11 @@ int main(int argc, char **argv)
 
     /* Read first CSR data from the file */
     sparse_CSR A;
-    read_CSR_data(&A, "lbtestcsr10_reverse.txt");
+    read_CSR_data(&A, "test10irr.txt");
 
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
-    // get_indices(10, nprocs, start, end);
-    // printf("Process %d has start %d and end %d\n", myid, start[myid], end[myid]);
     int * start_nnz = malloc(nprocs*sizeof(int));
     int * end_nnz = malloc(nprocs*sizeof(int));
     get_indices(A.nnz, nprocs, start_nnz, end_nnz);
@@ -47,6 +45,10 @@ int main(int argc, char **argv)
     get_indices_load_balanced(A, nprocs, start, end);
     // int m = end[myid] - start[myid] + 1;
     printf("After: process %d has to start at row %d and end at row %d\n", myid, start[myid], end[myid]);
+
+    /* Read own part */
+    read_CSR_values(&A, "test10irr.txt", start[myid], end[myid]);
+    print_CSR(&A);
 
     // if(!myid){
     //     float logprocs = log2(nprocs);
