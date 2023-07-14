@@ -48,6 +48,8 @@ int main(int argc, char **argv){
         return 1;
     }
 
+    printf("%d %d %d\n", M, min_nnz, max_nnz);
+
     sparse_CSR A = generate_irregular_csr(M, min_nnz, max_nnz);
     save_CSR(argv[1], A);
     
