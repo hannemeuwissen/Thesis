@@ -165,35 +165,21 @@ void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const
 		exit(-1);
     }
     int temp;
-    for(int i=0;i<3;i++){
-        if(fscanf(fp, "%d", &temp) == 0){
-            perror("Invalid CSR file");
-            exit(-1);
-        }
-    }
     M->nrows = end - start + 1;
     M->nnz = M->rowptrs[end+1] - M->rowptrs[start];
     int nnz_to_skip = M->rowptrs[start];
+    for(int i=0;i<(3+M->ncols+1);i++){
+        if(fscanf(fp, "%d", &temp) == 0){
+            perror("Invalid CSR file");
+            exit(-1);
+        }
+    }
+    int * temp_rowptrs = malloc((M->nrows + 1)*sizeof(int));
+    for(int i=0;i<M->nrows+1;i++){
+        temp_rowptrs[i] = M->rowptrs[start + i];
+    }
     free(M->rowptrs);
-    M->rowptrs = malloc((M->nrows + 1)*sizeof(int));
-    for(int i=0;i<start;i++){
-        if(fscanf(fp, "%d", &temp) == 0){
-            perror("Invalid CSR file");
-            exit(-1);
-        }
-    }
-    for(int i=0;i<(M->nrows+1);i++){
-        if(fscanf(fp, "%d",M->rowptrs + i) == 0){
-            perror("Incorrect CSR matrix dimensions in file.");
-            exit(-1);
-        }
-    }
-    for(int i=0;i<(M->ncols + 1 - end);i++){
-        if(fscanf(fp, "%d", &temp) == 0){
-            perror("Invalid CSR file");
-            exit(-1);
-        }
-    }
+    M->rowptrs = temp_rowptrs;
     double temp_double;
     for(int i=0;i<nnz_to_skip;i++){
         if(fscanf(fp, "%d",temp) == 0){
