@@ -30,11 +30,6 @@ int main(int argc, char **argv)
     /* Read first CSR data from the file */
     sparse_CSR A;
     read_CSR_data(&A, "lbtestcsr10_reverse.txt");
-    if(myid == 0){
-        for(int i=0;i<11;i++){
-            printf("%d\n", A.rowptrs[i]);
-        }
-    }
 
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
