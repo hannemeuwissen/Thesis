@@ -37,6 +37,7 @@ int contains(int element, int * array, const int len){
  * @param nnz The number of nonzeros; the number of indices to be randomly selected.
  */
 void random_col_indices(int ** result, const int n, const int nnz){
+    printf("Here!\n");
     *result = malloc(nnz*sizeof(int));
     int proposal;
     for(int i=0;i<nnz;i++){
@@ -212,7 +213,6 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
     while(i<T.nnz){
         value = 1.0/((double) nnz_per_row[row_index]);
         T.rowptrs[row_index] = i;
-        printf("Here!\n");
         random_col_indices(&col_indices, M, nnz_per_row[row_index]);
         for(int j=0;j<nnz_per_row[row_index];j++){
             T.values[i] = value;            
