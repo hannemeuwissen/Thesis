@@ -4,7 +4,7 @@
  * format to investigate CA-Arnoldi, part of Thesis project in High Performance Computing 
  * at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 2.0
+ * @version 3.0
  * @date 2023-05-26
  */
 #include<stdlib.h>
@@ -177,5 +177,51 @@ sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int
     }
     T.rowptrs[row_index] = T.nnz;
     free(col_indices);
+    return T;
+}
+
+/**
+ * @brief Function that generates a graph transition matrix (CSR) of a random graph 
+ * where each node has a number of edges between a minimum and maximum, and the 
+ * sparsity of the rows increases from the top to the bottom rows.
+ * @param M Total number of nodes in the graph.
+ * @param min_nnz The minimum of the number of nonzeros; the number of edges per node.
+ * @param max_nnz The maximum of the number of nonzeros; the number of edges per node.
+ * @return Sparse CSR matrix stucture of the part of the transition matrix.
+ */
+sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_nnz){
+    srandom(9499);
+
+    /* Initialize sparse_CSR structure */
+    sparse_CSR T;
+    T.nrows = M;
+    T.ncols = M;
+    T.rowptrs = malloc((M+1)*sizeof(int));
+    int *nnz_per_row = malloc(M*sizeof(int));
+    random_nnz_per_row(nnz_per_row, &(T.nnz), min_nnz, max_nnz, M);
+    int sorter(const void * f1, const void * f2){return (*(int*)f2 - *(int*)f1);}
+    qsort(nnz_per_row, T.nnz, sizeof(int), sorter);
+    T.colindex = malloc(T.nnz*sizeof(int));
+    T.values = malloc(T.nnz*sizeof(double));
+
+    /* Set column indices nonzero elements per row at random */
+    int i = 0;
+    int row_index = 0;
+    int * col_indices;
+    double value;
+    while(i<T.nnz){
+        value = 1.0/((double) nnz_per_row[row_index]);
+        T.rowptrs[row_index] = i;
+        random_col_indices(&col_indices, M, nnz_per_row[row_index]);
+        for(int j=0;j<nnz_per_row[row_index];j++){
+            T.values[i] = value;            
+            T.colindex[i] = col_indices[j];
+            i++;
+        }
+        row_index++;
+    }
+    T.rowptrs[row_index] = T.nnz;
+    free(col_indices);
+    free(nnz_per_row);
     return T;
 }
