@@ -116,7 +116,7 @@ sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int n
 void random_nnz_per_row(int *result, int *sum, const int min_nnz_per_row, const int max_nnz_per_row, const int n){
     *sum = 0;
     for(int i=0;i<n;i++){
-        result[i] = min_nnz_per_row + random() % (max_nnz_per_row+1 - min_nnz_per_row);
+        result[i] = (min_nnz_per_row + random()) % (max_nnz_per_row+1 - min_nnz_per_row);
         *sum += result[i];
     }
 }
@@ -164,6 +164,7 @@ sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int
     int row_index = 0;
     int * col_indices;
     double value;
+    printf("last nr of nnz: %d\n", nnz_per_row[n-1]);
     while(i<T.nnz){
         value = 1.0/((double) nnz_per_row[row_index]);
         T.rowptrs[row_index] = i;
@@ -218,13 +219,9 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
             T.colindex[i] = col_indices[j];
             i++;
         }
-        printf("Row index:%d\n", row_index);
         row_index++;
     }
     T.rowptrs[row_index] = T.nnz;
-    for(int i=0;i<=row_index;i++){
-        printf("%d\n",T.rowptrs[i]);
-    }
     printf("Total nnz: %d\n", T.nnz);
     free(col_indices);
     free(nnz_per_row);
