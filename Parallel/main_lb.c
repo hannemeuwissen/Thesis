@@ -25,7 +25,7 @@
 int main(int argc, char **argv){
     const double tol = 1.0E-10;  
     int myid, nprocs;
-    int degree,original_degree,s,M,total_nnz,lb;
+    int degree,original_degree,s,M,lb;
     char filename_v[100], filename_A[100];
 
     MPI_Init(&argc, &argv);
