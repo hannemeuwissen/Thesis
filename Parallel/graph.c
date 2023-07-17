@@ -212,7 +212,6 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
     int row_index = 0;
     int * col_indices;
     double value;
-    printf("last nr of nnz: %d\n", nnz_per_row[M-1]);
     while(i<T.nnz){
         value = 1.0/((double) nnz_per_row[row_index]);
         T.rowptrs[row_index] = i;
@@ -228,7 +227,6 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
        T.rowptrs[row_index] = T.nnz;
        row_index++;
     }
-    printf("Total nnz: %d\n", T.nnz);
     free(col_indices);
     free(nnz_per_row);
     return T;
