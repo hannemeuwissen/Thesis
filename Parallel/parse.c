@@ -140,7 +140,7 @@ void parse_command_line_irregular(const int argc, char * const *argv, int * M, i
  * @param comm The MPI communicator.
  */
 void parse_command_line_lb(const int argc, char * const *argv, char * filename_A, char * filename_v, int * degree, int * s, int * lb, MPI_Comm comm){
-    int *lb = 0;
+    *lb = 0;
     int c=0;
     while((c = getopt(argc, argv, "d:f:s:v:l:")) != -1){
         switch(c){
