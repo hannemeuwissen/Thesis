@@ -37,7 +37,9 @@ int main(int argc, char **argv){
     read_matrix_from_file(argv[2], 0, b, n, 1);
 
     Arnoldi(T, b, n, Q, H, m);
+    printf("Matrix Q:\n");
     print_matrix(Q, n, m);
+    printf("Matrix H:\n");
     print_matrix(H, m, m-1);
     free(H);
     free(Q);
