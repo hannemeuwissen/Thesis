@@ -262,7 +262,7 @@ int main(int argc, char **argv){
     if(!myid){ /* Print out results */
         // printf("Part of Q process 0:\n");
         // print_matrix_transposed(mathcalQ, original_degree +1, m);
-        printf("Total runtime process %d: %lf\n", myid, t2 - t1);
+        printf("Total runtime process %d (%d nnz): %lf\n", myid, t2 - t1, A.nnz);
         printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
         printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
         printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
@@ -272,7 +272,7 @@ int main(int argc, char **argv){
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    printf("Total runtime process %d: %lf\n", myid, t2 - t1);
+    printf("Total runtime process %d (%d nnz): %lf\n", myid, t2 - t1, A.nnz);
     printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
     printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
     printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
