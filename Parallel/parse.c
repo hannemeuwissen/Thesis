@@ -9,6 +9,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<unistd.h>
+#include<string.h>
 #include<mpi.h>
 
 /**
@@ -26,6 +27,7 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
     int c=0;
     *M = 800;
     *nnz = 50;
+    strncpy(filename_v, "v.txt", 100);
     *degree = 8;
     *s = 2;
     while((c = getopt(argc, argv, "d:s:v:m:z:")) != -1){
@@ -84,6 +86,7 @@ void parse_command_line_irregular(const int argc, char * const *argv, int * M, i
     *M = 800;
     *min_nnz = 0;
     *max_nnz = 800;
+    strncpy(filename_v, "v.txt", 100);
     *degree = 8;
     *s = 2;
     while((c = getopt(argc, argv, "d:s:v:m:z:x:")) != -1){
@@ -144,8 +147,12 @@ void parse_command_line_irregular(const int argc, char * const *argv, int * M, i
  * @param comm The MPI communicator.
  */
 void parse_command_line_lb(const int argc, char * const *argv, char * filename_A, char * filename_v, int * degree, int * s, int * lb, MPI_Comm comm){
-    *lb = 0;
     int c=0;
+    strncpy(filename_A, "test100irr.txt", 100);
+    strncpy(filename_v, "v.txt", 100);
+    *lb = 0;
+    *degree = 8;
+    *s = 2;
     while((c = getopt(argc, argv, "d:f:s:v:l:")) != -1){
         switch(c){
             case 'f':
