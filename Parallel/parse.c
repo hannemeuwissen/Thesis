@@ -157,25 +157,25 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
         switch(c){
             case 'f':
                 if(sscanf(optarg,"%s",filename_A) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] -l\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] -l\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] -l\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] -l\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
@@ -183,7 +183,7 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
                 *lb = 1;
                 break;
             case '?':
-                printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] -l\n");
+                printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
                 MPI_Abort(comm, 1);
         }
     }
