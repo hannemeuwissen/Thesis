@@ -218,8 +218,8 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
             T.colindex[i] = col_indices[j];
             i++;
         }
-        row_index++;
         printf("Row index:%d\n", row_index);
+        row_index++;
     }
     T.rowptrs[row_index] = T.nnz;
     for(int i=0;i<=row_index;i++){
