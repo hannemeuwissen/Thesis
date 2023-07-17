@@ -26,6 +26,8 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
     int c=0;
     *M = 800;
     *nnz = 50;
+    *degree = 8;
+    *s = 2;
     while((c = getopt(argc, argv, "d:s:v:m:z:")) != -1){
         switch(c){
             case 'v':
@@ -80,8 +82,10 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
 void parse_command_line_irregular(const int argc, char * const *argv, int * M, int * min_nnz, int * max_nnz, char * filename_v, int * degree, int * s, MPI_Comm comm){
     int c=0;
     *M = 800;
-    *min_nnz = 20;
-    *max_nnz = 40;
+    *min_nnz = 0;
+    *max_nnz = 800;
+    *degree = 8;
+    *s = 2;
     while((c = getopt(argc, argv, "d:s:v:m:z:x:")) != -1){
         switch(c){
             case 'v':
