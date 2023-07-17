@@ -221,7 +221,7 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
         }
         row_index++;
     }
-    T.rowptrs[row_index] = T.nnz;
+    T.rowptrs[M] = T.nnz;
     printf("Total nnz: %d\n", T.nnz);
     free(col_indices);
     free(nnz_per_row);
