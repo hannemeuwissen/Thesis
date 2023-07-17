@@ -39,7 +39,8 @@ int main(int argc, char **argv)
     if(!myid){
         printf("Total nnz: %d\n", A.nnz);
     }
-
+    MPI_Barrier(MPI_COMM_WORLD);
+    
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
