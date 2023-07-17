@@ -28,14 +28,14 @@ int main(int argc, char **argv){
 
     sparse_CSR T;
     read_CSR(&T, argv[1]);
-    int n = T.nrows;
+    n = T.nrows;
 
     double * Q = malloc(n*m*sizeof(double));
     double * H = malloc(m*(m-1)*sizeof(double));
     memset(H, 0, m*(m-1)*sizeof(double));
     double *b = malloc(n*sizeof(double));
     read_matrix_from_file(argv[2], 0, b, n, 1);
-    
+
     Arnoldi(T, b, n, Q, H, m);
     print_matrix(Q, n, m);
     print_matrix(H, m, m-1);
