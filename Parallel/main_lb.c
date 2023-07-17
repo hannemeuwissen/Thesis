@@ -86,6 +86,11 @@ int main(int argc, char **argv){
     get_indices_load_balanced(A, nprocs, start, end);
     int m = end[myid] - start[myid] + 1;
 
+    /* Read part of transition matrix for calling process */
+    sparse_CSR A;
+    read_CSR_part(&A, filename_A, start[myid], end[myid]);
+    printf("Process %d is done reading its part!\n", myid);
+
     /* Initialize arrays */
     int steps = degree/s;
     double *V;

@@ -50,25 +50,29 @@ int main(int argc, char **argv)
     if(myid == 0){
         printf("Rank %d:\n", myid);
         read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
-        print_CSR(&A);
+        // print_CSR(&A);
+        printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){
         printf("Rank %d:\n", myid);
         read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
-        print_CSR(&A);
+        // print_CSR(&A);
+        printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 2){
         printf("Rank %d:\n", myid);
         read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
-        print_CSR(&A);
+        // print_CSR(&A);
+        printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 3){
         printf("Rank %d:\n", myid);
         read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
-        print_CSR(&A);
+        // print_CSR(&A);
+        printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
     }
 
     // if(!myid){
