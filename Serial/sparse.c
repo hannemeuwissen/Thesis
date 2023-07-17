@@ -3,7 +3,7 @@
  * @brief Code related to working with sparse CSR matrices, part of Thesis 
  * project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 1.0
+ * @version 2.0
  * @date 2023-05-27
  */
 #include<stdlib.h>
@@ -12,6 +12,58 @@
 #include<mkl_types.h>
 #include<mkl_cblas.h>
 #include"sparse.h"
+
+/**
+ * @brief Function that reads a CSR matrix from a txt file. 
+ * @param M The sparse_CSR matrix object that will hold the matrix.
+ * @param filename The name of the file. This file contains first the number of columns, the number of
+ * rows and the number of nonzeros (each on one line), after this it contains the array of row pointers
+ * (each value on one line), and then the column indices and values (one index and corresponding value
+ * on one line).
+ */
+void read_CSR(sparse_CSR * M, const char *const filename){
+    FILE *fp;
+    if((fp = fopen(filename, "r"))==NULL){
+		perror("Error trying to open the file that contains the csr matrix.");
+		exit(-1);
+    }
+    int temp;
+    if(fscanf(fp, "%d", &temp) == 0){
+        perror("Invalid CSR file");
+        exit(-1);
+    }
+    M->ncols = temp;
+    if(fscanf(fp, "%d", &temp) == 0){
+        perror("Invalid CSR file");
+        exit(-1);
+    }
+    M->nrows = temp;
+    if(fscanf(fp, "%d", &temp) == 0){
+        perror("Invalid CSR file");
+        exit(-1);
+    }
+    M->nnz = temp;
+    M->rowptrs = malloc((M->nrows + 1)*sizeof(int));
+    M->colindex = malloc((M->nnz)*sizeof(int));
+    M->values = malloc((M->nnz)*sizeof(double));
+    for(int i = 0;i<=M->nrows;i++){
+        if(fscanf(fp, "%d", M->rowptrs + i ) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+    }
+    for (int i=0;i<M->nnz;i++){
+        if(fscanf(fp, "%d", M->colindex + i) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+        if(fscanf(fp, "%lf", M->values + i) == 0){
+            perror("Incorrect CSR matrix dimensions in file.");
+            exit(-1);
+        }
+	}
+    fclose(fp);
+}
 
 /**
  * @brief Function that prints a sparse CSR matrix structure.
@@ -79,6 +131,39 @@ void print_matrix(double * A, const int n, const int m){
         }
         printf("\n");
     }
+}
+
+/**
+ * @brief Function that reads data from a file and stores it in a matrix.
+ * @param[in] filename File to read the matrix from.
+ * @param[in] skip The number of elements to skip.
+ * @param[in] A The matrix that will hold the data.
+ * @param[in] M Number of rows of the matrix.
+ * @param[in] N Number of columns of the matrix.
+ */
+void read_matrix_from_file(const char *const filename, const int skip, double *A, const int M, const int N){
+    FILE *fp;
+    if((fp = fopen(filename, "r"))==NULL){
+		perror("Error trying to open the file");
+		exit(-1);
+    }
+    double temp;
+    for(int r=0;r<skip;r++){
+        if(fscanf(fp, "%lf", &temp) == 0){
+            perror("Incorrect matrix dimensions");
+            exit(-1);
+        }
+    }
+    for (int i=0;i<M;i++){
+        for(int j=0;j<N;j++){
+            if(fscanf(fp, "%lf", A + j + i*N) == 0){
+                printf("Goes wrong on row %d and col %d\n", i, j);
+			    perror("Incorrect matrix dimensions");
+			    exit(-1);
+		    }
+        }
+	}
+    fclose(fp);
 }
 
 /**
