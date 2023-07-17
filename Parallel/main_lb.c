@@ -58,6 +58,7 @@ int main(int argc, char **argv){
     MPI_Bcast(&degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&original_degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&lb, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_A, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
