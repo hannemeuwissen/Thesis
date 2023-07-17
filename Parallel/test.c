@@ -65,7 +65,7 @@ int main(int argc, char **argv)
         print_CSR(&A);
     }
     MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 1){
+    if(myid == 3){
         printf("Rank %d:\n", myid);
         read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
         print_CSR(&A);
