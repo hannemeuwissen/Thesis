@@ -36,7 +36,9 @@ int main(int argc, char **argv)
     /* Read first CSR data from the file */
     sparse_CSR A;
     read_CSR_data(&A, argv[1]);
-    printf("Total nnz: %d\n", A.nnz);
+    if(!myid){
+        printf("Total nnz: %d\n", A.nnz);
+    }
 
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
