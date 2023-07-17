@@ -49,9 +49,6 @@ int main(int argc, char **argv){
     }
 
     sparse_CSR A = generate_irregular_csr(M, min_nnz, max_nnz);
-    for(int i=0;i<A.nnz;i++){
-        printf("%d %lf\n", A.colindex[i], A.values[i]);
-    }
     save_CSR(argv[1], A);
     
     return 0;
