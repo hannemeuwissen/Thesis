@@ -175,7 +175,10 @@ sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int
         }
         row_index++;
     }
-    T.rowptrs[row_index] = T.nnz;
+    while(row_index <= n){ /* Account for zero nnz in last (few) rows */
+       T.rowptrs[row_index] = T.nnz;
+       row_index++;
+    }
     free(col_indices);
     return T;
 }
@@ -221,7 +224,10 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
         }
         row_index++;
     }
-    T.rowptrs[M] = T.nnz;
+    while(row_index <= M){ /* Account for zero nnz in last (few) rows */
+       T.rowptrs[row_index] = T.nnz;
+       row_index++;
+    }
     printf("Total nnz: %d\n", T.nnz);
     free(col_indices);
     free(nnz_per_row);
