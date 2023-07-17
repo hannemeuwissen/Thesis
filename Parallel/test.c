@@ -27,9 +27,15 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
+    /* Test load balancing */
+    if(argc < 2){
+        fprintf(stderr, "Usage: %s file\n", argv[0]);
+        return 1;
+    }
+
     /* Read first CSR data from the file */
     sparse_CSR A;
-    read_CSR_data(&A, "test10irr.txt");
+    read_CSR_data(&A, argv[1]);
 
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
@@ -49,28 +55,28 @@ int main(int argc, char **argv)
     /* Read own part */
     if(myid == 0){
         printf("Rank %d:\n", myid);
-        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        read_CSR_part(&A, argv[1], start[myid], end[myid]);
         // print_CSR(&A);
         printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){
         printf("Rank %d:\n", myid);
-        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        read_CSR_part(&A, argv[1], start[myid], end[myid]);
         // print_CSR(&A);
         printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 2){
         printf("Rank %d:\n", myid);
-        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        read_CSR_part(&A, argv[1], start[myid], end[myid]);
         // print_CSR(&A);
         printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
     }
     MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 3){
         printf("Rank %d:\n", myid);
-        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        read_CSR_part(&A, argv[1], start[myid], end[myid]);
         // print_CSR(&A);
         printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
     }
