@@ -180,10 +180,7 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
                 }
                 break;
             case 'l':
-                if(sscanf(optarg,"%d",lb) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l load balancing]\n");
-                    MPI_Abort(comm, 1);
-                }
+                *lb = 1;
                 break;
             case '?':
                 printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l load balancing]\n");
