@@ -85,7 +85,7 @@ int main(int argc, char **argv){
         get_indices_load_balanced(A, nprocs, start, end);
     }
     int m = end[myid] - start[myid] + 1;
-    printf("Process %d: start %d end %d -> %d rows\n", myid, start[myid], end[myid]);
+    printf("Process %d: start %d end %d -> %d rows\n", myid, start[myid], end[myid], m);
     if(m < s+1){
         printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process in step 0: %d x %d).\nSuggestion: lower the blocksize.\n", M/nprocs, s+1);
         MPI_Abort(MPI_COMM_WORLD, 1);
