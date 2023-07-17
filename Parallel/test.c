@@ -47,7 +47,26 @@ int main(int argc, char **argv)
     // printf("After: process %d has to start at row %d and end at row %d\n", myid, start[myid], end[myid]);
 
     /* Read own part */
+    if(myid == 0){
+        printf("Rank %d:\n", myid);
+        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        print_CSR(&A);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
     if(myid == 1){
+        printf("Rank %d:\n", myid);
+        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        print_CSR(&A);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 2){
+        printf("Rank %d:\n", myid);
+        read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
+        print_CSR(&A);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    if(myid == 1){
+        printf("Rank %d:\n", myid);
         read_CSR_part(&A, "test10irr.txt", start[myid], end[myid]);
         print_CSR(&A);
     }
