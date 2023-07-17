@@ -36,11 +36,11 @@ int main(int argc, char **argv)
     /* Read first CSR data from the file */
     sparse_CSR A;
     read_CSR_data(&A, argv[1]);
-    if(!myid){
-        printf("Total nnz: %d\n", A.nnz);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    
+    // if(!myid){
+    //     printf("Total nnz: %d\n", A.nnz);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
