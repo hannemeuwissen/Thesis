@@ -12,7 +12,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= test main main_irreg generate_irr_main
+EXECS= test main main_irreg generate_irr_main main_lb
 OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
@@ -54,6 +54,12 @@ main:main.c $(OBJ)
         -liomp5 -lpthread -lm
 
 main_irreg:main_irreg.c $(OBJ)
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+        -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
+        -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
+        -liomp5 -lpthread -lm
+
+main_lb:main_lb.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
