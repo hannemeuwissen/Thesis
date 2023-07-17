@@ -20,6 +20,7 @@
  * @param filename_v The name of the file that contains the initial vector.
  * @param degree The degree of the Krylov subspace.
  * @param s The blocksize (s-step Krylov subspace method).
+ * @param comm The MPI communicator.
  */
 void parse_command_line_regular(const int argc, char * const *argv, int * M, int * nnz, char * filename_v, int * degree, int * s, MPI_Comm comm){
     int c=0;
@@ -74,6 +75,7 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
  * @param filename_v The name of the file that contains the initial vector.
  * @param degree The degree of the Krylov subspace.
  * @param s The blocksize (s-step Krylov subspace method).
+ * @param comm The MPI communicator.
  */
 void parse_command_line_irregular(const int argc, char * const *argv, int * M, int * min_nnz, int * max_nnz, char * filename_v, int * degree, int * s, MPI_Comm comm){
     int c=0;
@@ -134,37 +136,46 @@ void parse_command_line_irregular(const int argc, char * const *argv, int * M, i
  * @param filename_v The name of the file that contains the initial vector.
  * @param degree The degree of the Krylov subspace.
  * @param s The blocksize (s-step Krylov subspace method).
+ * @param lb Indicator if load-balancing should be added or not.
+ * @param comm The MPI communicator.
  */
-void parse_command_line_lb(const int argc, char * const *argv, char * filename_A, char * filename_v, int * degree, int * s, MPI_Comm comm){
+void parse_command_line_lb(const int argc, char * const *argv, char * filename_A, char * filename_v, int * degree, int * s, int * lb, MPI_Comm comm){
+    int *lb = 0;
     int c=0;
-    while((c = getopt(argc, argv, "d:f:s:v:")) != -1){
+    while((c = getopt(argc, argv, "d:f:s:v:l:")) != -1){
         switch(c){
             case 'f':
                 if(sscanf(optarg,"%s",filename_A) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l load balancing]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l load balancing]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l load balancing]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l load balancing]\n");
+                    MPI_Abort(comm, 1);
+                }
+                break;
+            case 'l':
+                if(sscanf(optarg,"%d",lb) == 0){
+                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l load balancing]\n");
                     MPI_Abort(comm, 1);
                 }
                 break;
             case '?':
-                printf("Usage : ./main [-f filename_A] [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l load balancing]\n");
                 MPI_Abort(comm, 1);
         }
     }

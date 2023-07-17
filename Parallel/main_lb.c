@@ -25,7 +25,7 @@
 int main(int argc, char **argv){
     const double tol = 1.0E-10;  
     int myid, nprocs;
-    int degree,original_degree,s,M,total_nnz;
+    int degree,original_degree,s,M,total_nnz,lb;
     char filename_v[100], filename_A[100];
 
     MPI_Init(&argc, &argv);
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        parse_command_line_lb(argc, argv, filename_A, filename_v, &degree, &s, MPI_COMM_WORLD);
+        parse_command_line_lb(argc, argv, filename_A, filename_v, &degree, &s, &lb, MPI_COMM_WORLD);
         if((degree < 1) || (s > degree)){
             printf("Invalid input: the degree of the Krylov subspace should be at least 1 and the blocksize should be smaller\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
@@ -52,21 +52,6 @@ int main(int argc, char **argv){
                 degree++;
             }
         }
-
-        // if((M<=0) || (M<degree)){
-        //     printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
-        //     MPI_Abort(MPI_COMM_WORLD, 1);
-        // }
-
-        // if(floor(M/nprocs) < s+1){
-        //     printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process in step 0: %d x %d).\nSuggestion: lower the blocksize.\n", M/nprocs, s+1);
-        //     MPI_Abort(MPI_COMM_WORLD, 1);
-        // }
-
-        // if(nnz > M){
-        //     printf("Invalid input: Number of nonzeros per row is larger than length of row (%d > %d).\n", nnz, M);
-        //     MPI_Abort(MPI_COMM_WORLD, 1);
-        // }
     }
 
     /* Broadcast input to all processes */
@@ -79,12 +64,31 @@ int main(int argc, char **argv){
     /* Read first CSR data from the file */
     sparse_CSR A;
     read_CSR_data(&A, filename_A);
+    M = A.nrows;
+    if(!myid){
+        if(M != A.ncols){
+            printf("Invalid input file: The matrix doesn't represent a graph (non-square).\n");
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+        if((M<=0) || (M<original_degree)){
+            printf("Invalid input: the dimensions must define a tall skinny matrix.\n");
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
+    }
 
     /* Determine the start index, end index and size of part for calling process */
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
-    get_indices_load_balanced(A, nprocs, start, end);
+    if(!lb){
+        get_indices(A.nrows, nprocs, start, end);
+    }else{
+        get_indices_load_balanced(A, nprocs, start, end);
+    }
     int m = end[myid] - start[myid] + 1;
+    if(m < s+1){
+        printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process in step 0: %d x %d).\nSuggestion: lower the blocksize.\n", M/nprocs, s+1);
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
 
     /* Read part of transition matrix for calling process */
     sparse_CSR A;
