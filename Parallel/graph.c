@@ -192,6 +192,8 @@ sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int
 sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_nnz){
     srandom(9499);
 
+    printf("Here\n");
+
     /* Initialize sparse_CSR structure */
     sparse_CSR T;
     T.nrows = M;
