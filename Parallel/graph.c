@@ -199,6 +199,7 @@ sparse_CSR generate_irregular_csr(const int M, const int min_nnz, const int max_
     T.rowptrs = malloc((M+1)*sizeof(int));
     int *nnz_per_row = malloc(M*sizeof(int));
     random_nnz_per_row(nnz_per_row, &(T.nnz), min_nnz, max_nnz, M);
+    printf("Total nnz: %d\n", T.nnz);
     int sorter(const void * f1, const void * f2){return (*(int*)f2 - *(int*)f1);}
     qsort(nnz_per_row, M, sizeof(int), sorter);
     T.colindex = malloc(T.nnz*sizeof(int));
