@@ -167,14 +167,14 @@ void read_matrix_from_file(const char *const filename, const int skip, double *A
 }
 
 /**
- * @brief Function that computes the m-Krylov subspace of the sparse CSR matrix A,
- * thus the space spanned by the vectors {b, Ab, ..., A^(m-1) b}.
+ * @brief Function that computes the (m+1)-Krylov subspace of the sparse CSR matrix A,
+ * thus the space spanned by the vectors {b, Ab, ..., A^m b}.
  * @param A Sparse sparse_CSR matrix struct. A should represent a len x len matrix.
  * @param b Vector b.
  * @param len Length of the vector.
- * @param Q Matrix which will hold the resulting basis vectors of the Krylov subspace. (len x m)
- * @param H Matrix which will hold the resulting upper Hessenberg matrix H. (m x (m-1))
- * @param m The degree of the Krlov subspace.
+ * @param Q Matrix which will hold the resulting basis vectors of the Krylov subspace. (len x m+1)
+ * @param H Matrix which will hold the resulting upper Hessenberg matrix H. ((m+1) x m)
+ * @param m The number of iterations.
  */
 void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, double * H, const int m){
     if(A.ncols != len){
@@ -182,28 +182,28 @@ void Arnoldi(sparse_CSR A, double * b, const int len, double * Q, double * H, co
         exit(EXIT_FAILURE);
     }
     double eps = 1e-12; /* Tolerance for h: stop if h too small */
-    double * Q_trans = malloc(len*m*sizeof(double));
+    double * Q_trans = malloc(len*(m+1)*sizeof(double));
     cblas_dcopy(len, b, 1, Q_trans, 1); /* Set first vector of Q */
     double norm_b = cblas_dnrm2(len, Q_trans, 1);
     cblas_dscal(len, 1/norm_b, Q_trans, 1); /* Normalize */
     double * w = malloc(len*sizeof(double));
-    for(int j=1;j < m;j++){
+    for(int j=1;j < m+1;j++){
         spmv(A, Q_trans + (j-1)*len, len, w);
         for(int i=0;i<j;i++){
-            H[i*(m-1) + (j-1)] = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
-            cblas_daxpy(len,-H[i*(m-1) + (j-1)],Q_trans + i*len,1,w, 1);
+            H[i*m + (j-1)] = cblas_ddot(len, w, 1, Q_trans + i*len, 1);
+            cblas_daxpy(len,-H[i*m + (j-1)],Q_trans + i*len,1,w, 1);
         }
-        H[j*(m-1) + (j-1)] = cblas_dnrm2(len, w, 1);
-        if(H[j*(m-1) + (j-1)] < eps){
+        H[j*m + (j-1)] = cblas_dnrm2(len, w, 1);
+        if(H[j*m + (j-1)] < eps){
             break;
         }
-        cblas_dscal(len, 1/H[j*(m-1) + (j-1)], w, 1);
+        cblas_dscal(len, 1/H[j*m + (j-1)], w, 1);
         cblas_dcopy(len, w, 1, Q_trans + j*len, 1);
     }
     /* Transpose final result */
     for(int i=0;i<len;i++){
-        for(int j=0;j<m;j++){
-            Q[i*m + j] = Q_trans[j*len + i];
+        for(int j=0;j<m+1;j++){
+            Q[i*(m+1) + j] = Q_trans[j*len + i];
         }
     }
 }
