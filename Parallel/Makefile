@@ -12,7 +12,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= test caa_gen.c caa_gen_irreg generate_irr_main CAA
+EXECS= test caa_gen caa_gen_irreg generate_irr_main CAA
 OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
