@@ -34,36 +34,36 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
         switch(c){
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'm':
                 if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'z':
                 if(sscanf(optarg,"%d",nnz) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case '?':
-                printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n");
+                printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
                 MPI_Abort(comm, 1);
         }
     }
@@ -93,42 +93,42 @@ void parse_command_line_irregular(const int argc, char * const *argv, int * M, i
         switch(c){
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'z':
                 if(sscanf(optarg,"%d",min_nnz) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'x':
                 if(sscanf(optarg,"%d",max_nnz) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'm':
                 if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case '?':
-                printf("Usage : ./main [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n");
+                printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
                 MPI_Abort(comm, 1);
         }
     }
@@ -157,25 +157,25 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
         switch(c){
             case 'f':
                 if(sscanf(optarg,"%s",filename_A) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
+                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
+                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
+                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
+                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
@@ -183,7 +183,7 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
                 *lb = 1;
                 break;
             case '?':
-                printf("Usage : ./main [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n");
+                printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l]\n", argv[0]);
                 MPI_Abort(comm, 1);
         }
     }

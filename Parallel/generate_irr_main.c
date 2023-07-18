@@ -1,10 +1,10 @@
 /**
- * @file main.c
- * @brief Main code to investigate CA-Arnoldi, part of Thesis project in 
- * High Performance Computing at Trinity College Dublin.
+ * @file generate_irr_main.c
+ * @brief Code related to generating a sparse CSR_matrix file to use when investigating 
+ * CA-Arnoldi, part of Thesis project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
- * @version 4.0
- * @date 2023-06-02
+ * @version 2.0
+ * @date 2023-07-05
  */
 #include<stdlib.h>
 #include<stdio.h>
