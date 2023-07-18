@@ -38,9 +38,9 @@ int main(int argc, char **argv){
 
     Arnoldi(T, b, n, Q, H, m);
     printf("Matrix Q:\n");
-    print_matrix(Q, n, m);
+    print_matrix(Q, n, m+1);
     printf("Matrix H:\n");
-    print_matrix(H, m, m-1);
+    print_matrix(H, m+1, m);
     free(H);
     free(Q);
     free(b);
