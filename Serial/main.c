@@ -30,9 +30,9 @@ int main(int argc, char **argv){
     read_CSR(&T, argv[1]);
     n = T.nrows;
 
-    double * Q = malloc(n*m*sizeof(double));
-    double * H = malloc(m*(m-1)*sizeof(double));
-    memset(H, 0, m*(m-1)*sizeof(double));
+    double * Q = malloc(n*(m+1)*sizeof(double));
+    double * H = malloc(m*(m+1)*sizeof(double));
+    memset(H, 0, m*(m+1)*sizeof(double));
     double *b = malloc(n*sizeof(double));
     read_matrix_from_file(argv[2], 0, b, n, 1);
 
