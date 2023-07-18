@@ -106,9 +106,13 @@ int main(int argc, char **argv){
     double * tsqr_times = malloc(steps*sizeof(double));
     double * hess_times;
     if(!myid){hess_times = malloc(steps*sizeof(double));}
-    double t1 = MPI_Wtime();
     double tbeg, tend;
     
+    MPI_Barrier(MPI_COMM_WORLD);
+    double t1 = MPI_Wtime();
+
+    /* CA-ARNOLDI */
+
     /* Normalize start vector */
     double local_dot = cblas_ddot(m, v, 1, v, 1);
     double global_dot;
@@ -116,7 +120,7 @@ int main(int argc, char **argv){
     double global_norm = sqrt(global_dot);
     for(int i=0;i<m;i++){v[i] /= global_norm;}
 
-    /* CA-Arnoldi(s, steps) (note: no restarting, final degree = s*steps) */
+    /* Main loop: process blocks */
     int block = 0;
     for(block = 0;block < steps;block++){
         // printf("** Block %d\n", block);
@@ -250,7 +254,10 @@ int main(int argc, char **argv){
         }
     }
 
+    MPI_Barrier(MPI_COMM_WORLD);
     double t2 = MPI_Wtime();
+
+    /* END OF CA-ARNOLDI */
 
     if(!myid){ /* Print out results */
         // printf("Part of Q process 0:\n");
