@@ -116,7 +116,11 @@ sparse_CSR generate_regular_graph_part_csr(const int n, const int M, const int n
 void random_nnz_per_row(int *result, int *sum, const int min_nnz_per_row, const int max_nnz_per_row, const int n){
     *sum = 0;
     for(int i=0;i<n;i++){
-        result[i] = (min_nnz_per_row + random()) % (max_nnz_per_row+1 - min_nnz_per_row);
+        if(min_nnz_per_row != max_nnz_per_row){
+            result[i] = (min_nnz_per_row + random()) % (max_nnz_per_row+1 - min_nnz_per_row);
+        }else{
+            result[i] = min_nnz_per_row;
+        }
         *sum += result[i];
     }
 }
