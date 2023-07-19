@@ -28,21 +28,6 @@ int is_active(const int rank, const int step){
 }
 
 /**
- * @brief Function that finds active process to send data to. 
- * @param rank Rank of calling process.
- * @param step Step in the TSQR algorithm.
- * @return int Returns the rank of the process it has to send its data to.
- */
-int find_lower_active(const int rank, const int step){
-    for(int i=rank-1;i>=0;i--){
-        if(is_active(i, step)){
-            return i;
-        }
-    }
-    return 0;
-}
-
-/**
  * @brief Function that performs the communication avoiding TSQR (A = QR).
  * @param[in] A The matrix part of A for the calling process.
  * @param[in] m Number of rows in the matrix part.
@@ -96,7 +81,7 @@ void TSQR(double *A, const int m, const int N, double *R, const int rank, const 
                     MPI_Recv(tempA + N*N, N*N, MPI_DOUBLE, MPI_ANY_SOURCE, 1, comm, MPI_STATUS_IGNORE);
                 }else{
                     /* Send R to other active process */
-                    int lower_active = find_lower_active(rank, step + 1);
+                    int lower_active = rank - pow(2, step);
                     MPI_Send(R, N*N, MPI_DOUBLE, lower_active, 1, comm);
                 }
             }
@@ -172,8 +157,7 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                     }
                 }else{
                     /* Send R to other active process */
-                    int lower_active = find_lower_active(rank, step + 1);
-                    // int lower_active = rank - pow(2, step);
+                    int lower_active = rank - pow(2, step);
                     MPI_Send(R, N*N, MPI_DOUBLE, lower_active, 1, comm);
                 }
             }
