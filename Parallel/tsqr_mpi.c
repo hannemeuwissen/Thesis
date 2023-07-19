@@ -172,8 +172,8 @@ void TSQR_on_transpose(double *A, const int m, const int N, double *R, const int
                     }
                 }else{
                     /* Send R to other active process */
-                    // int lower_active = find_lower_active(rank, step + 1);
-                    int lower_active = rank - pow(2, step);
+                    int lower_active = find_lower_active(rank, step + 1);
+                    // int lower_active = rank - pow(2, step);
                     MPI_Send(R, N*N, MPI_DOUBLE, lower_active, 1, comm);
                 }
             }
