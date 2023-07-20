@@ -144,7 +144,7 @@ void GatherQ(double * Q, int m, int n, const int myid, const int nprocs, int * s
         MPI_Recv(temp, m*n, MPI_DOUBLE, p, 2, comm, MPI_STATUS_IGNORE);
         for(int j = 0;j<m;j++){
             for(int i=0;i<n;i++){
-                Q[(start[myid] + j)*n + i] = temp[i*m + j];
+                Q[(start[p] + j)*n + i] = temp[i*m + j];
             }
         }
         free(temp);
