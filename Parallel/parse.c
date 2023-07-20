@@ -191,6 +191,7 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
                 break;
             case 'h':
                 *h = 1;
+                break;
             case '?':
                 printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l] [-q] [-h]\n", argv[0]);
                 MPI_Abort(comm, 1);

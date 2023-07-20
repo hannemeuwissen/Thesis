@@ -131,12 +131,12 @@ void read_matrix_from_file(const char *const filename, const int skip, double *A
  * @param start The start indices of all row blocks for all processes.
  * @param comm The MPI communicator.
  */
-void GatherQ(double * Q, const int m, const int n, const int myid, const int nprocs, int * start, MPI_Comm comm){
+void GatherQ(double * Q, int m, int n, const int myid, const int nprocs, int * start, MPI_Comm comm){
   if(nprocs > 1){
     double * temp;
     if(myid>0){
         MPI_Send(&m, 1, MPI_INT, 0, 1, comm);
-        MPI_Send(Q, &m, MPI_DOUBLE, 0, 2, comm);
+        MPI_Send(Q, m*n, MPI_DOUBLE, 0, 2, comm);
     }else{
       for(int p=1;p<nprocs;p++){
         MPI_Recv(&m, 1, MPI_INT, p, 1, comm, MPI_STATUS_IGNORE);
