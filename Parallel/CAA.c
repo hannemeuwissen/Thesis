@@ -25,7 +25,7 @@
 int main(int argc, char **argv){
     const double tol = 1.0E-10;  
     int myid, nprocs;
-    int degree,original_degree,s,M,lb;
+    int degree,original_degree,s,M,lb, q, h;
     char filename_v[100], filename_A[100];
 
     MPI_Init(&argc, &argv);
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        parse_command_line_lb(argc, argv, filename_A, filename_v, &degree, &s, &lb, MPI_COMM_WORLD);
+        parse_command_line_lb(argc, argv, filename_A, filename_v, &degree, &s, &lb, &q, &h, MPI_COMM_WORLD);
         if((degree < 1) || (s > degree)){
             printf("Invalid input: the degree of the Krylov subspace should be at least 1 and the blocksize should be smaller\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
@@ -59,6 +59,7 @@ int main(int argc, char **argv){
     MPI_Bcast(&original_degree, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&lb, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&q, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_v, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
     MPI_Bcast(filename_A, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
 
@@ -267,9 +268,38 @@ int main(int argc, char **argv){
 
     /* END OF CA-ARNOLDI */
 
+    /* Save Hessenberg */
+    if(!myid){
+        if(h>0){
+            char filename[100];
+            sprintf(filename, "Hfile_%d_%d_%d.txt", M, original_degree, s);
+            save_matrix(mathcalH, original_degree+1, original_degree, filename);
+            printf("Process %d created file %s.\n", myid, filename);
+        }
+    }
+
+    /* Save Q */
+    if(q > 0){
+        if(!myid){
+            double * finalQ = malloc(M*(original_degree+1)*sizeof(double));
+            for(int j = 0;j<m;j++){
+                for(int i=0;i<(original_degree+1);i++){
+                    finalQ[j*(original_degree+1) + i] = mathcalQ[i*m + j];
+                }
+            }
+            GatherQ(finalQ, M, original_degree+1, myid, nprocs, start, MPI_COMM_WORLD);
+            char filename[100];
+            sprintf(filename, "Qfile_%d_%d_%d.txt", M, original_degree, s);
+            save_matrix(finalQ, M, original_degree+1, filename);
+            printf("Process %d created file %s.\n", myid, filename);
+        }else{
+            GatherQ(mathcalQ, m, original_degree + 1, myid, nprocs, start, MPI_COMM_WORLD);
+        }
+    }
+
     if(!myid){ /* Print out results */
-        // printf("Part of Q process 0:\n");
-        // print_matrix_transposed(mathcalQ, original_degree +1, m);
+        printf("Part of Q process 0:\n");
+        print_matrix_transposed(mathcalQ, original_degree +1, m);
         // printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
         // printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
         // printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
@@ -279,11 +309,11 @@ int main(int argc, char **argv){
         print_matrix(mathcalH, original_degree + 1, original_degree);
     }
 
-    MPI_Barrier(MPI_COMM_WORLD);
-    printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
-    printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
-    printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
-    printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
+    // printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
+    // printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
+    // printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
 
     free(mathcalQ);
     if(!myid){free(mathcalH);}

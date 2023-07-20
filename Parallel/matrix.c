@@ -8,6 +8,7 @@
  */
 #include<stdlib.h>
 #include<stdio.h>
+#include<mpi.h>
 
 /**
  * @brief Function that calculates the average of a given vector.
@@ -47,6 +48,29 @@ void print_matrix(double * A, const int n, const int m){
         }
         printf("\n");
     }
+}
+
+/**
+ * @brief Function that saves a matrix of given dimensions to a file.
+ * @param A The matrix.
+ * @param n The number of rows.
+ * @param m The number of columns.
+ * @param filename The name of the file.
+ */
+void save_matrix(double * A, const int n, const int m, char * filename){
+    FILE *fp;
+    fp = fopen(filename, "w");
+    if(!fp){
+      fprintf(stderr, "Error: can't open file %s\n",filename);
+      exit(4);
+    }   
+    for(int i = 0;i<n;i++){
+        for(int j=0;j<m;j++){
+           fprintf(fp, "%lf ", A[i*m + j]);
+        }
+        fprintf(fp,"\n");
+    }
+    fclose(fp);
 }
 
 /**
@@ -95,4 +119,36 @@ void read_matrix_from_file(const char *const filename, const int skip, double *A
         }
 	}
     fclose(fp);
+}
+
+/**
+ * @brief Function that gathers all parts of Q from other processes.
+ * @param Q The array that will hold the result if the calling process is 0, otherwise the part of Q.
+ * @param m The number of rows in the part.
+ * @param n The number of columns in the part.
+ * @param myid The rank of the calling process.
+ * @param nprocs The number of processes.
+ * @param start The start indices of all row blocks for all processes.
+ * @param comm The MPI communicator.
+ */
+void GatherQ(double * Q, const int m, const int n, const int myid, const int nprocs, int * start, MPI_Comm comm){
+  if(nprocs > 1){
+    double * temp;
+    if(myid>0){
+        MPI_Send(&m, 1, MPI_INT, 0, 1, comm);
+        MPI_Send(Q, &m, MPI_DOUBLE, 0, 2, comm);
+    }else{
+      for(int p=1;p<nprocs;p++){
+        MPI_Recv(&m, 1, MPI_INT, p, 1, comm, MPI_STATUS_IGNORE);
+        temp = malloc(m*n*sizeof(double));
+        MPI_Recv(temp, m*n, MPI_DOUBLE, p, 2, comm, MPI_STATUS_IGNORE);
+        for(int j = 0;j<m;j++){
+            for(int i=0;i<n;i++){
+                Q[(start[myid] + j)*n + i] = temp[i*m + j];
+            }
+        }
+        free(temp);
+      }
+    }
+  }
 }

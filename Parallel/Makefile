@@ -20,11 +20,11 @@ all:$(EXECS)
 parse.o:parse.c parse.h
 	$(CC) -c $< $(FLAGS)
 
-matrix.o:matrix.c matrix.h
-	$(CC) -c $< $(FLAGS)
-
 graph.o:graph.c graph.h
 	$(CC) -c $< $(FLAGS)
+
+matrix.o:matrix.c matrix.h
+	$(ICC) -c $< $(FLAGS)
 
 sparse.o:sparse.c sparse.h
 	$(ICC) -c $< $(FLAGS) $(MKLFLAGS)
