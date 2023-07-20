@@ -297,23 +297,23 @@ int main(int argc, char **argv){
         }
     }
 
-    if(!myid){ /* Print out results */
-        printf("Part of Q process 0:\n");
-        print_matrix_transposed(mathcalQ, original_degree +1, m);
+    // if(!myid){ /* Print out results */
+    //     printf("Part of Q process 0:\n");
+    //     print_matrix_transposed(mathcalQ, original_degree +1, m);
         // printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
         // printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
         // printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
         // printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
         printf("Average time Upper Hessenberg: %lf\n", average(hess_times, block - 1));
-        printf("Hessenberg:\n");
-        print_matrix(mathcalH, original_degree + 1, original_degree);
+        // printf("Hessenberg:\n");
+        // print_matrix(mathcalH, original_degree + 1, original_degree);
     }
 
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
-    // printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
-    // printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
-    // printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
+    MPI_Barrier(MPI_COMM_WORLD);
+    printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
+    printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
+    printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
+    printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
 
     free(mathcalQ);
     if(!myid){free(mathcalH);}
