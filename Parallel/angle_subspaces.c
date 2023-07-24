@@ -78,6 +78,8 @@ int main(int argc, char **argv){
         return 1;
     }
 
+    printf("M: %d, n: %d\n", M, n);
+
     /* Read Q1, Q2 */
     double * Q1 = malloc(M*n*sizeof(double));
     read_matrix_from_file(argv[1], 0, Q1, M, n);
