@@ -80,7 +80,7 @@ int main(int argc, char **argv){
 
     /* Read Q1, Q2 */
     double * Q1 = malloc(M*n*sizeof(double));
-    read_matrix_from_file_double(argv[1], 0, Q1, M, n);
+    read_matrix_from_file(argv[1], 0, Q1, M, n);
     double * Q2 = malloc(M*n*sizeof(double));
     read_matrix_from_file(argv[2], 0, Q2, M, n);
     printf("Last element Q1: %lf\n", Q1[(M-1)*n + n-1]);
