@@ -74,6 +74,29 @@ void save_matrix(double * A, const int n, const int m, char * filename){
 }
 
 /**
+ * @brief Function that saves a matrix of given dimensions to a file (in double precision).
+ * @param A The matrix.
+ * @param n The number of rows.
+ * @param m The number of columns.
+ * @param filename The name of the file.
+ */
+void save_matrix_double(double * A, const int n, const int m, char * filename){
+    FILE *fp;
+    fp = fopen(filename, "w");
+    if(!fp){
+      fprintf(stderr, "Error: can't open file %s\n",filename);
+      exit(4);
+    }   
+    for(int i = 0;i<n;i++){
+        for(int j=0;j<m;j++){
+           fprintf(fp, "%.17g ", A[i*m + j]);
+        }
+        fprintf(fp,"\n");
+    }
+    fclose(fp);
+}
+
+/**
  * @brief Function that prints the transpose of a matrix of given dimensions.
  * @param A The matrix.
  * @param n The number of rows (before transpose).
@@ -112,6 +135,39 @@ void read_matrix_from_file(const char *const filename, const int skip, double *A
     for (int i=0;i<M;i++){
         for(int j=0;j<N;j++){
             if(fscanf(fp, "%lf", A + j + i*N) == 0){
+                printf("Goes wrong on row %d and col %d\n", i, j);
+			    perror("Incorrect matrix dimensions");
+			    exit(-1);
+		    }
+        }
+	}
+    fclose(fp);
+}
+
+/**
+ * @brief Function that reads data from a file (double precision) and stores it in a matrix.
+ * @param[in] filename File to read the matrix from.
+ * @param[in] skip The number of elements to skip.
+ * @param[in] A The matrix that will hold the data.
+ * @param[in] M Number of rows of the matrix.
+ * @param[in] N Number of columns of the matrix.
+ */
+void read_matrix_from_file_double(const char *const filename, const int skip, double *A, const int M, const int N){
+    FILE *fp;
+    if((fp = fopen(filename, "r"))==NULL){
+		perror("Error trying to open the file");
+		exit(-1);
+    }
+    double temp;
+    for(int r=0;r<skip;r++){
+        if(fscanf(fp, "%.17g", &temp) == 0){
+            perror("Incorrect matrix dimensions");
+            exit(-1);
+        }
+    }
+    for (int i=0;i<M;i++){
+        for(int j=0;j<N;j++){
+            if(fscanf(fp, "%.17g", A + j + i*N) == 0){
                 printf("Goes wrong on row %d and col %d\n", i, j);
 			    perror("Incorrect matrix dimensions");
 			    exit(-1);
