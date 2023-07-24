@@ -90,8 +90,8 @@ int main(int argc, char **argv){
     
     /* Singular value decomposition of D */
     double * S = malloc(n*sizeof(double));
-    double U,V, superb;
-    int ret = LAPACKE_dgesvd(CblasRowMajor, 'N', 'N', n, n, D, n, S, &U, 1, &V, 1, &superb);
+    double * U,* V, * superb;
+    int ret = LAPACKE_dgesvd(CblasRowMajor, 'N', 'N', n, n, D, n, S, U, 1, V, 1, superb);
     if(ret!=0){
         if(ret<0){
             fprintf(stderr, "LAPACKE_dgesvd failed. Parameter %d had an illegal value\n", abs(ret));
