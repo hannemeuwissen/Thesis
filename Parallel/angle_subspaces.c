@@ -27,7 +27,6 @@ double grassmann_distance(double *s, const int n){
     double term;
     for(int i=0;i<n;i++){
         term = ((s[i] > 1) ? 1 : s[i]);
-        term = ((s[i] < -1) ? -1 : term);
         res += pow(acos(term),2);
     }
     return sqrt(res);
@@ -56,7 +55,7 @@ void read_matrix_from_file_double(const char *const filename, const int skip, do
     }
     for (int i=0;i<M;i++){
         for(int j=0;j<N;j++){
-            if(fscanf(fp, "%lf", A + j + i*N) == 0){
+            if(fscanf(fp, "%g", A + j + i*N) == 0){
                 printf("Goes wrong on row %d and col %d\n", i, j);
 			    perror("Incorrect matrix dimensions");
 			    exit(-1);
