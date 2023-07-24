@@ -26,8 +26,9 @@ double grassmann_distance(double *s, const int n){
     double res = 0;
     double term;
     for(int i=0;i<n;i++){
-        term = acos(s[i]);
-        res += pow(term,2);
+        term = ((s[i] > 1) ? 1 : s[i]);
+        term = ((s[i] < -1) ? -1 : term);
+        res += pow(acos(term),2);
     }
     return sqrt(res);
 }
