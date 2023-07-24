@@ -41,8 +41,8 @@ tsqr_mpi.o:tsqr_mpi.c
 generate_irr_main:generate_irr_main.c graph.o
 	$(CC) -o $@ $< graph.o $(FLAGS)
 
-angle_subspaces:angle_subspaces.c matrix.o
-	$(ICC) -o $@ $< matrix.o $(FLAGS) $(MKLFLAGS) -lm
+angle_subspaces:angle_subspaces.c
+	$(ICC) -o $@ $< $(FLAGS) $(MKLFLAGS) -lm
 
 test:test.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
