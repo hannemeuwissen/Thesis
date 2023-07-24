@@ -1,7 +1,7 @@
 /**
  * @file distance_subspaces.c
  * @brief Main code to investigate the stability of CA-Arnoldi with respect to the block
- * size, scipt calculates the angle between two subspaces; part of Thesis project in High 
+ * size, scipt calculates the distance between two subspaces; part of Thesis project in High 
  * Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0

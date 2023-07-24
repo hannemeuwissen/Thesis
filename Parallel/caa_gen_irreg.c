@@ -1,6 +1,6 @@
 /**
  * @file main_irreg.c
- * @brief Main code to investigate CA-Arnoldi on irregular graph transition matrices, 
+ * @brief Code to investigate CA-Arnoldi on (ir)regular graph transition matrices, 
  * part of Thesis project ins High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0

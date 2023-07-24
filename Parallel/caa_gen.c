@@ -1,6 +1,6 @@
 /**
  * @file main.c
- * @brief Main code to investigate CA-Arnoldi, part of Thesis project in 
+ * @brief Code to investigate CA-Arnoldi, part of Thesis project in 
  * High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 4.0

@@ -1,7 +1,7 @@
 /**
  * @file main_lb.c
- * @brief Main code to investigate CA-Arnoldi with load-balancing, part of Thesis project in 
- * High Performance Computing at Trinity College Dublin.
+ * @brief Main code that performes CA-Arnoldi with or without load-balancing,
+ * part of Thesis project in High Performance Computing at Trinity College Dublin.
  * @author Hanne Meuwissen (meuwissh@tcd.ie)
  * @version 1.0
  * @date 2023-07-13
