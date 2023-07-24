@@ -40,7 +40,7 @@ double grassmann_distance(double *s, const int n){
  * @param[in] M Number of rows of the matrix.
  * @param[in] N Number of columns of the matrix.
  */
-void read_matrix_from_file_double(const char *const filename, const int skip, double *A, const int M, const int N){
+void read_matrix_from_file(const char *const filename, const int skip, double *A, const int M, const int N){
     FILE *fp;
     if((fp = fopen(filename, "r"))==NULL){
 		perror("Error trying to open the file");
@@ -82,7 +82,7 @@ int main(int argc, char **argv){
     double * Q1 = malloc(M*n*sizeof(double));
     read_matrix_from_file_double(argv[1], 0, Q1, M, n);
     double * Q2 = malloc(M*n*sizeof(double));
-    read_matrix_from_file_double(argv[2], 0, Q2, M, n);
+    read_matrix_from_file(argv[2], 0, Q2, M, n);
     printf("Last element Q1: %lf\n", Q1[(M-1)*n + n-1]);
     printf("Last element Q2: %lf\n", Q2[(M-1)*n + n-1]);
 
