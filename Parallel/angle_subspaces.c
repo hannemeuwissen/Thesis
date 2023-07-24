@@ -113,14 +113,13 @@ int main(int argc, char **argv){
 
     printf("The Grassmann distance between the subspaces in %s and %s is:\n%e\n", argv[1], argv[2], dist);
 
-    printf("Q1 pointer: %p\n", Q1);
     free(Q1);
-    printf("Q2 pointer: %p\n", Q2);
     free(Q2);
-    printf("D pointer: %p\n", D);
     free(D);
-    printf("S pointer: %p\n", S);
     free(S);
+    free(superb);
+    free(V);
+    free(U);
 
     return 0;
 }
