@@ -91,11 +91,15 @@ int main(int argc, char **argv){
     /* Singular value decomposition of D */
     double * S = malloc(n*sizeof(double));
     double U,V;
-    double * superb;
+    double * superb = malloc((n-2)*sizeof(double));
     int ret = LAPACKE_dgesvd(CblasRowMajor, 'N', 'N', n, n, D, n, S, &U, 1, &V, 1, superb);
     if(ret!=0){
         if(ret<0){
             fprintf(stderr, "LAPACKE_dgesvd failed. Parameter %d had an illegal value\n", abs(ret));
+            exit(EXIT_FAILURE);
+        }
+        else{
+            fprintf(stderr, "LAPACKE_dgesvd failed. Leading minor of order %d is not positive definite\n", ret);
             exit(EXIT_FAILURE);
         }
     }
@@ -104,11 +108,6 @@ int main(int argc, char **argv){
     double dist = grassmann_distance(S, n);
 
     printf("The Grassmann distance between the subspaces in %s and %s is:\n%e\n", argv[1], argv[2], dist);
-
-    free(Q1);
-    free(Q2);
-    free(S);
-    free(D);
 
     return 0;
 }
