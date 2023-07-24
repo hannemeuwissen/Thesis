@@ -91,9 +91,9 @@ int main(int argc, char **argv){
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, n, n, M, 1.0, Q1, n, Q2, n, 0.0, D, n);
     
     /* Singular value decomposition of D */
-    double * S = malloc(n*sizeof(double));
     double U,V;
     double * superb = malloc((n-2)*sizeof(double));
+    double * S = malloc(n*sizeof(double));
     int ret = LAPACKE_dgesvd(CblasRowMajor, 'N', 'N', n, n, D, n, S, &U, 1, &V, 1, superb);
     if(ret!=0){
         if(ret<0){
