@@ -107,7 +107,7 @@ int main(int argc, char **argv){
     }
 
     for(int i=0;i<n;i++){
-        printf(S[i]);
+        printf("%lf\n",S[i]);
     }
 
     /* Calculate distance */
