@@ -12,7 +12,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= test caa_gen caa_gen_irreg generate_irr_main CAA
+EXECS= test caa_gen caa_gen_irreg generate_irr_main angle_subspaces CAA
 OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
@@ -40,6 +40,9 @@ tsqr_mpi.o:tsqr_mpi.c
 
 generate_irr_main:generate_irr_main.c graph.o
 	$(CC) -o $@ $< graph.o $(FLAGS)
+
+angle_subspaces:angle_subspaces.c matrix.o
+	$(CC) -o $@ $< matrix.o $(FLAGS)
 
 test:test.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
