@@ -145,39 +145,6 @@ void read_matrix_from_file(const char *const filename, const int skip, double *A
 }
 
 /**
- * @brief Function that reads data from a file (double precision) and stores it in a matrix.
- * @param[in] filename File to read the matrix from.
- * @param[in] skip The number of elements to skip.
- * @param[in] A The matrix that will hold the data.
- * @param[in] M Number of rows of the matrix.
- * @param[in] N Number of columns of the matrix.
- */
-void read_matrix_from_file_double(const char *const filename, const int skip, double *A, const int M, const int N){
-    FILE *fp;
-    if((fp = fopen(filename, "r"))==NULL){
-		perror("Error trying to open the file");
-		exit(-1);
-    }
-    double temp;
-    for(int r=0;r<skip;r++){
-        if(fscanf(fp, "%.17g", &temp) == 0){
-            perror("Incorrect matrix dimensions");
-            exit(-1);
-        }
-    }
-    for (int i=0;i<M;i++){
-        for(int j=0;j<N;j++){
-            if(fscanf(fp, "%.17g", A + j + i*N) == 0){
-                printf("Goes wrong on row %d and col %d\n", i, j);
-			    perror("Incorrect matrix dimensions");
-			    exit(-1);
-		    }
-        }
-	}
-    fclose(fp);
-}
-
-/**
  * @brief Function that gathers all parts of Q from other processes.
  * @param Q The array that will hold the result if the calling process is 0, otherwise the part of Q.
  * @param m The number of rows in the part.

@@ -121,7 +121,7 @@ int main(int argc, char **argv){
     /* Calculate distance */
     double dist = grassmann_distance(S, n);
 
-    printf("The Grassmann distance between the subspaces in %s and %s is:\n%lf\n", argv[1], argv[2], dist);
+    printf("The Grassmann distance between the subspaces in %s and %s is:\n%e\n", argv[1], argv[2], dist);
 
     return 0;
 }
