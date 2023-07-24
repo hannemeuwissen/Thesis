@@ -290,7 +290,8 @@ int main(int argc, char **argv){
             GatherQ(finalQ, M, original_degree+1, myid, nprocs, start, MPI_COMM_WORLD);
             char filename[100];
             sprintf(filename, "Qfile_%d_%d_%d.txt", M, original_degree, s);
-            save_matrix_double(finalQ, M, original_degree+1, filename);
+            save_matrix(finalQ, M, original_degree+1, filename);
+            // save_matrix_double(finalQ, M, original_degree+1, filename);
             printf("Process %d created file %s.\n", myid, filename);
         }else{
             GatherQ(mathcalQ, m, original_degree + 1, myid, nprocs, start, MPI_COMM_WORLD);
