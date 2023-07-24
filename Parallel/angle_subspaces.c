@@ -111,5 +111,7 @@ int main(int argc, char **argv){
 
     printf("The Grassmann distance between the subspaces in %s and %s is:\n%e\n", argv[1], argv[2], dist);
 
+    free(Q1);
+
     return 0;
 }
