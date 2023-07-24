@@ -110,8 +110,6 @@ int main(int argc, char **argv){
     double dist = grassmann_distance(S, n);
 
     printf("The Grassmann distance between the subspaces in %s and %s is:\n%e\n", argv[1], argv[2], dist);
-    printf("\n");
-    printf("Theoretical maximum distance: %lf (pi/2)\n", M_PI_2);
 
     free(Q1);
     free(Q2);
