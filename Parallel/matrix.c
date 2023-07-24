@@ -89,7 +89,7 @@ void save_matrix_double(double * A, const int n, const int m, char * filename){
     }   
     for(int i = 0;i<n;i++){
         for(int j=0;j<m;j++){
-           fprintf(fp, "%.17g ", A[i*m + j]);
+           fprintf(fp, "%e ", A[i*m + j]);
         }
         fprintf(fp,"\n");
     }
