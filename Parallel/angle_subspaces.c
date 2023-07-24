@@ -11,10 +11,10 @@
 #include<stdio.h>
 #include<string.h>
 #include<math.h>
+#include"mkl.h"
 #include<mkl_cblas.h>
 #include<mkl_types.h>
-#include"matrix.h"
-#include"mpi.h"
+
 
 /**
  * @brief Function that calculates the Grassmann distance based on singular values.
@@ -30,6 +30,39 @@ double grassmann_distance(double *s, const int n){
         res += pow(term,2);
     }
     return sqrt(res);
+}
+
+/**
+ * @brief Function that reads data from a file (double precision) and stores it in a matrix.
+ * @param[in] filename File to read the matrix from.
+ * @param[in] skip The number of elements to skip.
+ * @param[in] A The matrix that will hold the data.
+ * @param[in] M Number of rows of the matrix.
+ * @param[in] N Number of columns of the matrix.
+ */
+void read_matrix_from_file_double(const char *const filename, const int skip, double *A, const int M, const int N){
+    FILE *fp;
+    if((fp = fopen(filename, "r"))==NULL){
+		perror("Error trying to open the file");
+		exit(-1);
+    }
+    double temp;
+    for(int r=0;r<skip;r++){
+        if(fscanf(fp, "%.17g", &temp) == 0){
+            perror("Incorrect matrix dimensions");
+            exit(-1);
+        }
+    }
+    for (int i=0;i<M;i++){
+        for(int j=0;j<N;j++){
+            if(fscanf(fp, "%.17g", A + j + i*N) == 0){
+                printf("Goes wrong on row %d and col %d\n", i, j);
+			    perror("Incorrect matrix dimensions");
+			    exit(-1);
+		    }
+        }
+	}
+    fclose(fp);
 }
 
 int main(int argc, char **argv){
