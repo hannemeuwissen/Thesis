@@ -48,14 +48,14 @@ void read_matrix_from_file_double(const char *const filename, const int skip, do
     }
     double temp;
     for(int r=0;r<skip;r++){
-        if(fscanf(fp, "%e", &temp) == 0){
+        if(fscanf(fp, "%lf", &temp) == 0){
             perror("Incorrect matrix dimensions");
             exit(-1);
         }
     }
     for (int i=0;i<M;i++){
         for(int j=0;j<N;j++){
-            if(fscanf(fp, "%e", A + j + i*N) == 0){
+            if(fscanf(fp, "%lf", A + j + i*N) == 0){
                 printf("Goes wrong on row %d and col %d\n", i, j);
 			    perror("Incorrect matrix dimensions");
 			    exit(-1);
