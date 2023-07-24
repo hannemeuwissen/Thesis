@@ -112,6 +112,11 @@ int main(int argc, char **argv){
             exit(EXIT_FAILURE);
         }
     }
+    printf("S:\n");
+    for(int i=0;i<n;i++){
+        printf("%lf ", S[i]);
+    }
+    printf("\n");
 
     /* Calculate distance */
     double dist = grassmann_distance(S, n);
