@@ -118,7 +118,6 @@ int main(int argc, char **argv){
     printf("D pointer: %p\n", D);
     free(D);
     printf("S pointer: %p\n", S);
-    printf("Pointer 10th element S: %p\n", S + 10);
     free(S);
 
     return 0;
