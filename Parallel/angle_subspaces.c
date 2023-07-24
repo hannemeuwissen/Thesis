@@ -115,10 +115,10 @@ int main(int argc, char **argv){
     free(Q1);
     printf("Q2 pointer: %p\n", Q2);
     free(Q2);
-    printf("S pointer: %p\n", S);
-    free(S);
     printf("D pointer: %p\n", D);
     free(D);
+    printf("S pointer: %p\n", S);
+    free(S);
 
     return 0;
 }
