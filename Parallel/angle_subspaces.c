@@ -91,7 +91,7 @@ int main(int argc, char **argv){
     /* Singular value decomposition of D */
     double * S = malloc(n*sizeof(double));
     double U,V;
-    double * superb = malloc((n-2)*sizeof(double));
+    double * superb;
     int ret = LAPACKE_dgesvd(CblasRowMajor, 'N', 'N', n, n, D, n, S, &U, 1, &V, 1, superb);
     if(ret!=0){
         if(ret<0){
@@ -109,7 +109,6 @@ int main(int argc, char **argv){
     free(Q2);
     free(S);
     free(D);
-    free(superb);
 
     return 0;
 }
