@@ -92,7 +92,7 @@ int main(int argc, char **argv){
     double * S = malloc(n*sizeof(double));
     double U,V;
     double * superb = malloc((n-2)*sizeof(double));
-    int ret = LAPACKE_dgesvd(CblasRowMajor, N, N, n, n, D, n, S, &U, 1, &V, 1, superb);
+    int ret = LAPACKE_dgesvd(CblasRowMajor, 'N', 'N', n, n, D, n, S, &U, 1, &V, 1, superb);
     if(ret!=0){
         if(ret<0){
             fprintf(stderr, "LAPACKE_dgesvd failed. Parameter %d had an illegal value\n", abs(ret));
