@@ -14,6 +14,7 @@
 #include<mkl_cblas.h>
 #include<mkl_types.h>
 #include"matrix.h"
+#include"mpi.h"
 
 /**
  * @brief Function that calculates the Grassmann distance based on singular values.

@@ -42,7 +42,7 @@ generate_irr_main:generate_irr_main.c graph.o
 	$(CC) -o $@ $< graph.o $(FLAGS)
 
 angle_subspaces:angle_subspaces.c matrix.o
-	$(CC) -o $@ $< matrix.o $(FLAGS)
+	$(ICC) -o $@ $< matrix.o $(FLAGS) $(MKLFLAGS) -lm
 
 test:test.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
