@@ -24,8 +24,8 @@ typedef struct sparse_CSR {
 
 void print_CSR(sparse_CSR * M);
 void read_CSR(sparse_CSR * M, const char *const filename);
-void read_CSR_data(sparse_CSR * M, const char * filename);
 void save_CSR(char * filename_A, sparse_CSR A);
+void read_CSR_data(sparse_CSR * M, const char * filename);
 void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const int end);
 void get_indices(const int n, const int nprocs, int * start, int * end);
 void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int * end);

@@ -21,49 +21,54 @@
  * @param filename_v The name of the file that contains the initial vector.
  * @param degree The degree of the Krylov subspace.
  * @param s The blocksize (s-step Krylov subspace method).
+ * @param t Indicator to print out the timings.
  * @param comm The MPI communicator.
  */
-void parse_command_line_regular(const int argc, char * const *argv, int * M, int * nnz, char * filename_v, int * degree, int * s, MPI_Comm comm){
+void parse_command_line_regular(const int argc, char * const *argv, int * M, int * nnz, char * filename_v, int * degree, int * s, int * t, MPI_Comm comm){
     int c=0;
     *M = 800;
     *nnz = 50;
     strncpy(filename_v, "v.txt", 100);
     *degree = 8;
     *s = 2;
-    while((c = getopt(argc, argv, "d:s:v:m:z:")) != -1){
+    *timing = 0;
+    while((c = getopt(argc, argv, "d:s:v:m:z:t")) != -1){
         switch(c){
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'm':
                 if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'z':
                 if(sscanf(optarg,"%d",nnz) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
+            case 't':
+                *t = 1;
+                break;
             case '?':
-                printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize]\n", argv[0]);
+                printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z nnz per row] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                 MPI_Abort(comm, 1);
         }
     }
@@ -79,9 +84,10 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
  * @param filename_v The name of the file that contains the initial vector.
  * @param degree The degree of the Krylov subspace.
  * @param s The blocksize (s-step Krylov subspace method).
+ * @param t Indicator to print out the timings.
  * @param comm The MPI communicator.
  */
-void parse_command_line_irregular(const int argc, char * const *argv, int * M, int * min_nnz, int * max_nnz, char * filename_v, int * degree, int * s, MPI_Comm comm){
+void parse_command_line_irregular(const int argc, char * const *argv, int * M, int * min_nnz, int * max_nnz, char * filename_v, int * degree, int * s, int * t, MPI_Comm comm){
     int c=0;
     *M = 800;
     *min_nnz = 0;
@@ -89,46 +95,50 @@ void parse_command_line_irregular(const int argc, char * const *argv, int * M, i
     strncpy(filename_v, "v.txt", 100);
     *degree = 8;
     *s = 2;
-    while((c = getopt(argc, argv, "d:s:v:m:z:x:")) != -1){
+    *t = 0;
+    while((c = getopt(argc, argv, "d:s:tv:m:z:x:")) != -1){
         switch(c){
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'z':
                 if(sscanf(optarg,"%d",min_nnz) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'x':
                 if(sscanf(optarg,"%d",max_nnz) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'm':
                 if(sscanf(optarg,"%d",M) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
+                    printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
+            case 't':
+                *t = 1;
+                break;
             case '?':
-                printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize]\n", argv[0]);
+                printf("Usage : %s [-v filename_v] [-m nr of nodes] [-z min nnz] [-x max nnz] [-d degree] [-s blocksize] [-t]\n", argv[0]);
                 MPI_Abort(comm, 1);
         }
     }
@@ -143,12 +153,13 @@ void parse_command_line_irregular(const int argc, char * const *argv, int * M, i
  * @param filename_v The name of the file that contains the initial vector.
  * @param degree The degree of the Krylov subspace.
  * @param s The blocksize (s-step Krylov subspace method).
+ * @param t Indicator to print out the timings.
  * @param lb Indicator if load-balancing should be added or not.
  * @param q Indicator if Q needs to be saved to a file.
  * @param h Indicator if H needs to be saved to a file.
  * @param comm The MPI communicator.
  */
-void parse_command_line_lb(const int argc, char * const *argv, char * filename_A, char * filename_v, int * degree, int * s, int * lb, int * q, int * h, MPI_Comm comm){
+void parse_command_line_lb(const int argc, char * const *argv, char * filename_A, char * filename_v, int * degree, int * s, int * t, int * lb, int * q, int * h, MPI_Comm comm){
     int c=0;
     strncpy(filename_A, "test100irr.txt", 100);
     strncpy(filename_v, "v.txt", 100);
@@ -157,31 +168,35 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
     *s = 2;
     *q = 0;
     *h = 0;
+    *t = 0
     while((c = getopt(argc, argv, "d:f:s:v:lqh")) != -1){
         switch(c){
             case 'f':
                 if(sscanf(optarg,"%s",filename_A) == 0){
-                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l] [-q] [-h]\n", argv[0]);
+                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-t] [-l] [-q] [-h]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'v':
                 if(sscanf(optarg,"%s",filename_v) == 0){
-                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l] [-q] [-h]\n", argv[0]);
+                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-t] [-l] [-q] [-h]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 'd':
                 if(sscanf(optarg,"%d",degree) == 0){
-                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l] [-q] [-h]\n", argv[0]);
+                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-t] [-l] [-q] [-h]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
                 break;
             case 's':
                 if(sscanf(optarg,"%d",s) == 0){
-                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l] [-q] [-h]\n", argv[0]);
+                    printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-t] [-l] [-q] [-h]\n", argv[0]);
                     MPI_Abort(comm, 1);
                 }
+                break;
+            case 't':
+                *t = 1;
                 break;
             case 'l':
                 *lb = 1;
@@ -193,7 +208,7 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
                 *h = 1;
                 break;
             case '?':
-                printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-l] [-q] [-h]\n", argv[0]);
+                printf("Usage : %s [-f filename_A] [-v filename_v] [-d degree] [-s blocksize] [-t] [-l] [-q] [-h]\n", argv[0]);
                 MPI_Abort(comm, 1);
         }
     }

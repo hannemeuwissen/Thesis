@@ -25,7 +25,7 @@
 int main(int argc, char **argv){
     const double tol = 1.0E-10;  
     int myid, nprocs;
-    int degree,original_degree,s,M,lb, q, h;
+    int degree,original_degree,s, t,M,lb, q, h;
     char filename_v[100], filename_A[100];
 
     MPI_Init(&argc, &argv);
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
             MPI_Abort(MPI_COMM_WORLD, 1);
         }
 
-        parse_command_line_lb(argc, argv, filename_A, filename_v, &degree, &s, &lb, &q, &h, MPI_COMM_WORLD);
+        parse_command_line_lb(argc, argv, filename_A, filename_v, &degree, &s, &t, &lb, &q, &h, MPI_COMM_WORLD);
         if((degree < 1) || (s > degree)){
             printf("Invalid input: the degree of the Krylov subspace should be at least 1 and the blocksize should be smaller\n");
             MPI_Abort(MPI_COMM_WORLD, 1);
@@ -298,23 +298,13 @@ int main(int argc, char **argv){
         }
     }
 
-    if(!myid){ /* Print out results */
-        // printf("Part of Q process 0:\n");
-        // print_matrix_transposed(mathcalQ, original_degree +1, m);
-        // printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
-        // printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
-        // printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
-        // printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
+    if((!myid) && (t>0)){ /* Print out timing results */
+        printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
+        printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
+        printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
+        printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
         printf("Average time Upper Hessenberg: %lf\n", average(hess_times, block - 1));
-        // printf("Hessenberg:\n");
-        // print_matrix(mathcalH, original_degree + 1, original_degree);
     }
-
-    MPI_Barrier(MPI_COMM_WORLD);
-    printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
-    printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
-    printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
-    printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
 
     free(mathcalQ);
     if(!myid){free(mathcalH);}

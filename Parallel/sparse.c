@@ -89,6 +89,30 @@ void read_CSR(sparse_CSR * M, const char *const filename){
 }
 
 /**
+ * @brief Function that saves a CSR matrix to a file.
+ * @param filename_A The name of the file.
+ * @param A The CSR_matrix.
+ */
+void save_CSR(char * filename_A, sparse_CSR A){
+    FILE *fp;
+    fp = fopen(filename_A, "w");
+    if(!fp){
+      fprintf(stderr, "Error: can't open file %s\n",filename_A);
+      exit(4);
+    }
+    fprintf(fp, "%d\n", A.ncols);
+    fprintf(fp, "%d\n", A.nrows);
+    fprintf(fp, "%d\n", A.nnz);
+    for(int i=0;i<(A.nrows+1);i++){
+        fprintf(fp, "%d\n", A.rowptrs[i]);
+    }
+    for(int i=0;i<A.nnz;i++){
+        fprintf(fp,"%d %lf\n", A.colindex[i], A.values[i]);
+    }
+    fclose(fp);
+}
+
+/**
  * @brief Function that reads only the number of rows, columns, nonzero elements and the array with
  * row pointers from a file containing a sparse CSR matrix.
  * @param M The sparse_CSR object that will hold the info.
@@ -127,32 +151,10 @@ void read_CSR_data(sparse_CSR * M, const char * filename){
 }
 
 /**
- * @brief Function that saves a CSR matrix to a file.
- * @param filename_A The name of the file.
- * @param A The CSR_matrix.
- */
-void save_CSR(char * filename_A, sparse_CSR A){
-    FILE *fp;
-    fp = fopen(filename_A, "w");
-    if(!fp){
-      fprintf(stderr, "Error: can't open file %s\n",filename_A);
-      exit(4);
-    }
-    fprintf(fp, "%d\n", A.ncols);
-    fprintf(fp, "%d\n", A.nrows);
-    fprintf(fp, "%d\n", A.nnz);
-    for(int i=0;i<(A.nrows+1);i++){
-        fprintf(fp, "%d\n", A.rowptrs[i]);
-    }
-    for(int i=0;i<A.nnz;i++){
-        fprintf(fp,"%d %lf\n", A.colindex[i], A.values[i]);
-    }
-    fclose(fp);
-}
-
-/**
  * @brief Function that reads only the column indices and values from a file 
- * containing a sparse CSR matrix.
+ * containing a sparse CSR matrix. Note that the function read_CSR_data() should 
+ * be used before using this function; the number of rows, clumns, nonzeros and
+ * the row pointers should be defined before calling this function.
  * @param M The sparse_CSR object that will hold the info.
  * @param filename The name of the file that holds the data.
  * @param start The row index where to start reading.
@@ -168,6 +170,7 @@ void read_CSR_part(sparse_CSR * M, const char * filename, const int start, const
     M->nrows = end - start + 1;
     M->nnz = M->rowptrs[end+1] - M->rowptrs[start];
     int nnz_to_skip = M->rowptrs[start];
+    /* Skip data that is already read */
     for(int i=0;i<(3+M->ncols+1);i++){
         if(fscanf(fp, "%d", &temp) == 0){
             perror("Invalid CSR file");
