@@ -169,7 +169,7 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
     *q = 0;
     *h = 0;
     *t = 0;
-    while((c = getopt(argc, argv, "d:f:s:v:lqh")) != -1){
+    while((c = getopt(argc, argv, "d:f:s:tv:lqh")) != -1){
         switch(c){
             case 'f':
                 if(sscanf(optarg,"%s",filename_A) == 0){
