@@ -168,7 +168,7 @@ void parse_command_line_lb(const int argc, char * const *argv, char * filename_A
     *s = 2;
     *q = 0;
     *h = 0;
-    *t = 0
+    *t = 0;
     while((c = getopt(argc, argv, "d:f:s:v:lqh")) != -1){
         switch(c){
             case 'f':
