@@ -31,7 +31,7 @@ void parse_command_line_regular(const int argc, char * const *argv, int * M, int
     strncpy(filename_v, "v.txt", 100);
     *degree = 8;
     *s = 2;
-    *timing = 0;
+    *t = 0;
     while((c = getopt(argc, argv, "d:s:v:m:z:t")) != -1){
         switch(c){
             case 'v':
