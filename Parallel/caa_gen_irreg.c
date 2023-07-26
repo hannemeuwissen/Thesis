@@ -159,12 +159,9 @@ int main(int argc, char **argv){
             if(!myid){
                 tbeg = MPI_Wtime();
                 mathcalH = malloc((s+1)*s*sizeof(double));
-                double * R = malloc(s*s*sizeof(double)); 
-                get_R(R, R_, s+1);
                 double * B_ = malloc(s*(s+1)*sizeof(double));
                 set_B_(B_, s);
-                calc_hess_on_transpose(mathcalH, R_, B_, R, s+1, s);
-                free(R);
+                calc_hess_on_transpose(mathcalH, R_, B_, s+1, s);
                 free(B_);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
                 tend = MPI_Wtime();

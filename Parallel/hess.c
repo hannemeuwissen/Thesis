@@ -21,14 +21,16 @@
  * @param H_ The matrix which will hold the result.
  * @param R_ The R_ matrix.
  * @param B_ The B_ matrix.
- * @param R The R matrix.
  * @param n The number of rows and columns in R_, and rows in B_.
  * @param m The number of columns in B_, and rows and columns in R.
  */
-void calc_hess(double * H_, double * R_, double * B_, double * R, const int n, const int m){
+void calc_hess(double * H_, double * R_, double * B_, const int n, const int m){
     memcpy(H_, B_, n*m*sizeof(double));
+    double * R = malloc(m*m*sizeof(double));
+    get_R(R, R_, n);
     cblas_dtrmm(CblasRowMajor, CblasLeft, CblasUpper, CblasNoTrans, CblasNonUnit, n, m, 1.0, R_, n, H_, m);
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasUpper, CblasNoTrans, CblasNonUnit, n, m, 1.0, R, m, H_, m);
+    free(R);
 }
 
 /**
@@ -36,14 +38,16 @@ void calc_hess(double * H_, double * R_, double * B_, double * R, const int n, c
  * @param H_ The matrix which will hold the result.
  * @param R_ The R_ matrix.
  * @param B_ The B_ matrix.
- * @param R The R matrix.
  * @param n The number of rows and columns in R_, and rows in B_.
  * @param m The number of columns in B_, and rows and columns in R.
  */
-void calc_hess_on_transpose(double * H_, double * R_, double * B_, double * R, const int n, const int m){
+void calc_hess_on_transpose(double * H_, double * R_, double * B_, const int n, const int m){
     memcpy(H_, B_, n*m*sizeof(double));
+    double * R = malloc(m*m*sizeof(double));
+    get_R(R, R_, n);
     cblas_dtrmm(CblasRowMajor, CblasLeft, CblasLower, CblasTrans, CblasNonUnit, n, m, 1.0, R_, n, H_, m);
     cblas_dtrsm(CblasRowMajor, CblasRight, CblasLower, CblasTrans, CblasNonUnit, n, m, 1.0, R, m, H_, m);
+    free(R);
 }
 
 /**
@@ -112,8 +116,6 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
         memcpy(MathcalR_ + (s*k + 1) + i*upperdim, transR_ + j*s, s*sizeof(double));
         j++;
     }
-    double * MathcalR = malloc(lowerdim*lowerdim*sizeof(double));
-    get_R(MathcalR, MathcalR_, upperdim);
 
     /* Construct MathcalB_ ([H 0 ; 0,...,h B_]) */
     double * MathcalB_ = malloc(upperdim*lowerdim*sizeof(double));
@@ -130,11 +132,10 @@ void update_hess_on_transpose(double ** H, double * mathcalR_, double * R_, cons
 
     /* Update H */
     *H = malloc(upperdim*lowerdim*sizeof(double));
-    calc_hess(*H, MathcalR_, MathcalB_, MathcalR, upperdim, lowerdim);
+    calc_hess(*H, MathcalR_, MathcalB_, upperdim, lowerdim);
 
     free(MathcalB_);
     free(MathcalR_);
-    free(MathcalR);
 }
 
 /**
