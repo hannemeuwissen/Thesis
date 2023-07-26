@@ -17,6 +17,18 @@
 #include"matrix.h"
 
 /**
+ * @brief Function that gets the internal part from R_. 
+ * @param R The matrix which will hold the result.
+ * @param R_ The matrix which holds R_.
+ * @param n The number of rows in R_.
+ */
+void get_R(double * R, double * R_, const int n){
+    for(int i=0;i<(n-1);i++){
+        memcpy(R + (n-1)*i, R_ + n*i, (n-1)*sizeof(double));
+    }
+}
+
+/**
  * @brief Function that calculates the upper Hessenberg matrix based on R_, R and B_. 
  * @param H_ The matrix which will hold the result.
  * @param R_ The R_ matrix.
@@ -59,18 +71,6 @@ void set_B_(double *B_, const int s){
     memset(B_, 0, s*(s+1)*sizeof(double));
     for(int i=1;i<(s+1);i++){
         B_[i-1 + i*s] = 1.0;
-    }
-}
-
-/**
- * @brief Function that gets the internal part from R_. 
- * @param R The matrix which will hold the result.
- * @param R_ The matrix which holds R_.
- * @param n The number of rows in R_.
- */
-void get_R(double * R, double * R_, const int n){
-    for(int i=0;i<(n-1);i++){
-        memcpy(R + (n-1)*i, R_ + n*i, (n-1)*sizeof(double));
     }
 }
 
