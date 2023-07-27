@@ -199,6 +199,7 @@ int main(int argc, char **argv){
                 tbeg = MPI_Wtime();
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
+                printf("%d\n", breakdown);
                 tend = MPI_Wtime();
                 hess_times[block] = tend-tbeg;
             }
