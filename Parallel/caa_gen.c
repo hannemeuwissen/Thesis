@@ -257,6 +257,7 @@ int main(int argc, char **argv){
     /* END OF CA-ARNOLDI */
 
     if((!myid) && (t>0)){ /* Print out timing results */
+        print_matrix(mathcalH, original_degree+1, original_degree);
         printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
         printf("Times matrix powers kernel:\n");
         for(int i=0;i<block;i++){
