@@ -276,7 +276,7 @@ int main(int argc, char **argv){
         }
         printf("\n");
         printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
-        printf("Times mHessenberg:\n");
+        printf("Times Hessenberg:\n");
         for(int i=0;i<block;i++){
             printf("%lf ",hess_times[i]);
         }
