@@ -199,7 +199,6 @@ int main(int argc, char **argv){
                 tbeg = MPI_Wtime();
                 update_hess_on_transpose(&mathcalH, mathcalR_, R_, s, block);
                 breakdown = breakdown_check(mathcalH, s, block, tol);
-                printf("%d\n", breakdown);
                 tend = MPI_Wtime();
                 hess_times[block] = tend-tbeg;
             }
@@ -258,7 +257,6 @@ int main(int argc, char **argv){
     /* END OF CA-ARNOLDI */
 
     if((!myid) && (t>0)){ /* Print out timing results */
-        print_matrix(mathcalH, original_degree+1, original_degree);
         printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
         printf("Times matrix powers kernel:\n");
         for(int i=0;i<block;i++){
