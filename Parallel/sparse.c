@@ -391,7 +391,7 @@ void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, cons
  */
 void spmv_full_v(sparse_CSR M, double * v, double len, double * result){
     if(len != M.ncols){
-        printf("%lf %lf\n", len, M.ncols);
+        printf("%d %d\n", len, M.ncols);
         perror("incompatible dimensions in spmv.\n");
         exit(EXIT_FAILURE);
     }
