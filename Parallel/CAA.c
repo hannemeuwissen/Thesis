@@ -87,7 +87,7 @@ int main(int argc, char **argv){
         get_indices_load_balanced(A, nprocs, start, end);
     }
     int * all_m = malloc(nprocs*sizeof(int));
-    for(int i=0;i<nprocs;i++){all_m[i] = end[i] - start[i] + 1}
+    for(int i=0;i<nprocs;i++){all_m[i] = end[i] - start[i] + 1;}
     int m = all_m[myid];
     if(m < s+1){
         printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process in step 0: %d x %d).\nSuggestion: lower the blocksize.\n", M/nprocs, s+1);
