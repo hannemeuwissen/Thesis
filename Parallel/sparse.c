@@ -420,7 +420,7 @@ void matrix_powers_full_v(sparse_CSR A, double * start_v, double * V, const int 
     spmv_full_v(A, temp, M, V);
     for(int k=1;k<s;k++){
         MPI_Allgatherv(V + (k-1)*m, m, MPI_DOUBLE, temp, all_m, start, MPI_DOUBLE, comm);
-        spmv_full_v(A, temp, m, V + k*m);
+        spmv_full_v(A, temp, M, V + k*m);
     }
     free(temp);
 }
