@@ -31,6 +31,6 @@ void get_indices(const int n, const int nprocs, int * start, int * end);
 void get_indices_load_balanced(sparse_CSR A, const int nprocs, int * start, int * end);
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm);
 void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm);
-void matrix_powers_full_v(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int M, int * start, int *all_m, const int nprocs, MPI_Comm comm){
+void matrix_powers_full_v(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int M, int * start, int *all_m, const int nprocs, MPI_Comm comm);
 
 #endif /* end of include guard: SPARSE_H_TWYFUKH2 */
