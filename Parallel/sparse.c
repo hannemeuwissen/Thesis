@@ -291,7 +291,7 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
 }
 
 /**
- * @brief Function that calculates the sparse matrix mector multiplication between
+ * @brief Function that calculates the sparse matrix vector multiplication between
  * a sparse_CSR matrix and a vector with compatible length.
  * @param A Sparse CSR matrix structure. Part of the matrix stored in memory of the calling process.
  * @param x Vector. Part of the full vector that is stored in memory of the calling process.
@@ -299,6 +299,8 @@ int find_rank_colindex(const int colindex, const int nprocs, int * end, const in
  * @param result Resulting part of the full vector.
  * @param myid Id of the calling process.
  * @param nprocs Number of processes.
+ * @param start The start indices of all processes.
+ * @param end The end indices of all processes.
  * @param comm MPI communicator between processes.
  */
 void spmv(sparse_CSR A, double * x, double len, double * result, const int myid, const int nprocs, int * start, int * end, MPI_Comm comm){
@@ -372,6 +374,8 @@ void spmv(sparse_CSR A, double * x, double len, double * result, const int myid,
  * @param m The number of rows in the part A.
  * @param myid The rank of the calling process.
  * @param nprocs The number of processes.
+ * @param start The start indices of all processes.
+ * @param end The end indices of all processes.
  * @param comm The MPI communicator.
  */
 void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int myid, const int nprocs, int *start, int *end, MPI_Comm comm){
@@ -382,7 +386,7 @@ void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, cons
 }
 
 /**
- * @brief Function that calculates the sparse matrix mector multiplication between
+ * @brief Function that calculates the sparse matrix vector multiplication between
  * a sparse_CSR matrix and a vector with compatible length.
  * @param M Sparse CSR matrix structure.
  * @param v Vector.
@@ -410,7 +414,9 @@ void spmv_full_v(sparse_CSR M, double * v, int len, double * result){
  * @param V The matrix that stores the result.
  * @param s The maximum power of A.
  * @param m The number of rows in the part A.
- * @param myid The rank of the calling process.
+ * @param M The total number of nodes in A (columns).
+ * @param start The start indices of all processes.
+ * @param all_m The number of rows for each process.
  * @param nprocs The number of processes.
  * @param comm The MPI communicator.
  */

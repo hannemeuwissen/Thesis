@@ -87,7 +87,9 @@ int main(int argc, char **argv){
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
     get_indices(M, nprocs, start, end);
-    int m = end[myid] - start[myid] + 1;
+    int * all_m = malloc(nprocs*sizeof(int));
+    for(int i=0;i<nprocs;i++){all_m[i] = end[i] - start[i] + 1;}
+    int m = all_m[myid];
 
     /* Generate part of transition matrix for calling process */
     sparse_CSR A = generate_irregular_graph_part_csr(m, M, min_nnz, max_nnz, 1);
@@ -137,7 +139,8 @@ int main(int argc, char **argv){
             tbeg = MPI_Wtime();
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
-            matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            // matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            matrix_powers_full_v(A, v, V+m, s, m, M, start, all_m, nprocs, MPI_COMM_WORLD);
             tend = MPI_Wtime();;
             mp_times[block] = tend-tbeg;
 
@@ -175,7 +178,8 @@ int main(int argc, char **argv){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
             tbeg = MPI_Wtime();
             V = malloc(s*m*sizeof(double));
-            matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            // matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            matrix_powers_full_v(A, v, V, s, m, M, start, all_m, nprocs, MPI_COMM_WORLD);
             tend = MPI_Wtime();
             mp_times[block] = tend - tbeg;
 
