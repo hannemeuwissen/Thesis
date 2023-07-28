@@ -86,7 +86,9 @@ int main(int argc, char **argv){
     }else{
         get_indices_load_balanced(A, nprocs, start, end);
     }
-    int m = end[myid] - start[myid] + 1;
+    int * all_m = malloc(nprocs*sizeof(int));
+    for(int i=0;i<nprocs;i++){all_m[i] = end[i] - start[i] + 1}
+    int m = all_m[myid];
     if(m < s+1){
         printf("Invalid input: the dimensions must define a tall skinny matrix on every process (dimension on process in step 0: %d x %d).\nSuggestion: lower the blocksize.\n", M/nprocs, s+1);
         MPI_Abort(MPI_COMM_WORLD, 1);
@@ -140,7 +142,8 @@ int main(int argc, char **argv){
             tbeg = MPI_Wtime();
             V = malloc((s+1)*m*sizeof(double));
             memcpy(V, v, m*sizeof(double));
-            matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            // matrix_powers(A, v, V + m, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            matrix_powers_full_v(A, v, V+m, s, m, M, start, all_m, nprocs, MPI_COMM_WORLD);
             tend = MPI_Wtime();
             mp_times[block] = tend - tbeg;
 
@@ -178,7 +181,8 @@ int main(int argc, char **argv){
             /* Matrix powers kernel (note: saved as transpose - vectors in rows!) */
             tbeg = MPI_Wtime();
             V = malloc(s*m*sizeof(double));
-            matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            // matrix_powers(A, v, V, s, m, myid, nprocs, start, end, MPI_COMM_WORLD);
+            matrix_powers_full_v(A, v, V, s, m, M, start, all_m, nprocs, MPI_COMM_WORLD);
             tend = MPI_Wtime();
             mp_times[block] = tend-tbeg;
 

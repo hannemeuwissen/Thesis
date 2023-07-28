@@ -380,3 +380,46 @@ void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, cons
         spmv(A, V + (k-1)*m, m, V + k*m, myid, nprocs, start, end, comm);
     }
 }
+
+/**
+ * @brief Function that calculates the sparse matrix mector multiplication between
+ * a sparse_CSR matrix and a vector with compatible length.
+ * @param M Sparse CSR matrix structure.
+ * @param v Vector.
+ * @param len Length of the vector.
+ * @param result Result vector.
+ */
+void spmv_full_v(sparse_CSR M, double * v, double len, double * result){
+    if(len != M.ncols){
+        perror("incompatible dimensions in spmv.\n");
+        exit(EXIT_FAILURE);
+    }
+    for(int i=0;i<M.nrows;i++){
+        result[i] = 0.0;
+        for(int j=M.rowptrs[i];j<M.rowptrs[i+1];j++){
+            result[i] += M.values[j]*v[M.colindex[j]];
+        }
+    }
+}
+
+/**
+ * @brief Function that performs the matrix powers kernel, constructing {v, Av, ..., A^(s)v}. 
+ * @param A The part of the sparse CSR matrix A for calling process.
+ * @param start_v The start vector v.
+ * @param V The matrix that stores the result.
+ * @param s The maximum power of A.
+ * @param m The number of rows in the part A.
+ * @param myid The rank of the calling process.
+ * @param nprocs The number of processes.
+ * @param comm The MPI communicator.
+ */
+void matrix_powers_full_v(sparse_CSR A, double * start_v, double * V, const int s, const int m, const int M, int * start, int *all_m, const int nprocs, MPI_Comm comm){
+    double * temp = malloc(M*sizeof(double));
+    MPI_Allgatherv(start_v, m, MPI_DOUBLE, temp, all_m, start, MPI_DOUBLE, comm);
+    spmv_full_v(A, temp, M, V);
+    for(int k=1;k<s;k++){
+        MPI_Allgatherv(V + (k-1)*m, m, MPI_DOUBLE, temp, all_m, start, MPI_DOUBLE, comm);
+        spmv_full_v(A, temp, m, V + k*m);
+    }
+    free(temp);
+}
