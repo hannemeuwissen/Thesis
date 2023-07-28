@@ -389,7 +389,7 @@ void matrix_powers(sparse_CSR A, double * start_v, double * V, const int s, cons
  * @param len Length of the vector.
  * @param result Result vector.
  */
-void spmv_full_v(sparse_CSR M, double * v, double len, double * result){
+void spmv_full_v(sparse_CSR M, double * v, int len, double * result){
     if(len != M.ncols){
         printf("%d %d\n", len, M.ncols);
         perror("incompatible dimensions in spmv.\n");
