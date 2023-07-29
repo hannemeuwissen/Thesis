@@ -27,63 +27,68 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-    /* Test load balancing */
-    if(argc < 2){
-        fprintf(stderr, "Usage: %s file\n", argv[0]);
-        return 1;
-    }
+    double * v = malloc(2*sizeof(double));
+    read_matrix_from_file("vrandom.txt", 2*myid, v, 2, 1);
+    printf("Part for process %d: %lf %lf\n", myid, v[0], v[1]);
+    free(v);
 
-    /* Read first CSR data from the file */
-    sparse_CSR A;
-    read_CSR_data(&A, argv[1]);
-    if(!myid){
-        printf("Total nnz: %d\n", A.nnz);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
+    // /* Test load balancing */
+    // if(argc < 2){
+    //     fprintf(stderr, "Usage: %s file\n", argv[0]);
+    //     return 1;
+    // }
+
+    // /* Read first CSR data from the file */
+    // sparse_CSR A;
+    // read_CSR_data(&A, argv[1]);
+    // if(!myid){
+    //     printf("Total nnz: %d\n", A.nnz);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
     
-    /* Test load balancing indices */
-    int * start = malloc(nprocs*sizeof(int));
-    int * end = malloc(nprocs*sizeof(int));
-    int * start_nnz = malloc(nprocs*sizeof(int));
-    int * end_nnz = malloc(nprocs*sizeof(int));
-    get_indices(A.nnz, nprocs, start_nnz, end_nnz);
-    // printf("Before: process %d gets nonzero %d until %d\n", myid, start_nnz[myid], end_nnz[myid]);
-
-    /* Determine the start index, end index and size of part for calling process */
+    // /* Test load balancing indices */
     // int * start = malloc(nprocs*sizeof(int));
     // int * end = malloc(nprocs*sizeof(int));
-    get_indices_load_balanced(A, nprocs, start, end);
-    // int m = end[myid] - start[myid] + 1;
-    // printf("After: process %d has to start at row %d and end at row %d\n", myid, start[myid], end[myid]);
+    // int * start_nnz = malloc(nprocs*sizeof(int));
+    // int * end_nnz = malloc(nprocs*sizeof(int));
+    // get_indices(A.nnz, nprocs, start_nnz, end_nnz);
+    // // printf("Before: process %d gets nonzero %d until %d\n", myid, start_nnz[myid], end_nnz[myid]);
 
-    /* Read own part */
-    if(myid == 0){
-        printf("Rank %d:\n", myid);
-        read_CSR_part(&A, argv[1], start[myid], end[myid]);
-        // print_CSR(&A);
-        printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 1){
-        printf("Rank %d:\n", myid);
-        read_CSR_part(&A, argv[1], start[myid], end[myid]);
-        // print_CSR(&A);
-        printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 2){
-        printf("Rank %d:\n", myid);
-        read_CSR_part(&A, argv[1], start[myid], end[myid]);
-        // print_CSR(&A);
-        printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
-    }
-    MPI_Barrier(MPI_COMM_WORLD);
-    if(myid == 3){
-        printf("Rank %d:\n", myid);
-        read_CSR_part(&A, argv[1], start[myid], end[myid]);
-        // print_CSR(&A);
-        printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
-    }
+    // /* Determine the start index, end index and size of part for calling process */
+    // // int * start = malloc(nprocs*sizeof(int));
+    // // int * end = malloc(nprocs*sizeof(int));
+    // get_indices_load_balanced(A, nprocs, start, end);
+    // // int m = end[myid] - start[myid] + 1;
+    // // printf("After: process %d has to start at row %d and end at row %d\n", myid, start[myid], end[myid]);
+
+    // /* Read own part */
+    // if(myid == 0){
+    //     printf("Rank %d:\n", myid);
+    //     read_CSR_part(&A, argv[1], start[myid], end[myid]);
+    //     // print_CSR(&A);
+    //     printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 1){
+    //     printf("Rank %d:\n", myid);
+    //     read_CSR_part(&A, argv[1], start[myid], end[myid]);
+    //     // print_CSR(&A);
+    //     printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 2){
+    //     printf("Rank %d:\n", myid);
+    //     read_CSR_part(&A, argv[1], start[myid], end[myid]);
+    //     // print_CSR(&A);
+    //     printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
+    // }
+    // MPI_Barrier(MPI_COMM_WORLD);
+    // if(myid == 3){
+    //     printf("Rank %d:\n", myid);
+    //     read_CSR_part(&A, argv[1], start[myid], end[myid]);
+    //     // print_CSR(&A);
+    //     printf("Nr of rows: %d, nr of nnz: %d\n", A.nrows, A.nnz);
+    // }
 
     // if(!myid){
     //     float logprocs = log2(nprocs);
