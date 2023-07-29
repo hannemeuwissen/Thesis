@@ -92,8 +92,10 @@ int main(int argc, char **argv){
     int m = all_m[myid];
 
     /* Generate part of transition matrix for calling process */
+    double gen_time = MPI_Wtime();
     sparse_CSR A = generate_irregular_graph_part_csr(m, M, min_nnz, max_nnz, 1);
-    printf("Process %d is done generating its part!\n", myid);
+    double gen_time_2 = MPI_Wtime();
+    printf("Process %d is done generating its part (took %lf s)!\n", myid, gen_time_2-gen_time);
 
     /* Initialize arrays */
     int steps = degree/s;
