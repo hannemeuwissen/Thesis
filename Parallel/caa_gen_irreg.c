@@ -268,10 +268,30 @@ int main(int argc, char **argv){
 
     if((!myid) && (t>0)){ /* Print out timing results */
         printf("Total runtime process %d (%d nnz): %lf\n", myid, A.nnz, t2 - t1);
+        printf("Times matrix powers kernel:\n");
+        for(int i=0;i<block;i++){
+            printf("%lf ",mp_times[i]);
+        }
+        printf("\n");
         printf("Average time matrix powers process %d: %lf\n", myid, average(mp_times, block));
+        printf("Times B-CGS:\n");
+        for(int i=0;i<(block-1);i++){
+            printf("%lf ",bgs_times[i]);
+        }
+        printf("\n");
         printf("Average time block (classical) Gram-Schmidt process %d: %lf\n", myid, average(bgs_times, block - 1));
+        printf("Times TSQR:\n");
+        for(int i=0;i<block;i++){
+            printf("%lf ",tsqr_times[i]);
+        }
+        printf("\n");
         printf("Average time TSQR process %d: %lf\n", myid, average(tsqr_times, block));
-        printf("Average time Upper Hessenberg: %lf\n", average(hess_times, block - 1));
+        printf("Times Hessenberg:\n");
+        for(int i=0;i<block;i++){
+            printf("%lf ",hess_times[i]);
+        }
+        printf("\n");
+        printf("Average time Upper Hessenberg: %lf\n", average(hess_times, block));
     }
 
     free(mathcalQ);
