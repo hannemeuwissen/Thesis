@@ -117,7 +117,7 @@ void random_nnz_per_row(int *result, int *sum, const int min_nnz_per_row, const 
     *sum = 0;
     for(int i=0;i<n;i++){
         if(min_nnz_per_row != max_nnz_per_row){
-            result[i] = (min_nnz_per_row + random()) % (max_nnz_per_row+1 - min_nnz_per_row);
+            result[i] = min_nnz_per_row + (random() % (max_nnz_per_row+1 - min_nnz_per_row));
         }else{
             result[i] = min_nnz_per_row;
         }

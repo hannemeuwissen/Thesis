@@ -27,11 +27,6 @@ int main(int argc, char **argv)
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
     MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
 
-    double * v = malloc(2*sizeof(double));
-    read_matrix_from_file("smallv.txt", 2*myid, v, 2, 1);
-    printf("Part for process %d: %lf %lf\n", myid, v[0], v[1]);
-    free(v);
-
     // /* Test load balancing */
     // if(argc < 2){
     //     fprintf(stderr, "Usage: %s file\n", argv[0]);
