@@ -37,6 +37,7 @@ int main(int argc, char **argv)
     sparse_CSR A;
     sparse_CSR B;
     read_CSR_data(&A, argv[1]);
+    read_CSR_data(&B, argv[1]);
     if(!myid){
         printf("Total nnz: %d\n", A.nnz);
     }
