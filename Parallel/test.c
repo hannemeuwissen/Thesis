@@ -35,6 +35,7 @@ int main(int argc, char **argv)
 
     /* Read first CSR data from the file */
     sparse_CSR A;
+    sparse_CSR B;
     read_CSR_data(&A, argv[1]);
     if(!myid){
         printf("Total nnz: %d\n", A.nnz);
@@ -44,18 +45,16 @@ int main(int argc, char **argv)
     /* Test load balancing indices */
     int * start = malloc(nprocs*sizeof(int));
     int * end = malloc(nprocs*sizeof(int));
-    int * start_nnz = malloc(nprocs*sizeof(int));
-    int * end_nnz = malloc(nprocs*sizeof(int));
-    get_indices(A.nnz, nprocs, start_nnz, end_nnz);
-    // printf("Before: process %d gets nonzero %d until %d\n", myid, start_nnz[myid], end_nnz[myid]);
-
+    int * start_before = malloc(nprocs*sizeof(int));
+    int * end_before = malloc(nprocs*sizeof(int));
+    
     /* Determine the start index, end index and size of part for calling process */
-    get_indices_load_balanced(A, nprocs, start, end);
-    // int m = end[myid] - start[myid] + 1;
-    // printf("After: process %d has to start at row %d and end at row %d\n", myid, start[myid], end[myid]);
-
+    get_indices(A.ncols, nprocs, start_before, end_before);
+    read_CSR_part(&B, argv[1], start_before[myid], end_before[myid]);
+    printf("Before load balancing: rank %d has %d rows, nr of nnz: %d\n", myid, B.nrows, B.nnz);
+    get_indices_load_balanced(A, nprocs, start, end);;
     read_CSR_part(&A, argv[1], start[myid], end[myid]);
-    printf("Rank %d has %d rows, nr of nnz: %d\n", myid, A.nrows, A.nnz);
+    printf("After load balancing: rank %d has %d rows, nr of nnz: %d\n", myid, A.nrows, A.nnz);
 
     // if(!myid){
     //     float logprocs = log2(nprocs);
