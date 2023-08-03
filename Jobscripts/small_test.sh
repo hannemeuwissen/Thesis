@@ -17,7 +17,7 @@ cd /home/users/mschpc/2022/meuwissh/Thesis/Parallel
 # module load apps intel-oneapi/2022.1.0 
 # module load apps intel-oneapi/2022.1.0 
 module load gcc/12.2.0 
-module load apps intel-oneapi/2022.1.0 intel openmpi
+module load apps intel-oneapi/2022.1.0 openmpi
 
 # launch code
 make
