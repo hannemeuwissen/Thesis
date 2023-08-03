@@ -14,8 +14,8 @@
  * @brief Structure that holds information of sparse CSR matrix.
  */
 typedef struct sparse_CSR {
-    int ncols;
     int nrows;
+    int ncols;
     int nnz;
     int * rowptrs;
     int * colindex;
