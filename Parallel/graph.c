@@ -155,8 +155,8 @@ sparse_CSR generate_irregular_graph_part_csr(const int n, const int M, const int
 
     /* Initialize sparse_CSR structure */
     sparse_CSR T;
-    T.nrows = n;
     T.ncols = M;
+    T.nrows = n;
     T.rowptrs = malloc((n+1)*sizeof(int));
     int *nnz_per_row = malloc(n*sizeof(int));
     random_nnz_per_row(nnz_per_row, &(T.nnz), min_nnz_per_row, max_nnz_per_row, n);
