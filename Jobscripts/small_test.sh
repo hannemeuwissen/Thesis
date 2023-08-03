@@ -7,7 +7,7 @@
 #SBATCH -A MSCHPC
 
 #SBATCH --output=/home/users/mschpc/2022/meuwissh/Thesis/ResultsLonsdale/%x.out
-#SBATCH --error=output=/home/users/mschpc/2022/meuwissh/Thesis/ResultsLonsdale/%x.error
+#SBATCH --error=/home/users/mschpc/2022/meuwissh/Thesis/ResultsLonsdale/%x.error
 
 # go to working directory
 /home/users/mschpc/2022/meuwissh/Thesis/Parallel
