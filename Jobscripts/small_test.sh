@@ -20,7 +20,7 @@ cd /home/users/mschpc/2022/meuwissh/Thesis/Parallel
 module load apps intel-oneapi/2022.1.0 openmpi
 
 # launch code
-make
+make caa_gen
 mpirun -np 1 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t
 mpirun -np 2 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t
 mpirun -np 4 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t
