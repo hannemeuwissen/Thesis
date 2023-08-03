@@ -13,7 +13,8 @@
 /home/users/mschpc/2022/meuwissh/Thesis/Parallel
 
 # load up necessary modules
-module load cports gcc/12.1.0-gnu intel openmpi
+# module load cports gcc/12.1.0-gnu intel openmpi
+module load apps intel-oneapi/2022.1.0 gcc/9.3.0 intel/18.0.5 openmpi/3.1.6
 
 # launch code
 make
