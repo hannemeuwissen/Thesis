@@ -4,7 +4,7 @@
 #SBATCH -n 8
 #SBATCH -t 00:02:00
 #SBATCH -p compute
-#SBATCH -A meuwissh
+#SBATCH -A MSCHPC
 
 #SBATCH --output=/home/users/mschpc/2022/meuwissh/Thesis/ResultsLonsdale/%x.out
 #SBATCH --error=output=/home/users/mschpc/2022/meuwissh/Thesis/ResultsLonsdale/%x.error
