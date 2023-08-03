@@ -21,7 +21,6 @@ module load apps intel-oneapi/2022.1.0 openmpi
 
 # launch code
 make caa_gen
-mpicc -o caa_gen caa_gen.c parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o -Wextra -Wall -lm
 mpirun -np 1 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t -a
 # mpirun -np 2 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t
 # mpirun -np 4 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t
