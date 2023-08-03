@@ -18,10 +18,10 @@ cd /home/users/mschpc/2022/meuwissh/Thesis/Parallel
 # module load apps intel-oneapi/2022.1.0 
 # module load gcc/12.2.0 
 module load apps intel-oneapi/2022.1.0 openmpi 
-module load intel-mpi/2018.4.18555
 
 # launch code
 make caa_gen
+ls
 mpirun -np 1 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t -a
 # mpirun -np 2 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t
 # mpirun -np 4 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t
