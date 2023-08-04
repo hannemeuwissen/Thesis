@@ -108,8 +108,7 @@ int main(int argc, char **argv){
     double * mp_times = malloc(steps*sizeof(double));
     double * bgs_times = malloc((steps-1)*sizeof(double));
     double * tsqr_times = malloc(steps*sizeof(double));
-    double * hess_times;
-    if(!myid){hess_times = malloc(steps*sizeof(double));}
+    if(!myid){double * hess_times = malloc(steps*sizeof(double));}
     double tbeg, tend;
     
     MPI_Barrier(MPI_COMM_WORLD);
