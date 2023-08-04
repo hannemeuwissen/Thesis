@@ -10,7 +10,7 @@
 CC=gcc
 ICC = icc
 MPI = mpicc
-FLAGS= -g -Wextra -Wall -O3
+FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
 EXECS= test caa_gen caa_gen_irreg generate_irr_main distance_subspaces CAA
 OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
@@ -51,19 +51,19 @@ test:test.c $(OBJ)
         -liomp5 -lpthread -lm
 
 caa_gen:caa_gen.c $(OBJ)
-	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) -O3 \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
         -liomp5 -lpthread -lm
 
 caa_gen_irreg:caa_gen_irreg.c $(OBJ)
-	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) -O3 \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
         -liomp5 -lpthread -lm
 
 CAA:CAA.c $(OBJ)
-	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) -O3 \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
         -liomp5 -lpthread -lm
