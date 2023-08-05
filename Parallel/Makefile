@@ -45,7 +45,7 @@ distance_subspaces:distance_subspaces.c
 	$(ICC) -o $@ $< $(FLAGS) $(MKLFLAGS) -lm
 
 test:test.c $(OBJ)
-	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
+	$(MPI) -o $@ $< $(OBJ) $(FLAGS) -O3 \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
         -liomp5 -lpthread -lm
