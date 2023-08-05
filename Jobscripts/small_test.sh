@@ -20,11 +20,7 @@ cd /home/users/mschpc/2022/meuwissh/Thesis/Parallel
 module load apps intel-oneapi/2022.1.0 openmpi 
 
 # launch code
-make caa_gen
-mpicc -o caa_gen caa_gen.c parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o -Wextra -Wall -march=opteron \
-        -I/home/support/pkgs/intel/oneapi/mkl/2022.1.0/include -L/home/support/pkgs/intel/oneapi/mkl/2022.1.0/lib/intel64 \
-        -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        -liomp5 -lpthread -lm
+make -f MakefileLonsdale caa_gen
 
 mpirun -np 1 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t -a
 # mpirun -np 2 ./caa_gen -v b.txt -m 400 -z 200 -d 8 -s 2 -t
