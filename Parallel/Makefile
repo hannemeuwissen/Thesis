@@ -48,25 +48,25 @@ test:test.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        -liomp5 -lpthread -lm
+        -liomp5 -lpthread -lm -lintlc
 
 caa_gen:caa_gen.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        -liomp5 -lpthread -lm
+        -liomp5 -lpthread -lm -lintlc
 
 caa_gen_irreg:caa_gen_irreg.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        -liomp5 -lpthread -lm
+        -liomp5 -lpthread -lm -lintlc
 
 CAA:CAA.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
         -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
         -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        -liomp5 -lpthread -lm
+        -liomp5 -lpthread -lm -lintlc
 
 .PHONY:clean
 
