@@ -12,7 +12,7 @@ ICC = icc
 MPI = mpicc
 FLAGS= -g -Wextra -Wall
 MKLFLAGS = -mkl
-EXECS= test caa_gen caa_gen_irreg generate_irr_main distance_subspaces CAA
+EXECS= caa_gen caa_gen_irreg generate_irr_main distance_subspaces CAA
 OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 
 all:$(EXECS)
@@ -43,12 +43,6 @@ generate_irr_main:generate_irr_main.c graph.o
 
 distance_subspaces:distance_subspaces.c
 	$(ICC) -o $@ $< $(FLAGS) $(MKLFLAGS) -lm
-
-test:test.c $(OBJ)
-	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
-        -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 \
-        -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core \
-        -liomp5 -lpthread -lm
 
 caa_gen:caa_gen.c $(OBJ)
 	$(MPI) -o $@ $< $(OBJ) $(FLAGS) \
