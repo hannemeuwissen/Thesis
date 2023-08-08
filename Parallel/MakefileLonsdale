@@ -18,10 +18,10 @@ OBJ = parse.o graph.o sparse.o tsqr_mpi.o bgs.o matrix.o hess.o
 all:$(EXECS)
 
 parse.o:parse.c parse.h
-	$(CC) -c $< $(FLAGS)
+	$(CC) -c $< $(FLAGS) -std=c99
 
 graph.o:graph.c graph.h
-	$(CC) -c $< $(FLAGS)
+	$(CC) -c $< $(FLAGS) -std=c99
 
 matrix.o:matrix.c matrix.h
 	$(ICC) -c $< $(FLAGS)
