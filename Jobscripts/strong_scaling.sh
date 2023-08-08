@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -J thesis-small-test
-#SBATCH -n 8
+#SBATCH -n 64
 #SBATCH -t 02:00:00
 #SBATCH -p compute
 #SBATCH -A MSCHPC
