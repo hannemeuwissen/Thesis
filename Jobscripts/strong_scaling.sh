@@ -2,7 +2,7 @@
 
 #SBATCH -J thesis-small-test
 #SBATCH -n 8
-#SBATCH -t 00:10:00
+#SBATCH -t 00:20:00
 #SBATCH -p compute
 #SBATCH -A MSCHPC
 
@@ -22,7 +22,7 @@ make -f MakefileLonsdale caa_gen
 echo "----------------------------------------------------------"
 echo "Blocksize 2"
 echo "----------------------------------------------------------"
-mpirun -np 1 ./caa_gen -v b.txt -m 40000 -z 4000 -d 16 -s 2 -t
+mpirun -np 1 ./caa_gen -v b.txt -m 20000 -z 2000 -d 16 -s 2 -t
 echo "----------------------------------------------------------"
 # mpirun -np 2 ./caa_gen -v b.txt -m 40000 -z 4000 -d 16 -s 2 -t
 # echo "----------------------------------------------------------"
